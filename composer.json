@@ -4,12 +4,6 @@
     "description": "Nesttab (for nested tables)",
     "type": "library",
     "license": "proprietary",
-	"repositories": [
-        {
-            "url": "https://github.com/alxnv/nesttab.git",
-            "type": "vcs"
-        }
-    ],
     "require": {
         "laravelcollective/html": "^6.3"
     },
