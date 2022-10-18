@@ -3,7 +3,7 @@
 	"version": "v1.0.1",
     "description": "Nesttab (for nested tables)",
     "type": "library",
-    "license": "Shareware",
+    "license": "proprietary",
 	"repositories": [
         {
             "url": "https://github.com/alxnv/nesttab.git",
@@ -11,7 +11,6 @@
         }
     ],
     "require": {
-        "alxnv/nesttab": "dev-master",
         "laravelcollective/html": "^6.3"
     },
     "autoload": {
