@@ -4,6 +4,16 @@
     "description": "Nesttab (for nested tables)",
     "type": "library",
     "license": "Shareware",
+	"repositories": [
+        {
+            "url": "https://github.com/alxnv/nesttab.git",
+            "type": "vcs"
+        }
+    ],
+    "require": {
+        "alxnv/nesttab": "dev-master",
+        "laravelcollective/html": "^6.3"
+    },
     "autoload": {
         "psr-4": {
             "Alxnv\\Nesttab\\": "src/"
@@ -14,5 +24,6 @@
             "Alxnv\\Nesttab\\": "src/"
         }
     },
-    "require": {}
+	"minimum-stability" : "dev",
+	"prefer-stable" : true
 }
