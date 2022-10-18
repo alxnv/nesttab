@@ -1,0 +1,18 @@
+{
+    "name": "alxnv/nesttab",
+	"version": "v1.0.1",
+    "description": "Nesttab (for nested tables)",
+    "type": "library",
+    "license": "Shareware",
+    "autoload": {
+        "psr-4": {
+            "Alxnv\\Nesttab\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Alxnv\\Nesttab\\": "src/"
+        }
+    },
+    "require": {}
+}
