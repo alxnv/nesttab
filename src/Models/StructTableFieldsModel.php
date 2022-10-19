@@ -1,8 +1,10 @@
 <?php
 
-namespace app\models;
+namespace Alxnv\Nesttab\Models;
 
-class StructTableFieldsModel extends \app\yy\Model {
+use Illuminate\Support\Facades\Lang;
+
+class StructTableFieldsModel {
     
     /**
      * Получить следующее незанятое имя данного типа для данной таблицы
@@ -35,7 +37,8 @@ class StructTableFieldsModel extends \app\yy\Model {
     public function getFieldsList() {
         global $db, $yy;
         
-        $lang = $yy->settings['language'];
+        $lang = Lang::getLocale(); //$yy->settings['language'];
+        //dd($lang);
         $arr = $db->qlist_arr("select * from yy_col_types where language='$lang' "
                 . "order by id_category, descr");
         
@@ -59,7 +62,7 @@ class StructTableFieldsModel extends \app\yy\Model {
     public function getOne($field_id) {
         global $db, $yy;
         
-        $lang = $yy->settings['language'];
+        $lang = Lang::getLocale(); //$yy->settings['language'];
         $arr = $db->q("select * from yy_col_types where language=$1 "
                 . " and id=$2", [$lang, $field_id]);
         return $arr;

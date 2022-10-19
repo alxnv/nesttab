@@ -4,7 +4,7 @@
  * Класс со вспомогательными функциями проекта
  */
 
-namespace app\core;
+namespace Alxnv\Nesttab\core;
 
 class Helper {
     /**

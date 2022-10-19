@@ -1,35 +1,38 @@
 <?php
-namespace app\controllers;
+namespace Alxnv\Nesttab\Http\Controllers;
+
+use Illuminate\Http\Request;
 
 /**
  * Редактирование структуры - добавление поля к таблице
  */
 
-class StructTableEditFieldController extends \app\backend\controllers\StructPrevController {
+class StructTableEditFieldController extends BasicController {
     /**
      * Выбрать тип поля
      * @global type $db
      * @global type $yy
      * @param type $r
      */
-    public function indexAction($r) {
+    public function index($id, Request $request) {
         
         global $db, $yy;
         
         //var_dump($r);exit;
+        $prev_link = ($request->has('prev') ? substr($request->input('prev'), 0, 500) : '');
         
-        if (!isset($r['t']) || (intval($r['t']) == 0)) {
+        if (!isset($id) || (intval($id) == 0)) {
             \yy::gotoErrorPage('Not valid table id as an argument');
         }
-        $table_id = intval($r['t']);
+        $table_id = intval($id);
         $tbl = $db->q("select * from yy_tables where id=$1", [$table_id]);
         if (is_null($tbl)) \yy::gotoErrorPage('Table not found');
 
         
-        $arr = (new \app\models\StructTableFieldsModel())->getFieldsList();
+        $arr = (new \Alxnv\Nesttab\Models\StructTableFieldsModel())->getFieldsList();
         
-        $this->render(['tbl' => $tbl, 'tblname' => $tbl['id'], 'table_id' => $table_id,
-            'field_types' => $arr]);
+        return view('nesttab::struct-table-edit-field.index', ['tbl' => $tbl, 'tblname' => $tbl['id'], 'table_id' => $table_id,
+            'field_types' => $arr, 'prev_link' => $prev_link]);
     }
     
 

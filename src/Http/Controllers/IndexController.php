@@ -18,8 +18,8 @@ class IndexController extends BasicController
     {
         //dd(6);
         global $db;
-        $arr = $db->qlist("select * from yy_columns");
-        dd($arr);
+        //$arr = $db->qlist("select * from yy_columns");
+        //dd($arr);
         return view('nesttab::index');
     }
 }

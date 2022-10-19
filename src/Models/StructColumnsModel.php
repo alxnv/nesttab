@@ -1,8 +1,8 @@
 <?php
 
-namespace app\models;
+namespace Alxnv\Nesttab\Models;
 
-class StructColumnsModel extends \app\yy\Model {
+class StructColumnsModel {
     public static function getTableColumns($table_id) {
         global $db, $yy;
         $flds = $db->qlist_arr("select a.*, b.descr as descr_fld from yy_columns a "

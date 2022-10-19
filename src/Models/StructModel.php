@@ -4,10 +4,10 @@
  * Структура таблиц
  */
 
-namespace app\models;
+namespace Alxnv\Nesttab\Models;
 
 
-class StructModel extends \app\yy\Model {
+class StructModel {
 
     /**
      * Возвращает все таблицы

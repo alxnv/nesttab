@@ -4,6 +4,7 @@ namespace Alxnv\Nesttab\Providers;
 
 //use Illuminate\Support\ServiceProvider;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Route;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -43,5 +44,6 @@ class RouteServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(__DIR__.'/../../routes/web.php');
         $this->loadJsonTranslationsFrom(__DIR__.'/../../resources/lang');
 
+        Route::pattern('id', '[0-9]+');
     }
 }

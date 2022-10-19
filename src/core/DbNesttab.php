@@ -30,7 +30,7 @@ class DbNesttab {
     public function escape($s) {
 	//	global $db;
 //        return mysqli_real_escape_string($this->handle, $s);
-        return \PDO::quote($s);
+        return $this->handle->quote($s);
     }
 
     /**

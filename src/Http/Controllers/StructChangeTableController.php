@@ -1,27 +1,30 @@
 <?php
-namespace app\controllers;
+namespace Alxnv\Nesttab\Http\Controllers;
 
+use Illuminate\Http\Request;
 /**
  * Редактирование структуры заданной таблицы
  */
 
-class StructChangeTableController extends \app\backend\controllers\StructPrevController {
-    public function editAction($r) {
+class StructChangeTableController extends BasicController {
+    public function edit($id, Request $request) {
         
         global $db, $yy;
         
-        if (!isset($r['t']) || (intval($r['t']) ==0)) {
+        $prev_link = ($request->has('prev') ? substr($request->input('prev'), 0, 500) : '');
+
+        if (!isset($id) || (intval($id) == 0)) {
             \yy::gotoErrorPage('Not valid table id as an argument');
         }
-        $n = intval($r['t']);
+        $n = intval($id);
         $tbl = $db->q("select * from yy_tables where id=$1", [$n]);
         if (is_null($tbl)) \yy::gotoErrorPage('Table not found');
 
-        $flds = \app\models\StructColumnsModel::getTableColumns($n);
+        $flds = \Alxnv\Nesttab\Models\StructColumnsModel::getTableColumns($n);
         
         
-        $this->render(['tbl' => $tbl, 'tblname' => $tbl['name'], 'tbl_id' => $n,
-            'flds' => $flds]);
+        return view('nesttab::struct_change_table', ['tbl' => $tbl, 'tblname' => $tbl['name'], 'tbl_id' => $n,
+            'flds' => $flds, 'prev_link' => $prev_link]);
     }
     
     public function moveAction($r) {

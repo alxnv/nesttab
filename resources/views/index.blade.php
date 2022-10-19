@@ -1,4 +1,7 @@
-@extends('nesttab::layout')
+<?php
+global $yy;
+?>
+@extends($yy->settings['layout'])
 @section('content')
 kljkljl;jj
 jkljl;kjl;kjl

@@ -340,7 +340,7 @@ static function parsestrall(&$mtch,&$mtchto,$regex,$str1) {
         //echo '<pre>';
         //var_dump($ato);
         for ($i=0;$i<count($ato);$i++) {
-            $ato[$i][0][0]="'" . $db->escape($arr[intval(substr($ato[$i][0][0],1)) - 1]) . "'";
+            $ato[$i][0][0]= $db->escape($arr[intval(substr($ato[$i][0][0],1)) - 1]);
         }
         $s2=\yy::repltextarray3($s,$afrom,$ato);
         return $s2;
