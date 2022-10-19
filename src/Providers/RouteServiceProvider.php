@@ -41,6 +41,7 @@ class RouteServiceProvider extends ServiceProvider
         //and then set the package viewDirectory
         $this->loadViewsFrom($viewsDirectory, 'nesttab');
         $this->loadRoutesFrom(__DIR__.'/../../routes/web.php');
+        $this->loadJsonTranslationsFrom(__DIR__.'/../../resources/lang');
 
     }
 }

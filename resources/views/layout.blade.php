@@ -1,0 +1,52 @@
+<?php
+// main layout
+?>
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title><?=__("Administrator's module")?></title>
+    <link rel="stylesheet" href="<?=asset('/nt/css/styles.css')?>">
+    <link rel="stylesheet" href="<?=asset('/nt/js/jquery-confirm.min.css')?>">
+    <script type="text/javascript" src="<?=asset('/nt/js/jquery-3.6.0.min.js')?>"></script>
+    <script type="text/javascript" src="<?=asset('/nt/js/jquery-confirm.min.js')?>"></script>
+    <!-- <script type="text/javascript" src="<?//=$yy->baseurl . \yy::get_js_lang_file()?>"></script>-->
+    <script type="text/javascript" src="<?=asset('/nt/js/functions.js')?>"></script>
+    
+  </head>
+  <body>
+      <div id="body-wrapper">
+          <div id="header"><a href="<?=asset('/nesttab')?>">Nesttab</a></div>
+        <div id="page_content">
+	<div id="admin_left">
+	@include('nesttab::menu_left')
+<?php
+/*
+if ($user['can_modify_structure']) {
+	echo '<h2>' . \yy::t('Structure') . '</h2>';
+	if ($user['all_tables']) {
+		echo '<p><a href="' . $yy->baseurl . 'struct-add-table">' . \yy::t('Add table') . '</a><br />'
+                        . '<a href="' .$yy->baseurl. 'change-struct-list">' . \yy::t('All upper level tables list') . '</a></p>';
+	}
+}*/
+?>	
+	</div>
+	<div id="admin_right">
+ <?php //\app\core\Helper::show_prev_link($controller); // отображаем ссылку "уровень вверх",
+    // если $controller->prev_link<>'',
+    // ссылки "Назад" и "Выйти"
+ ?>
+		
+
+	@yield('content')
+	</div>
+        </div>    
+        <div id="footer">&copy; 2022 by Alexander Vorobyov</div>
+      </div>
+    <script>
+    @stack('js')
+    </script>
+  </body>
+</html>
+                

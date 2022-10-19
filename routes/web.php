@@ -36,6 +36,7 @@ Route::prefix('nesttab')->group(function () {
     });*/
     //Route::get('/ex', ['as' => 'ex',
       //              'uses' => 'ExController@show']);
+    //dd(7);
     Route::get('/', CP9 . 'IndexController@index');
     //Route::get('/not-req/{id?}', 'NotReqParamsController');
         //->whereNumber('id');
