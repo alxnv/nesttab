@@ -1,4 +1,5 @@
 <?php
+const CP9 = 'Alxnv\\Nesttab\\Http\\Controllers\\';
 
 use Illuminate\Support\Facades\Route;
 
@@ -23,3 +24,20 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 */
+
+/*    Route::get('/nesttab', function () {
+            return 'Hello';
+    });
+*/
+
+Route::prefix('nesttab')->group(function () {
+    /*Route::get('/', function () {
+            return 'Hello';
+    });*/
+    //Route::get('/ex', ['as' => 'ex',
+      //              'uses' => 'ExController@show']);
+    Route::get('/', CP9 . 'IndexController@index');
+    //Route::get('/not-req/{id?}', 'NotReqParamsController');
+        //->whereNumber('id');
+    //Route::resource('edit', 'EditController');
+});
