@@ -3,7 +3,7 @@ namespace app\controllers;
 //use \app\yy\Controller;
 
 function logged_and_renew() {
-            
+				/*
         if (!isset($_SESSION['logged_user7237'])) {
                 header("Location: ./login.php");
                 exit;
@@ -30,7 +30,7 @@ function logged_and_renew() {
                 $_SESSION['logged_user7237'] = $arr;
                 return $arr;
 
-        }
+        }*/
         
 
 }

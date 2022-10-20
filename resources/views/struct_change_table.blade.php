@@ -102,7 +102,7 @@ echo '<div id="error_div"></div>';
     $(function () {
         $('#idt .change-button').click(function (e) {
             let id = e.target.getAttribute('data-id');
-            location.href=baseUrl + 'struct-table-edit-field/step2/<?=$tbl['id']?>/<?=$prev_link?>/'
+            location.href=baseUrl + 'struct-table-edit-field/step2/<?=$tbl['id']?>/'
                 + id;
 
         })

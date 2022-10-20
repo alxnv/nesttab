@@ -1,9 +1,11 @@
 <?php
-namespace app\controllers;
+namespace Alxnv\Nesttab\Http\Controllers;
 
-class MessageController extends \app\backend\controllers\Controller {
-    public function IndexAction() {
-        $this->render([]);
+use Illuminate\Http\Request;
+
+class MessageController extends BasicController {
+    public function __invoke() {
+        return view('nesttab::message');
     }
     
 }

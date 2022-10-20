@@ -2,4 +2,10 @@
 
 1. создать проект laravel
 2. установить laravel breeze
-3.
+3. установить пакет alxnv/nesttab
+4. установить config/app.php locale => 'ru'
+5. добавить вызов сервис провайдера пакета в app.php:
+        /*
+         * Package Service Providers...
+         */
+        Alxnv\Nesttab\Providers\RouteServiceProvider::class,

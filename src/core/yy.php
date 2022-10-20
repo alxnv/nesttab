@@ -1,5 +1,5 @@
 <?php
-
+use Illuminate\Support\Facades\Session;
 
 class yy { 
 /**
@@ -40,17 +40,43 @@ class yy {
     public static function gotoErrorPage($s) {
         global $yy;
         $lnk = \yy::get_error_session();
-        $_SESSION[$lnk] = $s;
-        header('Location: ' . $yy->baseurl . 'error');
-        exit;
+        session([$lnk => $s]);
+        Session::save();
+        static::redirect_now($yy->baseurl . 'nesttab/error');
+        //exit;
     }
 
     public static function gotoMessagePage($s) {
         global $yy;
         $lnk = \yy::get_message_session();
-        $_SESSION[$lnk] = $s;
-        header('Location: ' . $yy->baseurl . 'message');
+        session([$lnk => $s]);
+        header('Location: ' . $yy->baseurl . 'nesttab/message');
         exit;
+    }
+    /**
+     * Redirect the user no matter what. No need to use a return
+     * statement. Also avoids the trap put in place by the Blade Compiler.
+     *
+     * @param string $url
+     * @param int $code http code for the redirect (should be 302 or 301)
+     */
+    public static function redirect_now($url, $code = 302)
+    {
+        try {
+            \App::abort($code, '', ['Location' => $url]);
+        } catch (\Exception $exception) {
+            // the blade compiler catches exceptions and rethrows them
+            // as ErrorExceptions :(
+            //
+            // also the __toString() magic method cannot throw exceptions
+            // in that case also we need to manually call the exception
+            // handler
+            $previousErrorHandler = set_exception_handler(function () {
+            });
+            restore_error_handler();
+            call_user_func($previousErrorHandler, $exception);
+            die;
+        }
     }
 
     public static function isPost() {
@@ -64,13 +90,13 @@ class yy {
      * @return array массив с данными о текущем пользователе
      */
     public static function testlogged():array {
-        
+        /*
         if (!isset($_SESSION['logged_user7237'])) {
                 header("Location: ./login.php");
                 exit;
         }
 
-        return $_SESSION['logged_user7237'];        
+        return $_SESSION['logged_user7237'];        */
     }
 
     /**

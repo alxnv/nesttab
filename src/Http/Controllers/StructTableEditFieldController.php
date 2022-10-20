@@ -2,6 +2,7 @@
 namespace Alxnv\Nesttab\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 
 /**
  * Редактирование структуры - добавление поля к таблице
@@ -40,8 +41,9 @@ class StructTableEditFieldController extends BasicController {
      * По выбранному типу поля вывести форму редактирования данного типа поля
      * @param type $r
      */
-    public function step2Action($r) {
+    public function step2($r) {
         global $db, $yy;
+        Session::put('ttt', 7777);
         if (!isset($r['t']) || (intval($r['t']) == 0)) {
             \yy::gotoErrorPage('Not valid table id as an argument');
         }

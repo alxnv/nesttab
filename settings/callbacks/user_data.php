@@ -35,6 +35,7 @@ class user_data {
 	*  @return array данные пользователя из базы данных
 	*/
 	function refresh_user_credentials(string $login1):array {
+		/*
 		$login = \db::escape($login1);
 		$arr = \yy::q("select * from yy_custom_users where name='$login'");
 		if (is_null($arr)) {
@@ -44,7 +45,7 @@ class user_data {
 			header("Location: .");
 			exit;
 		}
-		return $arr;
+		return $arr;*/
 	}
 
 }

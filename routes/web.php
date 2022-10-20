@@ -37,9 +37,12 @@ Route::prefix('nesttab')->group(function () {
     //Route::get('/ex', ['as' => 'ex',
       //              'uses' => 'ExController@show']);
     //dd(7);
+    Route::get('/struct-table-edit-field/step2/{id}', CP9 . 'StructTableEditFieldController@step2');
     Route::get('/struct-table-edit-field/index/{id}/{prev?}', CP9 . 'StructTableEditFieldController@index');
     Route::get('/struct-change-table/edit/{id}/{prev?}', CP9 . 'StructChangeTableController@edit');
     Route::get('/change-struct-list', CP9 . 'ChangeStructListController');
+    Route::get('/error', CP9 . 'ErrorController');
+    Route::get('/message', CP9 . 'MessageController');
     Route::get('/', CP9 . 'IndexController@index');
     //Route::get('/not-req/{id?}', 'NotReqParamsController');
         //->whereNumber('id');
