@@ -7,12 +7,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title><?=__("Administrator's module")?></title>
-    <link rel="stylesheet" href="<?=asset('/nt/css/styles.css')?>">
-    <link rel="stylesheet" href="<?=asset('/nt/js/jquery-confirm.min.css')?>">
-    <script type="text/javascript" src="<?=asset('/nt/js/jquery-3.6.0.min.js')?>"></script>
-    <script type="text/javascript" src="<?=asset('/nt/js/jquery-confirm.min.js')?>"></script>
+    <link rel="stylesheet" href="<?=asset('/nsttab/css/styles.css')?>">
+    <link rel="stylesheet" href="<?=asset('/nsttab/js/jquery-confirm.min.css')?>">
+    <script type="text/javascript" src="<?=asset('/nsttab/js/jquery-3.6.0.min.js')?>"></script>
+    <script type="text/javascript" src="<?=asset('/nsttab/js/jquery-confirm.min.js')?>"></script>
     <!-- <script type="text/javascript" src="<?//=$yy->baseurl . \yy::get_js_lang_file()?>"></script>-->
-    <script type="text/javascript" src="<?=asset('/nt/js/functions.js')?>"></script>
+    <script type="text/javascript" src="<?=asset('/nsttab/js/functions.js')?>"></script>
     
   </head>
   <body>

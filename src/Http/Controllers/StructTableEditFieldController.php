@@ -18,6 +18,11 @@ class StructTableEditFieldController extends BasicController {
     public function index($id, Request $request) {
         
         global $db, $yy;
+        /*$s = session('trw', '8888');
+Session::put('trw', '777');
+Session::save();
+dd($s);*/
+
         
         //var_dump($r);exit;
         $prev_link = ($request->has('prev') ? substr($request->input('prev'), 0, 500) : '');

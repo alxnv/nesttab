@@ -9,3 +9,5 @@
          * Package Service Providers...
          */
         Alxnv\Nesttab\Providers\RouteServiceProvider::class,
+5. скопировать файлы css, js
+

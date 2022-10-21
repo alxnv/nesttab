@@ -1,16 +1,24 @@
 <?php
+use Illuminate\Support\Facades\Session;
+
 global $yy, $db;
 ?>
 @extends($yy->settings['layout'])
 @section('content')
 
 <?php
+/*$s = Session::get('trw', '8888');
+Session::put('trw', '777');
+//Session::save();
+dump($s);
+*/
 //echo '<h1 class="center">' . __('Table') . ' - ' . mb_strtolower(__('Add field')) . '</h1>';
 echo '<h1 class="center">' . __('Table') . ' "' . \yy::qs($tbl['descr']) . '" (' .
         __('physical name') . ': ' . \yy::qs($tbl['name']) . ')  - ' . mb_strtolower(__('Add field')) , '<br /><br />';
 ?>
 <form method="get" class="choose_field_form" action="<?=$yy->baseurl?>nesttab/struct-table-edit-field/step2/<?=$table_id?>">
-<p class="center">
+@csrf
+    <p class="center">
     <?=__('Select field type')?>:<br /><br />
     <select name="field_type_id" class="choose_field_type" size="17">
 <?php
