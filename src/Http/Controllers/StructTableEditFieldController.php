@@ -50,7 +50,7 @@ dd($s);*/
         global $db, $yy;
         Session::put('ttt', 7777);
         if (!isset($r['t']) || (intval($r['t']) == 0)) {
-            \yy::gotoErrorPage('Not valid table id as an argument');
+            \yy::gotoMessagePage('Not valid table id as an argument');
         }
         $table_id = intval($r['t']);
         $tbl = $db->q("select * from yy_tables where id=$1", [$table_id]);

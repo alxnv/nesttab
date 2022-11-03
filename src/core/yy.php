@@ -50,12 +50,15 @@ class yy {
         global $yy;
         $lnk = \yy::get_message_session();
         session([$lnk => $s]);
-        header('Location: ' . $yy->baseurl . 'nesttab/message');
-        exit;
+        Session::save();
+        static::redirect_now($yy->baseurl . 'nesttab/message');
+        //header('Location: ' . $yy->baseurl . 'nesttab/message');
+        //exit;
     }
     /**
      * Redirect the user no matter what. No need to use a return
      * statement. Also avoids the trap put in place by the Blade Compiler.
+     * !!!!!! ПЕРЕД РЕДИРЕКТОМ ЕСЛИ ИЗМЕНЯЛИСЬ ДАННЫЕ СЕССИИ СДЕЛАТЬ Session::save()
      *
      * @param string $url
      * @param int $code http code for the redirect (should be 302 or 301)
