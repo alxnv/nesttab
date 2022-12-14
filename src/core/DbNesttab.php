@@ -125,7 +125,8 @@ class DbNesttab {
         $sth->execute();
         
         //$sth=$this->qdirect($s, $params);
-        return $sth->fetchObject();
+        $f = $sth->fetchObject();
+        return ($f ? $f : null);
     }
 
     function q($s, $params = []) {
@@ -137,7 +138,8 @@ class DbNesttab {
         $sth->execute();
         
         //$sth=$this->qdirect($s, $params);
-        return $sth->fetch();
+        $f = $sth->fetch();
+        return ($f ? $f : null);
     }
 /*
     function getkrohi($tab,$uid2) {

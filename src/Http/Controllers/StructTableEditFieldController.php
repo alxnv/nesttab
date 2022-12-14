@@ -46,13 +46,15 @@ dd($s);*/
      * По выбранному типу поля вывести форму редактирования данного типа поля
      * @param type $r
      */
-    public function step2($r) {
+    public function step2($id, Request $request) {
         global $db, $yy;
-        Session::put('ttt', 7777);
-        if (!isset($r['t']) || (intval($r['t']) == 0)) {
-            \yy::gotoMessagePage('Not valid table id as an argument');
+        //Session::put('ttt', 7777);
+        //$b = $request->has('field_type_id');
+        //dd($b);
+        if (!isset($id) || (intval($id) == 0)) {
+            \yy::gotoErrorPage('Not valid table id as an argument');
         }
-        $table_id = intval($r['t']);
+        $table_id = intval($id);
         $tbl = $db->q("select * from yy_tables where id=$1", [$table_id]);
         if (is_null($tbl)) \yy::gotoErrorPage('Table not found');
         $lnk2 = \yy::get_edit_session();
@@ -73,8 +75,8 @@ dd($s);*/
             if (!$b) $r = \yy::add_keys($r, $rec);
             $fld =  (new \app\models\StructTableFieldsModel())->getOne(intval($r['field_type_id']));
         } else {
-            if (!isset($r['field_type_id'])) \yy::gotoErrorPage('Field type is not defined');
-            $fld =  (new \app\models\StructTableFieldsModel())->getOne(intval($r['field_type_id']));
+            if (!$request->has('field_type_id')) \yy::gotoErrorPage('Field type is not defined');
+            $fld =  (new \app\models\StructTableFieldsModel())->getOne(intval($request->field_type_id));
             if (!$b) $r['name'] = \app\models\StructTableFieldsModel::getNextNameOfType($tbl['id'], $fld['name']);
             
         }
