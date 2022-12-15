@@ -1,7 +1,7 @@
 <?php
 global $yy;
 ?>
-@extends($yy->settings['layout'])
+@extends(config('nesttab.layout'))
 @section('content')
 
 

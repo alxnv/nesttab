@@ -6,7 +6,7 @@ $lnk = yy::get_message_session();
 
 if (!Session::has($lnk)) die('Required parameter has not been passed');
 ?>
-@extends($yy->settings['layout'])
+@extends(config('nesttab.layout'))
 @section('content')
 <?php
 

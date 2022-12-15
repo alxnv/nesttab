@@ -51,6 +51,7 @@ dd($s);*/
         //Session::put('ttt', 7777);
         //$b = $request->has('field_type_id');
         //dd($b);
+        $r = $request->all();
         if (!isset($id) || (intval($id) == 0)) {
             \yy::gotoErrorPage('Not valid table id as an argument');
         }
@@ -73,18 +74,19 @@ dd($s);*/
             $params = json_decode($rec['parameters']);
             $rec = \yy::add_keys($rec, (array)$params);
             if (!$b) $r = \yy::add_keys($r, $rec);
-            $fld =  (new \app\models\StructTableFieldsModel())->getOne(intval($r['field_type_id']));
+            $fld =  (new \Alxnv\Nesttab\Models\StructTableFieldsModel())->getOne(intval($r['field_type_id']));
         } else {
             if (!$request->has('field_type_id')) \yy::gotoErrorPage('Field type is not defined');
-            $fld =  (new \app\models\StructTableFieldsModel())->getOne(intval($request->field_type_id));
-            if (!$b) $r['name'] = \app\models\StructTableFieldsModel::getNextNameOfType($tbl['id'], $fld['name']);
+            $fld =  (new \Alxnv\Nesttab\Models\StructTableFieldsModel())->getOne(intval($request->field_type_id));
+            if (!$b) $r['name'] = \Alxnv\Nesttab\Models\StructTableFieldsModel::getNextNameOfType($tbl['id'], $fld['name']);
             
         }
         if (is_null($fld)) \yy::gotoErrorPage('Field def in table is not found');
-        $this->render(['tbl' => $tbl, 'tblname' => $tbl['name'], 'tbl_id' => $table_id,
-            'field_type_id' => intval($r['field_type_id']), 'fld' => $fld, 'r' => $r], 
-                $fld['name']); // вызываем контроллер
-                  // названный по $tbl['name']
+        return view('nesttab::struct-table-edit-field.' . $fld['name'], ['tbl' => $tbl, 'tblname' => $tbl['name'], 'tbl_id' => $table_id,
+            'field_type_id' => intval($r['field_type_id']), 'fld' => $fld, 'r' => $r] 
+                ); // вызываем контроллер
+                  // названный по $fld['name']
+
     }
     
     /**

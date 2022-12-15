@@ -3,7 +3,7 @@ use Illuminate\Support\Facades\Session;
 
 global $yy, $db;
 ?>
-@extends($yy->settings['layout'])
+@extends(config('nesttab.layout'))
 @section('content')
 
 <?php

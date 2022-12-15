@@ -1,3 +1,5 @@
+@extends(config('nesttab.layout'))
+@section('content')
 <?php
 /**
  * редактирование структуры поля типа boolean
@@ -7,14 +9,14 @@
 global $yy, $db;
 
 
-echo '<h1 class="center">' . \yy::t('Edit table') . ' "' . \yy::qs($tbl['descr']) . '" (' .
-        \yy::t('physical name') . ': ' . \yy::qs($tbl['name']) .')<br /><br />';
+echo '<h1 class="center">' . __('Edit table') . ' "' . \yy::qs($tbl['descr']) . '" (' .
+        __('physical name') . ': ' . \yy::qs($tbl['name']) .')<br /><br />';
 
 if(!isset($r['id'])) {
-    echo '<p class="center">' . \yy::t('Add field') . ' ' . \yy::t('of type') . ' "' .
+    echo '<p class="center">' . __('Add field') . ' ' . __('of type') . ' "' .
             \yy::qs($fld['descr']) . '"</p>';
 } else {
-    echo '<p class="center">' . \yy::t('Edit field') . ' ' . \yy::t('of type') . ' "' .
+    echo '<p class="center">' . __('Edit field') . ' ' . __('of type') . ' "' .
             \yy::qs($fld['descr']) . '"</p>';
 };
 echo '<br />';
@@ -28,12 +30,15 @@ if (isset($r['is_error'])) {
 }
 
 echo '<form method="post" action="' . $yy->baseurl . 'struct-table-edit-field/save/t/' . $tbl_id .
-        '/prev/' . $controller->prev_link .'"><p align="left">';
-$controller->render_partial(['r' => $r], 'all', 'all-fields');
+        '/prev/"><p align="left">';
+//$controller->render_partial(['r' => $r], 'all', 'all-fields');
+?>
+@include('nesttab::all-fields.all')
+<?php
 
-echo \yy::t('Default value') . ': <input id="default" type="checkbox"'
+echo __('Default value') . ': <input id="default" type="checkbox"'
         . ' name="default" ' .(isset($r['default']) ? 'checked="checked"' : '') . ' />'
-        . ' <label for="default">' .\yy::t('Checked') .'</label>';
+        . ' <label for="default">' .__('Checked') .'</label>';
 echo '</p>';
 
 
@@ -45,8 +50,9 @@ echo '</p>';
 ?>
 <br />
 <p align="left">
-<input type="submit" value="<?=\yy::t('Save')?>" />
+<input type="submit" value="<?=__('Save')?>" />
 </p>
 <?php
 echo '</form>';
 ?>
+@endsection

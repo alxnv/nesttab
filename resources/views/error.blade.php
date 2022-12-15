@@ -10,7 +10,7 @@ $s = session($lnk, '');
 //dump(Session::all());
 if (!Session::has($lnk)) die('Required parameter has not been passed');
 ?>
-@extends($yy->settings['layout'])
+@extends(config('nesttab.layout'))
 @section('content')
 <?php
 echo '<h2 class="center red">' . __('Error') . '</h2>';

@@ -2,6 +2,6 @@
 global $yy;
 $pppp = 1;
 ?>
-@extends($yy->settings['layout'])
+@extends(config('nesttab.layout'))
 @section('content')
 @endsection

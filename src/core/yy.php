@@ -6,7 +6,7 @@ class yy {
 	суперглобальный класс с основными функциями для работы
 */
 
-    public $settings;
+    //public $settings;
     public $built_in_settings;
     public $settings2;
     public $baseurl=null;
@@ -21,7 +21,7 @@ class yy {
         $this->baseurl=dirname($_SERVER['SCRIPT_NAME']).'/';
         if ($this->baseurl=='//') $this->baseurl='/';
         $this->basepath = dirname($_SERVER["SCRIPT_FILENAME"]).'/'; //dirname(__DIR__);  
-		$this->settings = require($this->Engine_Path . '/settings/settings.php');
+		//$this->settings = require($this->Engine_Path . '/settings/settings.php');
 		$this->built_in_settings = require('built_in_settings.php');
 		
 		include $this->Engine_Path . "/settings/callbacks/user_data.php";
@@ -232,16 +232,16 @@ class yy {
 	
         public static  function get_js_lang_file() {
             global $yy;
-		return 'locale/' . $yy->settings['language'] . '/names.js';
+		return 'locale/' . config('nesttab.language') . '/names.js';
             
         }
         
-        public function loadlocale() {
+        /*public function loadlocale() {
 		$s =  $this->basepath . 'locale/' . $this->settings['language'] . '/lang.php';
 		//var_dump($s);
 		$this->locale=require($s);
 		$this->locale_loaded = true;
-	}
+	}*/
 
     public static  function qobj($s) {
         global $db;

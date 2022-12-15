@@ -14,7 +14,7 @@ $arr_ts = $yy->settings2['table_names_short'];
 
 $s = '';
 ?>
-@extends($yy->settings['layout'])
+@extends(config('nesttab.layout'))
 @section('content')
 <?php
 echo '<h1 class="center">' . __('All upper level tables list') . '</h1>'; 

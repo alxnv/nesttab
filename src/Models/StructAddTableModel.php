@@ -50,7 +50,7 @@ class StructAddTableModel extends \app\yy\Model {
         // Если имя таблицы создано по шаблону, то проставляем номер таблицы в yy_settings 
         //   как следующий номер для автонумерации
         $arr_names = $yy->settings2['table_names'];
-        $def_db_prefix = $yy->settings['db_prefix'];
+        $def_db_prefix = config('nesttab.db_prefix');
         $s = $def_db_prefix . $arr_names[$tbl_idx];
         //var_dump($s);
         if (substr($tbl_name, 0, strlen($s)) == $s) {

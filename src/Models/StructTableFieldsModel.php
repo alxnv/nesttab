@@ -39,8 +39,9 @@ class StructTableFieldsModel {
         
         $lang = Lang::getLocale(); //$yy->settings['language'];
         //dd($lang);
-        $arr = $db->qlist_arr("select * from yy_col_types where language='$lang' "
-                . "order by id_category, descr");
+        $arr = $db->qlist_arr("select a.*, b.descr from yy_col_types a, "
+                . "yy_col_types_lang b where b.language='$lang' and b.id=a.id "
+                . "order by a.id_category, b.descr");
         
         $arr2 = [];
         foreach ($arr as $arr3) {
@@ -63,8 +64,9 @@ class StructTableFieldsModel {
         global $db, $yy;
         
         $lang = Lang::getLocale(); //$yy->settings['language'];
-        $arr = $db->q("select * from yy_col_types where language=$1 "
-                . " and id=$2", [$lang, $field_id]);
+        $arr = $db->q("select a.*,b.descr,b.language from yy_col_types a, yy_col_types_lang b"
+                . " where b.language=$1 "
+                . " and b.id=$2 and a.id=$2", [$lang, $field_id]);
         return $arr;
     }
 
