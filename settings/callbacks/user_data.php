@@ -5,7 +5,7 @@ class user_data {
 	public $use_custom_user_mangement_system = 0; # использовать ли определенную пользователем систему
 	    # управления пользователями
 	
-	# все нижеприведенные функции вызываются, если $use_custom_user_mangement_system == true
+	## все нижеприведенные функции вызываются, если $use_custom_user_mangement_system == true
 
 	function get_user_credentials():array {
 		
