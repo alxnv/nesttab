@@ -23,7 +23,7 @@ for ($i = 0; $i < count($list); $i++) {
     if ($s <> $list[$i]['table_type']) {
         $s = $list[$i]['table_type'];
         $k = array_search($s, $arr_ts);
-        $s2 = ($k === false ? '----' : $arrt[$k]);
+        $s2 = ($k === false ? '----' : __($arrt[$k]));
         echo '<br /><h2>' . \yy::qs($s2). '</h2>';
     }
     

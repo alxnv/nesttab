@@ -16,7 +16,7 @@ class StructAddTableModel extends \app\yy\Model {
 	if (!isset($r['tbl_type']) || !isset($r['tbl_name']) || !isset($r['tbl_descr']))  die('Required parameter is not passed');
 	$tbl_idx = intval($r['tbl_type']);
 	if ($tbl_idx < 0 || $tbl_idx >= count($arr2)) die('Wrong index of table');
-	$tbl_name = substr($r['tbl_name'], 0, $yy->built_in_settings['max_table_name_size']);
+	$tbl_name = substr($r['tbl_name'], 0, $yy->db_settings['max_table_name_size']);
 	$tbl_descr = trim(substr($r['tbl_descr'], 0, 200));
         $err = '';
 	if (($s72 = $db->valid_table_name($tbl_name)) <>'') {

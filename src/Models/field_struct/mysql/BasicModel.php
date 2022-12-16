@@ -5,9 +5,9 @@
  *  в этом каталоге
  */
 
-namespace app\models\field_struct;
+namespace Alxnv\Nesttab\Models\field_struct\mysql;
 
-class BasicModel extends \app\yy\Model {
+class BasicModel {
 
     /**
      * обрабатываем считанные из yy_columns данные и подготавливаем их для

@@ -19,7 +19,7 @@ class Helper {
         $arr_ts = $yy->settings2['table_names_short'];
 
         $k = array_search($s, $arr_ts);
-        $s2 = ($k === false ? '----' : $arrt[$k]);
+        $s2 = ($k === false ? '----' : __($arrt[$k]));
         return $s2;
     }
 

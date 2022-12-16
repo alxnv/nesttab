@@ -28,10 +28,10 @@ function confirm_it(id_passed) {
                         useBootstrap: false,
                         content: 'Simple alert!', }*/
                     //alert(this.id_passed);
-                    exec_ajax_json(baseUrl +'struct-change-table/delete/id/' + this.id_passed, {},
+                    exec_ajax_json(baseUrl +'/struct-change-table/delete/' + this.id_passed, {},
                         function () {
                             // refresh the page
-                            location.href=baseUrl + 'struct-change-table/edit/<?=$tbl['id']?>/prev/<?=$prev_link?>';
+                            location.href=baseUrl + '/struct-change-table/edit/<?=$tbl['id']?>/0';
                             
                         });
                         // возвращает {error: '<html of error>') если была ошибка удаления
@@ -68,8 +68,8 @@ echo '<br /><p class="center"><a class="addfield" href="' . $yy->baseurl . 'nest
 
 
 echo '<br /><table id="idt" class="table center2">';
-echo '<tr><th>№</th><th>' . __('Name') . '</th><th>' . \yy::mb_ucfirst(__('physical name')) . '</th>'
-        . '<th>' . __('Type') . '</th><th>' . __('Description') . '</th>'
+echo '<tr><th>№</th><th>' . __('Name') . '</th>' //'<th>' . \yy::mb_ucfirst(__('physical name')) . '</th>'
+        . '<th>' . __('Type') . '</th>' //'<th>' . __('Description') . '</th>'
         . '<th>' . __('Operations') . '</th></tr>';
 $n = 1;
 foreach ($flds as $f) {
@@ -78,15 +78,15 @@ foreach ($flds as $f) {
     echo '</td><td>';
     echo \yy::qs(trim($f['descr']) == '' ? '-------' : $f['descr']);
     echo '</td><td>';
-    echo \yy::qs($f['name']);
-    echo '</td><td>';
+    //echo \yy::qs($f['name']);
+    //echo '</td><td>';
     echo \yy::qs($f['descr_fld']);
-    echo '</td><td>';
+    //echo '</td><td>';
     // $f['parameters']
     echo '</td><td>';
     echo '<input class="change-button" type="button" data-id="' . $f['id'] . '" value="' . __('Change') . '" />&nbsp;';
     echo __('To position') . ': ';
-    echo '<input type="text" data_id="' . $f['id'] . '" id="e' . $n . '" class="table_edit" value="' . $f['ordr'] . '" />';
+    echo '<input type="number" data_id="' . $f['id'] . '" id="e' . $n . '" class="table_edit" value="' . $f['ordr'] . '" />';
     echo '&nbsp;<input type="button" class="move-button" data-id="' . 
             $n . '" value="' . __('Move') . '" />';
     echo '&nbsp;<input type="button" data-id="' . $f['id'] . '" class="delete-button" value="' . __('Delete') . '" />';
@@ -102,7 +102,7 @@ echo '<div id="error_div"></div>';
     $(function () {
         $('#idt .change-button').click(function (e) {
             let id = e.target.getAttribute('data-id');
-            location.href=baseUrl + 'struct-table-edit-field/step2/<?=$tbl['id']?>/'
+            location.href=baseUrl + '/struct-table-edit-field/step2/<?=$tbl['id']?>/'
                 + id;
 
         })
@@ -111,7 +111,7 @@ echo '<div id="error_div"></div>';
             let input = document.getElementById('e' + n);
             id = input.getAttribute('data_id');
             //alert(input.value);
-            location.href=baseUrl + 'struct-change-table/move/<?=$tbl['id']?>/<?=$prev_link?>/'
+            location.href=baseUrl + '/struct-change-table/move/<?=$tbl['id']?>/'
                 + id + '/moveto/' + input.value;
 
         })

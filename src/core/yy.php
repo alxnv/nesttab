@@ -1,5 +1,6 @@
 <?php
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Lang;
 
 class yy { 
 /**
@@ -15,6 +16,7 @@ class yy {
     private $locale;
     public $user_data;
     public $Engine_Path;
+    public $db_settings;
 	
     function __construct() {
         $this->Engine_Path = base_path() . '/vendor/alxnv/nesttab';
@@ -22,17 +24,18 @@ class yy {
         if ($this->baseurl=='//') $this->baseurl='/';
         $this->basepath = dirname($_SERVER["SCRIPT_FILENAME"]).'/'; //dirname(__DIR__);  
 		//$this->settings = require($this->Engine_Path . '/settings/settings.php');
-		$this->built_in_settings = require('built_in_settings.php');
-		
-		include $this->Engine_Path . "/settings/callbacks/user_data.php";
-		$this->user_data = new user_data();
+		//$this->built_in_settings = require('built_in_settings.php');
+	$this->db_settings = require($this->Engine_Path . '/src/core/db/' . 
+                config('nesttab.db_driver') . '/settings.php');	
+        include $this->Engine_Path . "/settings/callbacks/user_data.php";
+	$this->user_data = new user_data();
     }
 
     function init() {
         //$this->register_autoload();
 	$this->settings2 = require('settings2.php');
         global $db;
-        $db = new \Alxnv\Nesttab\core\DbNesttab();
+        $db = new \Alxnv\Nesttab\core\db\mysql\DbNesttab();
         //mysqli_report(MYSQLI_REPORT_ALL | MYSQLI_REPORT_STRICT); // перехватывать все сообщения об ошибках mysqli
     }
 
@@ -232,7 +235,7 @@ class yy {
 	
         public static  function get_js_lang_file() {
             global $yy;
-		return 'locale/' . config('nesttab.language') . '/names.js';
+		return 'lang/' . Lang::getLocale() . '/names.js';
             
         }
         

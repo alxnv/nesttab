@@ -16,7 +16,7 @@ dump($s);
 echo '<h1 class="center">' . __('Table') . ' "' . \yy::qs($tbl['descr']) . '" (' .
         __('physical name') . ': ' . \yy::qs($tbl['name']) . ')  - ' . mb_strtolower(__('Add field')) , '<br /><br />';
 ?>
-<form method="get" class="choose_field_form" action="<?=$yy->baseurl?>nesttab/struct-table-edit-field/step2/<?=$table_id?>">
+<form method="get" class="choose_field_form" action="<?=$yy->baseurl?>nesttab/struct-table-edit-field/step2/<?=$table_id?>/0">
 @csrf
     <p class="center">
     <?=__('Select field type')?>:<br /><br />

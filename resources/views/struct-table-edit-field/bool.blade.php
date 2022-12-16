@@ -25,14 +25,15 @@ echo '<br />';
 if (isset($r['is_error'])) {
     $lnk_err = \yy::get_error_edit_session();
     //$lnk_data = \yy::get_edit_session();
-    echo '<br /><p align="left" class="red">' . nl2br(\yy::qs($_SESSION[$lnk_err])) . '</p><br />';
+    echo '<br /><p align="left" class="red">' . nl2br(\yy::qs(session($lnk_err))) . '</p><br />';
     //\app\core\Helper::assignData($r, $_SESSION[$lnk_data]); // читаем сохраненные данные формы
 }
 
-echo '<form method="post" action="' . $yy->baseurl . 'struct-table-edit-field/save/t/' . $tbl_id .
-        '/prev/"><p align="left">';
+echo '<form method="post" action="' . $yy->baseurl . 'nesttab/struct-table-edit-field/save/' . $tbl_id .
+        '"><p align="left">';
 //$controller->render_partial(['r' => $r], 'all', 'all-fields');
 ?>
+@csrf
 @include('nesttab::all-fields.all')
 <?php
 

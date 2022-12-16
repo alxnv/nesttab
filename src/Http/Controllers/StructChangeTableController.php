@@ -27,38 +27,39 @@ class StructChangeTableController extends BasicController {
             'flds' => $flds, 'prev_link' => $prev_link]);
     }
     
-    public function moveAction($r) {
+    public function move($tbl_id, $id, $pos) {
         
         global $db, $yy;
         
+        $r = ['t' => $tbl_id, 'id' => $id, 'moveto' => $pos];
         if (!isset($r['t']) || (intval($r['t']) ==0)) {
             \yy::gotoErrorPage('Not valid table id as an argument');
         }
-        if (!isset($r['prev']) || !isset($r['id']) || !isset($r['moveto'])) {
+        if (!isset($r['id']) || !isset($r['moveto'])) {
             \yy::gotoErrorPage('Not all required parameters passed');
         }
         $n = intval($r['t']);
-        $prev = substr($r['prev'], 0, 200);
+        //$prev = substr($r['prev'], 0, 200);
         $tbl = $db->q("select * from yy_tables where id=$1", [$n]);
         if (is_null($tbl)) \yy::gotoErrorPage('Table not found');
 
-        \app\models\StructTableFieldsModel::move(intval($r['id']), intval($r['moveto']));
-        header('Location: ' . $yy->baseurl . 'struct-change-table/edit/t/' . $n . '/prev/' . $prev);
+        \Alxnv\Nesttab\Models\StructTableFieldsModel::move(intval($r['id']), intval($r['moveto']));
+        \yy::redirect_now($yy->baseurl . 'nesttab/struct-change-table/edit/' . $n . '/0');
         exit;
     }
     
-    public function deleteAction($r) {
+    public function delete($id) {
         // вызывается в режиме json
         global $yy, $db;
-        $this->switchToJson();
         $err = '';
-        if (!isset($r['id'])) $err .= chr(13) . 'Field id has not been passed';
+        if (!isset($id)) $err .= chr(13) . 'Field id has not been passed';
+        $r = ['id' => intval($id)];
         if ($err == '') {
             $column = $db->q("select * from yy_columns where id=$1", [$r['id']]);
             if (!$column) $err .= chr(13) . 'The record in yy_columns not found';
         }
         if ($err == '') {
-            $fld =  (new \app\models\StructTableFieldsModel())->getOne(intval($column['field_type']));
+            $fld =  (new \Alxnv\Nesttab\Models\StructTableFieldsModel())->getOne(intval($column['field_type']));
             if (is_null($fld)) $err .= chr(13) . 'Field def in table is not found';
             
         }
@@ -67,14 +68,16 @@ class StructChangeTableController extends BasicController {
         if (is_null($tbl)) $err .= 'Table definition is not found';
         
         if ($err == '') {
-            $s2 = '\\app\\models\\field_struct\\' . ucfirst($fld['name']) .'Model';
+            $s2 = '\\Alxnv\\Nesttab\\Models\\field_struct\\' . config('nesttab.db_driver') . '\\'
+                    . ucfirst($fld['name']) .'Model';
             $field_model = new $s2();
             $s = $field_model->delete($column, $fld, $tbl, $r);
             $err .= $s;
         }
         if ($err == '')
-            echo json_encode([]);
-            else echo json_encode(['error' => nl2br(\yy::qs($err))]);
+            $arr = [];
+            else $arr = ['error' => nl2br(\yy::qs($err))];
+        return response()->json($arr);
 
     }
     

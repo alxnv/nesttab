@@ -1,11 +1,11 @@
 <?php
 // функции для работы с БД
 // уровень записи для getkrohi возвращается в db->prcnt, топ uid корня в db->toplid
-namespace Alxnv\Nesttab\core;
+namespace Alxnv\Nesttab\core\db;
 
 use Illuminate\Support\Facades\DB;
 
-class DbNesttab {
+class BasicDbNesttab {
 /*
     function connect() {
 		global $yy;
@@ -26,6 +26,7 @@ class DbNesttab {
     public $handle;
     public function __construct() {
         $this->handle = DB::connection()->getPdo();
+        $this->handle->setAttribute(\PDO::ATTR_AUTOCOMMIT,1);
     }
     public function escape($s) {
 	//	global $db;
@@ -33,20 +34,6 @@ class DbNesttab {
         return $this->handle->quote($s);
     }
 
-    /**
-     * Проверяет валидность имени таблицы Mysql, и возвращает пустую строку в случае валидности,
-     *   либо строку ошибки
-     * @param string $tbl_name
-     * @return string
-     */
-    public function valid_table_name(string $tbl_name) {
-      	if (!preg_match('/^[a-z][a-z0-9\_]+$/', $tbl_name)) {
-                return \yy::t('The name of the table is not correct. It must begin with a-z. Next symbols allowed: a-z, 0-9, "_"');
-	}
-        return '';
-
-    }
-    
     function qlist($s, $params = []) {
         $sth = $this->handle->query(\yy::db_escape($s, $params))
                 or \yy::gotoErrorPage(sprintf ("Error %s\n", mysqli_error($this->handle)));
@@ -72,8 +59,10 @@ class DbNesttab {
     }
 
     function qdirect($s, $params = []) {
-        $affected = $this->handle->exec(\yy::db_escape($s, $params))
-                or \yy::gotoErrorPage(sprintf ("Error %s\n", mysqli_error($this->handle)));
+        $affected = $this->handle->exec(\yy::db_escape($s, $params));
+        if (intval($this->handle->errorInfo()[0]) <> 0) {
+           \yy::gotoErrorPage(sprintf ("Error %s\n", $this->handle->errorInfo()[2]));
+        };
         //if (!$sth) throw new \Exception('Table already exists', 1050);
         return $affected;
     }
@@ -91,9 +80,9 @@ class DbNesttab {
         $this->handle->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_SILENT);
         $sth = $this->handle->exec(\yy::db_escape($s, $params));
         $this->handle->setAttribute(\PDO::ATTR_ERRMODE, $temp);
-        if (!$sth) {
+        if (intval($this->handle->errorInfo()[0]) <> 0) {
             if (!in_array($this->handle->errorCode(), $error_codes)) {
-                \yy::gotoErrorPage(sprintf ("Error %s\n", mysqli_error($this->handle)));
+                \yy::gotoErrorPage(sprintf ("Error %s\n", $this->handle->errorInfo()[2]));
                 
             }
         }
@@ -109,11 +98,15 @@ class DbNesttab {
      * @return handler
      */
     function qdirect_no_error_message($s, $params = []) {
+        //dd(\yy::db_escape($s, $params));
         $temp = $this->handle->getAttribute(\PDO::ATTR_ERRMODE);
         $this->handle->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_SILENT);
         $sth = $this->handle->exec(\yy::db_escape($s, $params));
         $this->handle->setAttribute(\PDO::ATTR_ERRMODE, $temp);
-        return $sth;
+        if (intval($this->handle->errorInfo()[0]) <> 0) {
+            return false;
+        }
+        return true;
     }
 
     function qobj($s, $params =[]) {
