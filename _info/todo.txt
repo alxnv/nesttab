@@ -2,3 +2,59 @@
  пакет для языковой локали русской и других
  
 подключить Html редактор - вроде Trix с изображениями редактор
+
+
+
+
+
+-----
+в новых версиях (после 1-й):
+
+1) полнотекстовый поиск по БД
+- для полей самой таблицы указывать, включается ли это поле в поиск
+- указывать строку с адресом url, на основе имен полей, с возможностью указания имени таблицы для
+  родительских полей (например, "item/{yz_cat.txt_res_trans}/{txt2_res_trans}"
+    (где txt2_res_trans - это поле транслита для поля txt таблицы yz_cat, таблица yz_cat является родительской
+	  для текущей таблицы, txt2_res_trans - поле транслита для поля txt2 текущей таблицы)
+2) предусмотреть возможность формировать вручную поле полнотекстового поиска для указанных таблиц
+2.1) структура для всех формирующихся вручную данных полнотекстового поиска задается в одной единственной callback-
+  функции getFullTextSearchStructure() объекта UserFullTextSearch в виде набора команд:
+   $this->addInfo(string $tableName, array $childTablesNames, string $buildMethod)
+    где $tableName - имя таблицы, которая является основной для индексации этого набора таблиц
+	$childTablesNames - array of string - имена дочерних таблиц любого уровня для основной, данные из которых тоже
+	  будут сохранятся в поле полнотекстового поиска
+	$buildMethod - имя метода объекта UserFullTextSearch, который будет формировать значение поля полнотекстового
+    	поиска
+	  формат метода: $this->{$buildMethod}(array $thisRecord):array
+	   @param array $thisRecord - содержимое записи в $tableName, для которой генерируется значение полнотекстового
+	     поиска
+	   @return [string $url, string $ret_value] - [url, сгенерированное значение поля полнотекстового поиска]
+	   
+2.2) пример реализации данной технологии:
+
+class UserFullTextSearch {
+	public function getFullTextSearchStructure() {
+		$this->addInfo('yz_cat3', ['yz_list4'], 'buildCat3');
+		//$this->addInfo('yz_list5', ['yz_list48'], 'buildList5');
+		//$this->addInfo('yz_cat8', ['yz_ord3', 'yz_list2'], 'buildCat8');
+	}
+	public function buildCat3(array $thisRecord):array {
+	    /** пусть у yz_cat3 ключ id
+		      $tableName - это yz_cat3
+		      поле yz_cat3.txt_res_trans - транслит поля txt
+			  также включаются в поиск поля yz_cat3.description и yz_cat3.txt
+			  
+			  пусть таблица yz_list4 - следующая по вложенности после yz_cat3 (вложенная в нее) и пусть нам нужны поля
+			  yz_list4.item и yz_list4.name
+		*/	  
+		$s = $thisRecord['txt'] . ' ' . $thisRecord['description'];
+		$results = DB::select("select item, name from yz_list4 where parent_id = ? order by ordr", [$thisRecord['id]]);
+		foreach ($results as $result) {
+			$s .= ' ' . $result->item . ' ' . $result->name;
+		}
+		$url = 'item/' . $thisRecord['txt_res_trans'];
+		return [$url, $s];
+	}
+}
+
+3) также предусмотреть artisan job для всех таблиц всей БД и с параметром --table=yz_cat4 (только для данной таблицы)
