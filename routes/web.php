@@ -37,6 +37,8 @@ Route::prefix('nesttab')->group(function () {
     //Route::get('/ex', ['as' => 'ex',
       //              'uses' => 'ExController@show']);
     //dd(7);
+    Route::get('/struct-add-table', CP9 . 'StructAddTableController@index');
+    Route::get('/struct-add-table/step22', CP9 . 'StructAddTableController@step22');
     Route::post('/struct-table-edit-field/save/{id}', CP9 . 'StructTableEditFieldController@save');
     //Route::get('/struct-table-edit-field/step2/{id}', CP9 . 'StructTableEditFieldController@step2');
     Route::get('/struct-table-edit-field/step2/{id}/{parm}', CP9 . 'StructTableEditFieldController@step2');

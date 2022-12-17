@@ -24,6 +24,8 @@ class BasicDbNesttab {
     }
 */
     public $handle;
+    public $errorCode; // код ошибки БД
+    public $errorMessage; // сообщение обо ошибке БД
     public function __construct() {
         $this->handle = DB::connection()->getPdo();
         $this->handle->setAttribute(\PDO::ATTR_AUTOCOMMIT,1);
@@ -68,6 +70,15 @@ class BasicDbNesttab {
     }
 
     /**
+     * Вызывается иногда для сохранения кода и сообщения об ошибке БД
+     * @param type $code - код ошибки БД
+     * @param type $message - сообщение об ошибке БД
+     */
+    protected function setExceptionReturnValues($code, $message) {
+        $this->errorCode = $code;
+        $this->errorMessage = $message;
+    }
+    /**
      * Выполняется Mysqli запрос. в случае ошибки из $error_codes (например 
      *    1050 (таблица уже существует))
      *   не прерывается выполнение программы
@@ -76,12 +87,13 @@ class BasicDbNesttab {
      * @return handler
      */
     function qdirect_spec($s, array $error_codes, $params = []) {
-        $temp = $this->handle->getAttribute(\PDO::ATTR_ERRMODE);
-        $this->handle->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_SILENT);
-        $sth = $this->handle->exec(\yy::db_escape($s, $params));
-        $this->handle->setAttribute(\PDO::ATTR_ERRMODE, $temp);
-        if (intval($this->handle->errorInfo()[0]) <> 0) {
-            if (!in_array($this->handle->errorCode(), $error_codes)) {
+        try {
+            $sth = $this->handle->exec(\yy::db_escape($s, $params));
+        } catch (\Exception $e) {
+            $this->setExceptionReturnValues($e->getCode(), $e->getMessage());
+        }
+        if (intval($this->errorCode) <> 0) {
+            if (!in_array($this->errorCode, $error_codes)) {
                 \yy::gotoErrorPage(sprintf ("Error %s\n", $this->handle->errorInfo()[2]));
                 
             }
@@ -99,11 +111,10 @@ class BasicDbNesttab {
      */
     function qdirect_no_error_message($s, $params = []) {
         //dd(\yy::db_escape($s, $params));
-        $temp = $this->handle->getAttribute(\PDO::ATTR_ERRMODE);
-        $this->handle->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_SILENT);
-        $sth = $this->handle->exec(\yy::db_escape($s, $params));
-        $this->handle->setAttribute(\PDO::ATTR_ERRMODE, $temp);
-        if (intval($this->handle->errorInfo()[0]) <> 0) {
+        try {
+            $sth = $this->handle->exec(\yy::db_escape($s, $params));
+        } catch (\Exception $e) {
+            $this->setExceptionReturnValues($e->getCode(), $e->getMessage());
             return false;
         }
         return true;

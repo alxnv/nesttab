@@ -1,16 +1,19 @@
 <?php
-namespace app\controllers;
+namespace Alxnv\Nesttab\Http\Controllers;
 
-class StructAddTableController extends \app\backend\controllers\Controller {
-    public function IndexAction() {
-        $this->render([]);
+use Illuminate\Http\Request;
+
+class StructAddTableController extends BasicController {
+    public function index() {
+        return view('nesttab::struct_add_table');
     }
     
-    public function step22Action($r) {
+    public function step22(Request $request) {
         // create table structure, step 2, write to the tables
 	// пытаемся создать таблицу указанного типа и с указанным именем
-        $sa = new \app\models\StructAddTableModel();
-        if ($sa->Execute($r, $message)) \yy::gotoMessagePage($message);
+        $r = $request->all();
+        $sa = new \Alxnv\Nesttab\Models\StructAddTableModel();
+        if ($sa->execute($r, $message)) \yy::gotoMessagePage($message);
            else \yy::gotoErrorPage($message);
         
     }

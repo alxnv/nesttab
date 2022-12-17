@@ -64,19 +64,27 @@ class BoolModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
         $tblname= $tbl['name'];
 
         if (!$db->qdirect_no_error_message("lock tables yy_columns write, $tblname write")){
-            $err .= __('Table does not exist');
+            $err .= __('The table does not exist');
+            return $err;
         }
         if ($is_newrec) {
             $arr = $db->q("select id, name from yy_columns where table_id = $1 and name = $2",
                 [$tbl['id'], $name]);
-            if ($arr) $err .= chr(13) . __('The field with this name is already exists');
+            if ($arr) {
+                $err .= chr(13) . __('The field with this name is already exists');
+                return $err;
+            }
+
         }
         if (!$is_newrec) {
             $arr = $db->q("select id, name from yy_columns where table_id = $1 and name = $2 "
                     . "and id <> $3",
                 [$tbl['id'], $name, $r['id']]);
-            if ($arr) $err .= chr(13) . __('The field with this name is already exists');
-            //$old_values = $this->prepare_old_values($old_values);
+            if ($arr) {
+                $err .= chr(13) . __('The field with this name is already exists');
+                return $err;
+            }
+           //$old_values = $this->prepare_old_values($old_values);
         }
         
         $params = [];
@@ -94,6 +102,7 @@ class BoolModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
                 if (!$db->qdirect_no_error_message("alter table $tblname add $name bool not null"
                         . " default $default")) {
                     $err .= __('Error modifying table');
+                    return $err;
                 }
                 if ($err == '') {
                     $obj = $db->qobj("select max(ordr) as mx from yy_columns where table_id = $tbl_id");
@@ -102,6 +111,7 @@ class BoolModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
                             . "parameters,table_id,ordr,field_type) values"
                             . "($1, $2, $3, $4, $5, $6)", [$name, $descr, $params2, $tbl_id, $n2, $fld_type_id])) {
                         $err .= __('Error modifying table structure');
+                        return $err;
                     }
                     
                 }
@@ -111,13 +121,17 @@ class BoolModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
                 if ($old_col_name <> $name) {
                     if (!$db->qdirect_no_error_message("alter table $tblname change"
                             . " $old_col_name $name bool")) {
+                        // !!! it does not result in error if the table does not exist
+                        //   don't now why 
                         $err .= __('Error modifying table: ' . sprintf ("Error %s\n", $db->handle->errorInfo()[2]));
+                        return $err;
                     }
                 }
                 if ($err == '') {
                     if (!$db->qdirect_no_error_message("alter table $tblname alter"
                             . " $name set default $default")) {
                         $err .= __('Error setting default value: ' . sprintf ("Error %s\n", $db->handle->errorInfo()[2]));
+                        return $err;
                     }
                     
                 }
@@ -126,6 +140,7 @@ class BoolModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
                             . "parameters=$3 where table_id = $4 and id=$5",
                             [$name, $descr, $params2, $tbl_id, $r['id']])) {
                         $err .= __('Error modifying table structure');
+                        return $err;
                     }
                 }
                     

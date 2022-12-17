@@ -1,15 +1,15 @@
 <?php
 
-namespace app\models;
+namespace Alxnv\Nesttab\Models;
 
-class StructAddTableModel extends \app\yy\Model {
+class StructAddTableModel {
 
     // create table structure, step 2, write to the tables
     // пытаемся создать таблицу указанного типа и с указанным именем
-    public function Execute(array $r, &$message) {
+    public function execute(array $r, &$message) {
 
         global $yy, $db;
-        include_once $yy->Engine_Path . "/core/table_functions.php";
+        include_once __DIR__ . "..\\..\\core\\db\\" . config('nesttab.db_driver') . "\\table_functions.php";
 
         $arr2 = $yy->settings2['table_types'];
         $arr_table_names_short = $yy->settings2['table_names_short'];
@@ -23,20 +23,20 @@ class StructAddTableModel extends \app\yy\Model {
                 $err .= chr(13) . $s72;
 	}
         if ($tbl_descr == '') {
-            $err .= chr(13) . \yy::t("The table's description could not be empty");
+            $err .= chr(13) . __("The table's description could not be empty");
         }
         if ($err <>'') {
                 $message = $err;
                 return false;
         }
 	$tbl_name2 = $db->escape($tbl_name);
-        $arr_commands = get_init_table_struct($arr_table_names_short[$tbl_idx], $tbl_name2);
+        $arr_commands = get_init_table_struct($arr_table_names_short[$tbl_idx], $tbl_name);
         //var_dump($arr_commands);exit;
         foreach ($arr_commands as $command) {
                 $sth = $db->qdirect_spec($command, [1050]);
-                if (!$sth && $db->handle->errorCode() == '1050') { # table already exists 
-                        $message = \yy::t('The table') . ' ' . \yy::qs($tbl_name) 
-                                . ' ' . \yy::t('is already exists');
+                if (!$sth && $db->errorCode == '1050') { # table already exists 
+                        $message = __('The table') . ' ' . \yy::qs($tbl_name) 
+                                . ' ' . __('is already exists');
                         return false;
                 }
             
@@ -45,7 +45,7 @@ class StructAddTableModel extends \app\yy\Model {
         // Записываем данные таблицы в yy_tables
         $s3 = $db->escape($tbl_descr);
         $db->qdirect("insert into yy_tables (name, descr, parent_tbl_id, table_type)"
-                . " values ('$tbl_name2', '$s3', 0, '$arr_table_names_short[$tbl_idx]')");
+                . " values ('$tbl_name', '$tbl_descr', 0, '$arr_table_names_short[$tbl_idx]')");
         
         // Если имя таблицы создано по шаблону, то проставляем номер таблицы в yy_settings 
         //   как следующий номер для автонумерации
@@ -79,7 +79,7 @@ class StructAddTableModel extends \app\yy\Model {
             }
         }       
         
-        $message = \yy::t('The table was made');
+        $message = __('The table was made');
         return true;
         
     }
