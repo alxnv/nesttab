@@ -45,7 +45,7 @@ class StructAddTableModel {
         // Записываем данные таблицы в yy_tables
         $s3 = $db->escape($tbl_descr);
         $db->qdirect("insert into yy_tables (name, descr, parent_tbl_id, table_type)"
-                . " values ('$tbl_name', '$tbl_descr', 0, '$arr_table_names_short[$tbl_idx]')");
+                . " values ('$tbl_name', $s3, 0, '$arr_table_names_short[$tbl_idx]')");
         
         // Если имя таблицы создано по шаблону, то проставляем номер таблицы в yy_settings 
         //   как следующий номер для автонумерации
