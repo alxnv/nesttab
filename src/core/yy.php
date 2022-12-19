@@ -85,10 +85,11 @@ class yy {
         }
     }
 
+    /*
     public static function isPost() {
         return (isset($_POST) && count($_POST) > 0);
     }
-
+    */
 
     /**
      * Проверяет, залогинен ли пользователь, и если нет, то переходит на страницу login.php
@@ -153,6 +154,7 @@ class yy {
      * @return string
      */
     
+    /*
     public static function pathDefend(string $path) {
         $s = str_replace('..', '', $path);
         $s = str_replace('"', '', $s);
