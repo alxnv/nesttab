@@ -9,7 +9,6 @@ class StructAddTableModel {
     public function execute(array $r, &$message) {
 
         global $yy, $db;
-        include_once __DIR__ . "..\\..\\core\\db\\" . config('nesttab.db_driver') . "\\table_functions.php";
 
         $arr2 = $yy->settings2['table_types'];
         $arr_table_names_short = $yy->settings2['table_names_short'];
@@ -30,6 +29,8 @@ class StructAddTableModel {
                 return false;
         }
 	$tbl_name2 = $db->escape($tbl_name);
+        /*
+         * не создаем саму таблицу
         $arr_commands = getInitTableStruct($arr_table_names_short[$tbl_idx], $tbl_name);
         //var_dump($arr_commands);exit;
         foreach ($arr_commands as $command) {
@@ -41,6 +42,8 @@ class StructAddTableModel {
                 }
             
         }
+         * 
+         */
 
         // Записываем данные таблицы в yy_tables
         $s3 = $db->escape($tbl_descr);
