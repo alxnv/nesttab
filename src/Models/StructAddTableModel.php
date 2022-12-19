@@ -30,10 +30,10 @@ class StructAddTableModel {
                 return false;
         }
 	$tbl_name2 = $db->escape($tbl_name);
-        $arr_commands = get_init_table_struct($arr_table_names_short[$tbl_idx], $tbl_name);
+        $arr_commands = getInitTableStruct($arr_table_names_short[$tbl_idx], $tbl_name);
         //var_dump($arr_commands);exit;
         foreach ($arr_commands as $command) {
-                $sth = $db->qdirect_spec($command, [1050]);
+                $sth = $db->qdirectSpec($command, [1050]);
                 if (!$sth && $db->errorCode == '1050') { # table already exists 
                         $message = __('The table') . ' ' . \yy::qs($tbl_name) 
                                 . ' ' . __('is already exists');

@@ -42,19 +42,19 @@ class yy {
     
     public static function gotoErrorPage($s) {
         global $yy;
-        $lnk = \yy::get_error_session();
+        $lnk = \yy::getErrorSession();
         session([$lnk => $s]);
         Session::save();
-        static::redirect_now($yy->baseurl . 'nesttab/error');
+        static::redirectNow($yy->baseurl . 'nesttab/error');
         //exit;
     }
 
     public static function gotoMessagePage($s) {
         global $yy;
-        $lnk = \yy::get_message_session();
+        $lnk = \yy::getMessageSession();
         session([$lnk => $s]);
         Session::save();
-        static::redirect_now($yy->baseurl . 'nesttab/message');
+        static::redirectNow($yy->baseurl . 'nesttab/message');
         //header('Location: ' . $yy->baseurl . 'nesttab/message');
         //exit;
     }
@@ -66,7 +66,7 @@ class yy {
      * @param string $url
      * @param int $code http code for the redirect (should be 302 or 301)
      */
-    public static function redirect_now($url, $code = 302)
+    public static function redirectNow($url, $code = 302)
     {
         try {
             \App::abort($code, '', ['Location' => $url]);
@@ -109,7 +109,7 @@ class yy {
      * 
      * @return string Имя сессионной переменной, в которой передается сообщение об ошибке
      */
-    public static function get_error_session() {
+    public static function getErrorSession() {
         return 'error8732';
     }
 
@@ -117,7 +117,7 @@ class yy {
      * 
      * @return string Имя сессионной переменной, в которой передается сообщение об ошибке
      */
-    public static function get_error_edit_session() {
+    public static function getErrorEditSession() {
         return 'error7735';
     }
 
@@ -125,7 +125,7 @@ class yy {
      * 
      * @return string Имя сессионной переменной, в которой передается сообщение об ошибке
      */
-    public static function get_edit_session() {
+    public static function getEditSession() {
         return 'data7735';
     }
 
@@ -134,7 +134,7 @@ class yy {
      * @return string Имя сессионной переменной, в которой передается сообщение о благополучном
      *  завершении операции
      */
-    public static function get_message_session() {
+    public static function getMessageSession() {
         return 'message8732';
     }
     /**
@@ -153,28 +153,28 @@ class yy {
      * @return string
      */
     
-    public static function path_defend(string $path) {
+    public static function pathDefend(string $path) {
         $s = str_replace('..', '', $path);
         $s = str_replace('"', '', $s);
         $s = str_replace("'", '', $s);
         return $s;
     }
 
-    public function translate_aliases($path) {
+    public function translateAliases($path) {
         $n = strpos($path, '\\');
         if ($n !== false) {
             $s = substr($path, 0, $n);
             //var_dump($n, $s);
             if (isset($this->settings2['aliases'][$s])) {
-                return \yy::path_defend($this->settings2['aliases'][$s] . substr($path, $n));
+                return \yy::pathDefend($this->settings2['aliases'][$s] . substr($path, $n));
             }
         }
-        return \yy::path_defend($path);
+        return \yy::pathDefend($path);
     }
     
     /*public function register_autoload() {
         spl_autoload_register(function ($className) {
-            $cn = $this->translate_aliases($className);
+            $cn = $this->translateAliases($className);
             //var_dump($cn);//exit;
             include $cn . '.php';
         });
@@ -187,7 +187,7 @@ class yy {
      * @param array $arr
      * @param array $arr2
      */
-    public static function add_keys(array $arr, array $arr2) {
+    public static function addKeys(array $arr, array $arr2) {
         $arr3 = $arr;
         foreach ($arr2 as $key => $value) {
             if (!isset($arr3[$key])) $arr3[$key] = $value;
@@ -233,7 +233,7 @@ class yy {
 	}
 	*/
 	
-        public static  function get_js_lang_file() {
+        public static  function getJsLangFile() {
             global $yy;
 		return 'lang/' . Lang::getLocale() . '/names.js';
             
@@ -363,7 +363,7 @@ static function parsestrall(&$mtch,&$mtchto,$regex,$str1) {
  * @return string 
  * 
  */
-    static function db_escape($s, $arr) {
+    static function dbEscape($s, $arr) {
         global $db;
         if (count($arr) == 0) return $s;
         $afrom=array();

@@ -59,11 +59,11 @@ dd($s);*/
         $table_id = intval($id);
         $tbl = $db->q("select * from yy_tables where id=$1", [$table_id]);
         if (is_null($tbl)) \yy::gotoErrorPage('Table not found');
-        $lnk2 = \yy::get_edit_session();
+        $lnk2 = \yy::getEditSession();
         $b = false;
         if (Session::has($lnk2)) {
             $r_edited = session($lnk2);
-            $r = \yy::add_keys($r, $r_edited);
+            $r = \yy::addKeys($r, $r_edited);
             Session::remove($lnk2);
             $b = true;
         }
@@ -73,8 +73,8 @@ dd($s);*/
             if (!$rec)  \yy::gotoErrorPage('No record in table yy_columns');
             $r['field_type_id'] = $rec['field_type'];
             $params = json_decode($rec['parameters']);
-            $rec = \yy::add_keys($rec, (array)$params);
-            if (!$b) $r = \yy::add_keys($r, $rec);
+            $rec = \yy::addKeys($rec, (array)$params);
+            if (!$b) $r = \yy::addKeys($r, $rec);
             $fld =  (new \Alxnv\Nesttab\Models\StructTableFieldsModel())->getOne(intval($r['field_type_id']));
         } else {
             if (!$request->has('field_type_id')) \yy::gotoErrorPage('Field type is not defined');
@@ -118,17 +118,17 @@ dd($s);*/
         $s = $field_model->save($tbl, $fld, $r, $old_values);
         if ($s == '') {
             Session::save();
-            \yy::redirect_now($yy->baseurl . 'nesttab/struct-change-table/edit/' . $table_id . '/0');
+            \yy::redirectNow($yy->baseurl . 'nesttab/struct-change-table/edit/' . $table_id . '/0');
             exit;
         } else {
             //\yy::gotoErrorPage($s);
-            $lnk = \yy::get_error_edit_session();
+            $lnk = \yy::getErrorEditSession();
             session([$lnk => $s]);
-            $lnk2 = \yy::get_edit_session();
+            $lnk2 = \yy::getEditSession();
             session([$lnk2 => $r]);
             Session::save();
             $ids = (isset($r['id']) ? 'id=' . intval($r['id']) . '&' : '');
-            \yy::redirect_now($yy->baseurl . 'nesttab/struct-table-edit-field/step2/' . $table_id .
+            \yy::redirectNow($yy->baseurl . 'nesttab/struct-table-edit-field/step2/' . $table_id .
                     '/0?' . $ids . 'is_error=1&field_type_id=' . intval($r['field_type_id']));
             exit;
         }

@@ -37,7 +37,7 @@ class BasicDbNesttab {
     }
 
     function qlist($s, $params = []) {
-        $sth = $this->handle->query(\yy::db_escape($s, $params))
+        $sth = $this->handle->query(\yy::dbEscape($s, $params))
                 or \yy::gotoErrorPage(sprintf ("Error %s\n", mysqli_error($this->handle)));
 /*        if ($sth) {
 	    $rs = [];
@@ -48,8 +48,8 @@ class BasicDbNesttab {
         return $rows;
     }
 
-    function qlist_arr($s, $params = []) {
-        $sth = $this->handle->query(\yy::db_escape($s, $params))
+    function qlistArr($s, $params = []) {
+        $sth = $this->handle->query(\yy::dbEscape($s, $params))
                 or \yy::gotoErrorPage(sprintf ("Error %s\n", mysqli_error($this->handle)));
 /*        if ($sth) {
 	    $rs = [];
@@ -61,7 +61,7 @@ class BasicDbNesttab {
     }
 
     function qdirect($s, $params = []) {
-        $affected = $this->handle->exec(\yy::db_escape($s, $params));
+        $affected = $this->handle->exec(\yy::dbEscape($s, $params));
         if (intval($this->handle->errorInfo()[0]) <> 0) {
            \yy::gotoErrorPage(sprintf ("Error %s\n", $this->handle->errorInfo()[2]));
         };
@@ -86,9 +86,9 @@ class BasicDbNesttab {
      * @param array $error_codes
      * @return handler
      */
-    function qdirect_spec($s, array $error_codes, $params = []) {
+    function qdirectSpec($s, array $error_codes, $params = []) {
         try {
-            $sth = $this->handle->exec(\yy::db_escape($s, $params));
+            $sth = $this->handle->exec(\yy::dbEscape($s, $params));
         } catch (\Exception $e) {
             $this->setExceptionReturnValues($e->getCode(), $e->getMessage());
         }
@@ -109,10 +109,10 @@ class BasicDbNesttab {
      * @param array $error_codes
      * @return handler
      */
-    function qdirect_no_error_message($s, $params = []) {
-        //dd(\yy::db_escape($s, $params));
+    function qdirectNoErrorMessage($s, $params = []) {
+        //dd(\yy::dbEscape($s, $params));
         try {
-            $sth = $this->handle->exec(\yy::db_escape($s, $params));
+            $sth = $this->handle->exec(\yy::dbEscape($s, $params));
         } catch (\Exception $e) {
             $this->setExceptionReturnValues($e->getCode(), $e->getMessage());
             return false;
@@ -125,7 +125,7 @@ class BasicDbNesttab {
 			выполняет запрос и возвращает одну строчку с полученным объектом из строки
 			@return array (или null если 0 записей)
 		*/
-        $sth = $this->handle->prepare(\yy::db_escape($s, $params));
+        $sth = $this->handle->prepare(\yy::dbEscape($s, $params));
         $sth->execute();
         
         //$sth=$this->qdirect($s, $params);
@@ -138,7 +138,7 @@ class BasicDbNesttab {
 			выполняет запрос и возвращает одну строчку с полученным массивом
 			@return array (или null если 0 записей)
 		*/
-        $sth = $this->handle->prepare(\yy::db_escape($s, $params));
+        $sth = $this->handle->prepare(\yy::dbEscape($s, $params));
         $sth->execute();
         
         //$sth=$this->qdirect($s, $params);

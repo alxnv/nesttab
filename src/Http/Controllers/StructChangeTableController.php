@@ -44,7 +44,7 @@ class StructChangeTableController extends BasicController {
         if (is_null($tbl)) \yy::gotoErrorPage('Table not found');
 
         \Alxnv\Nesttab\Models\StructTableFieldsModel::move(intval($r['id']), intval($r['moveto']));
-        \yy::redirect_now($yy->baseurl . 'nesttab/struct-change-table/edit/' . $n . '/0');
+        \yy::redirectNow($yy->baseurl . 'nesttab/struct-change-table/edit/' . $n . '/0');
         exit;
     }
     

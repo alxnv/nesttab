@@ -11,7 +11,7 @@ class StructTableFieldsModel {
      */
     public static function getNextNameOfType($table_id, $field_type) {
         global $db, $yy;
-        $arr = $db->qlist_arr("select name from yy_columns where table_id = $1 and name like $2",
+        $arr = $db->qlistArr("select name from yy_columns where table_id = $1 and name like $2",
                 [$table_id, $field_type . '%']);
         
         $arr3 = [];
@@ -39,7 +39,7 @@ class StructTableFieldsModel {
         
         $lang = Lang::getLocale(); //$yy->settings['language'];
         //dd($lang);
-        $arr = $db->qlist_arr("select a.*, b.descr from yy_col_types a, "
+        $arr = $db->qlistArr("select a.*, b.descr from yy_col_types a, "
                 . "yy_col_types_lang b where b.language='$lang' and b.id=a.id "
                 . "order by a.id_category, b.descr");
         

@@ -3,7 +3,7 @@ use Illuminate\Support\Facades\Session;
 
 global $yy;
 
-$lnk = yy::get_error_session();
+$lnk = yy::getErrorSession();
 
 $s = session($lnk, '');
 //$session_id = $_COOKIE["laravel_session"];

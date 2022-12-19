@@ -1,7 +1,7 @@
 <?php
 global $yy;
 
-$lnk = yy::get_message_session();
+$lnk = yy::getMessageSession();
 //dump(Session::all());
 
 if (!Session::has($lnk)) die('Required parameter has not been passed');

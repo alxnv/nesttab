@@ -12,7 +12,7 @@
  * @return array массив строк для создания пустой таблицы заданного типа (с возможными
  *    дополнительными коммандами
  */
-function get_init_table_struct(string $table_type, string $table_name):array {
+function getInitTableStruct(string $table_type, string $table_name):array {
     switch ($table_type) {
         case 'O':
             return ["create table $table_name (`id` int NOT NULL, PRIMARY KEY (`id`))"];

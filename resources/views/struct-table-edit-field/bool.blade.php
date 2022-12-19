@@ -23,8 +23,8 @@ echo '<br />';
 
 
 if (isset($r['is_error'])) {
-    $lnk_err = \yy::get_error_edit_session();
-    //$lnk_data = \yy::get_edit_session();
+    $lnk_err = \yy::getErrorEditSession();
+    //$lnk_data = \yy::getEditSession();
     echo '<br /><p align="left" class="red">' . nl2br(\yy::qs(session($lnk_err))) . '</p><br />';
     //\app\core\Helper::assignData($r, $_SESSION[$lnk_data]); // читаем сохраненные данные формы
 }
