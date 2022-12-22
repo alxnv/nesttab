@@ -15,7 +15,7 @@ class TableHelper {
     function getFieldDef(int $n) {
         switch ($n) {
             case 1 :
-                return 'bool not null';
+                return 'bool';
             default:
                 throw new Exception("Table type is not defined");
         }
@@ -31,18 +31,19 @@ class TableHelper {
      *    дополнительными коммандами
      */
     function getCreateTableStrings(string $table_type, string $table_name, string $field_def, string $field_name, $default_value):array {
+        global $db;
         $df = $db->escape($default_value);
         switch ($table_type) {
             case 'O':
-                return ["create table $table_name (`id` int NOT NULL, " 
-                    . $field_name . ' ' . $field_def
+                return ["create table $table_name (`id` int NOT NULL default 1, " 
+                    . $field_name . ' ' . $field_def . ' not null'
                     . " default " . $df
                     . " ,PRIMARY KEY (`id`))",
                     "insert into $table_name ($field_name) values ($df)"];
             case 'L':
                 return ["create table $table_name (id int NOT NULL AUTO_INCREMENT,"
                         . " ordr int not null,"
-                        . $field_name . ' ' . $field_def
+                        . $field_name . ' ' . $field_def . ' not null'
                         . " default " . $df
                         . " primary key (id))",
                     "alter table $table_name add unique key(ordr)"];
@@ -50,13 +51,13 @@ class TableHelper {
                 return ["create table $table_name (id int NOT NULL AUTO_INCREMENT,"
                         . " parent_id int not null,"
                         . " ordr int not null,"
-                        . $field_name . ' ' . $field_def
+                        . $field_name . ' ' . $field_def . ' not null'
                         . " default " . $df
                         . " primary key (id))",
                     "alter table $table_name add unique key(parent_id, ordr)"];
             case 'V':
                 return ["create table $table_name ("
-                        . $field_name . ' ' . $field_def
+                        . $field_name . ' ' . $field_def . ' not null'
                         . " default " . $df
                         . ")"
                        ];

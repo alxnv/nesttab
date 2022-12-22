@@ -6,6 +6,10 @@ namespace Alxnv\Nesttab\core\db;
 use Illuminate\Support\Facades\DB;
 
 class BasicDbNesttab {
+    /**
+     * Типы данных представленные в БД
+     */
+    const BOOL_TYPE = 1; 
 /*
     function connect() {
 		global $yy;
@@ -96,10 +100,12 @@ class BasicDbNesttab {
             if (!in_array($this->errorCode, $error_codes)) {
                 \yy::gotoErrorPage(sprintf ("Error %s\n", $this->handle->errorInfo()[2]));
                 
+            } else {
+                return false;
             }
         }
         //if (!$sth) throw new \Exception('Table already exists', 1050);
-        return $sth;
+        return true;
     }
 
     /**

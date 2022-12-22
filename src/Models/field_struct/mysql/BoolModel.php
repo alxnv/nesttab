@@ -63,10 +63,10 @@ class BoolModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
         $fld_type_id = $fld['id'];
         $tblname= $tbl['name'];
 
-        if (!$db->qdirectNoErrorMessage("lock tables yy_columns write")){
+        /*if (!$db->qdirectNoErrorMessage("lock tables yy_columns write")){
             $err .= __('The table does not exist');
             return $err;
-        }
+        }*/
         if ($is_newrec) {
             $arr = $db->q("select id, name from yy_columns where table_id = $1 and name = $2",
                 [$tbl['id'], $name]);
@@ -101,9 +101,9 @@ class BoolModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
             if ($is_newrec) {
                 /**
                  * Новая запись - если эта первая запись, то создаем таблицы физически,
-                 *  иначе добавляем поле к таблице
+                 *  иначе только добавляем поле к таблице
                  */
-                if (($s22 = $this->createNewTableOrJustAddField($tblname, $name, $tbl['id'], $tbl['table_type'], $default)) <> '') {
+                if (($s22 = $this->createNewTableOrJustAddField($tblname, $name, $tbl['id'], $tbl['table_type'], $default, $fld_type_id)) <> '') {
                     $err .= $s22;
                     return $err;
                 }
@@ -149,7 +149,7 @@ class BoolModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
                     
             }
         }
-        $db->qdirect("unlock tables");
+        //$db->qdirect("unlock tables");
         return $err;
         
     }
@@ -162,30 +162,34 @@ class BoolModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
      * @param string $field_name - имя поля
      * @param type $table_id - id таблицы
      */
-    protected function createNewTableOrJustAddField(string $table_name, string $field_name, int $table_id, string $table_type, $default_value) {
-        $cnt_obj = $db->qobj("select count(*) as cnt where table_id = $table_id");
+    protected function createNewTableOrJustAddField(string $table_name, string $field_name, int $table_id, string $table_type, $default_value, int $fld_type_id) {
+        global $db;
+        $s = "\\Alxnv\\Nesttab\\core\\db\\" . config('nesttab.db_driver') . "\\TableHelper";
+        $th = new $s();
+        $def = $th->getFieldDef($fld_type_id); // вернуть определение поля типа bool для create table
+        $cnt_obj = $db->qobj("select count(*) as cnt from yy_columns where table_id = $table_id");
         if ($cnt_obj->cnt == 0) {
-            $s = "Alxnv\\Nesttab\\core\\db\\" . config('nesttab.db_driver') . "\\TableHelper.php";
-            $th = new $s();
 
-            $def = $th->getFieldDef(1); // вернуть определение поля типа bool для create table
             $arr_commands = $th->getCreateTableStrings($table_type, $table_name, $def, $field_name, $default_value);
             foreach ($arr_commands as $command) {
-                $sth = $db->qdirectSpec($command, [1050]);
-                if (!$sth && $db->errorCode == '1050') { # table already exists 
-                        $message = __('The table') . ' ' . \yy::qs($table_name) 
-                                . ' ' . __('is already exists');
+                $result = $db->qdirectNoErrorMessage($command);
+                if (!$result) { # table already exists 
+                        $message = __('Error') . ' ' . 
+                                $db->errorMessage;
                         return $message;
                 }
             
             }
 
         } else {
-            if (!$db->qdirectNoErrorMessage("alter table $tblname add $name bool not null"
-                            . " default $default")) {
-                return __('Error modifying table');
+            if (!$db->qdirectNoErrorMessage("alter table $table_name add $field_name $def not null"
+                            . " default $default_value")) {
+                $message = __('Error') . ' ' . 
+                        $db->errorMessage;
+                return $message;
             }
         }
+        return '';
     }
     
 }
