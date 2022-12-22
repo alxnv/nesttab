@@ -8,7 +8,18 @@
 namespace Alxnv\Nesttab\Models\field_struct\mysql;
 
 class BasicModel {
+    
+    /**
+     * объект с массивом ошибок с индексом по наименованиям полей формы
+     *  в которых ошибочные данные
+     * @var type array
+     */
+    public $err; 
 
+    public function __construct() {
+        $this->err = new \Alxnv\Nesttab\Models\ErrorModel();
+    }
+   
     /**
      * обрабатываем считанные из yy_columns данные и подготавливаем их для
      *   дальнейшей работы
@@ -20,26 +31,34 @@ class BasicModel {
         $ov2['parameters'] = json_decode($ov2['parameters']);
         return $ov2;
     }
+
     
+    public function setErr($field, $errorString) {
+        $this->err->setErr($field, $errorString);
+    }
+    
+    public function hasErr() {
+        return $this->err->hasErr();
+    }
     /**
      * пытается сохранить(изменить)  в таблице поле, шаг 2
      * @param array $tbl
      * @param array $fld
      * @param array $r
      */
-    public function saveStep2(array $tbl, array $fld, array $r, array $old_values, $err, $default) {
+    public function saveStep2(array $tbl, array $fld, array $r, array $old_values, $default) {
         global $yy, $db;
         $is_newrec = (!isset($r['id']));
-        if (!isset($r['name'])) $err .= chr(13) . __('Name of field not found');
-        if (!isset($r['descr'])) $err .= chr(13) . __('Description of field not found');
-        if ($err <> '') return $err;
-        $name = mb_substr($r['name'], 0, $yy->db_settings['max_custom_field_size']);
-        $descr = mb_substr($r['descr'], 0, 250);
-        if (trim($descr) == '') $err .= chr(13) . __('Description must not be empty');
+        $name = (isset($r['name']) ? $r['name'] : '');
+        $descr = (isset($r['descr']) ? $r['descr'] : '');
+        //if (!isset($r['descr'])) $this->setErr('descr', __('Description of field not found'));
+        $name = mb_substr($name, 0, $yy->db_settings['max_custom_field_size']);
+        $descr = mb_substr($descr, 0, 250);
+        if (trim($descr) == '') $this->setErr('descr', __('Description must not be empty'));
         if (($s = $db->valid_field_name($name)) <> '') {
-            $err .= $s;
+            $this->setErr('name', $s);
         }
-        if ($err <> '') return $err;
+        if ($this->hasErr()) return;
         $required = (isset($r['req']) ? 1 : 0);
         $fld_type_id = $fld['id'];
         $tblname= $tbl['name'];
@@ -52,8 +71,8 @@ class BasicModel {
             $arr = $db->q("select id, name from yy_columns where table_id = $1 and name = $2",
                 [$tbl['id'], $name]);
             if ($arr) {
-                $err .= chr(13) . __('The field with this name is already exists');
-                return $err;
+                $this->setErr('name', __('The field with this name is already exists'));
+                return;
             }
 
         }
@@ -62,8 +81,8 @@ class BasicModel {
                     . "and id <> $3",
                 [$tbl['id'], $name, $r['id']]);
             if ($arr) {
-                $err .= chr(13) . __('The field with this name is already exists');
-                return $err;
+                $this->setErr('name', __('The field with this name is already exists'));
+                return;
             }
            //$old_values = $this->prepare_old_values($old_values);
         }
@@ -76,7 +95,7 @@ class BasicModel {
         // ...
         
         
-        if ($err == '') {
+        if (!$this->hasErr()) {
             $tbl_id= $tbl['id'];
             $params2 = json_encode($params);
             if ($is_newrec) {
@@ -84,18 +103,18 @@ class BasicModel {
                  * Новая запись - если эта первая запись, то создаем таблицы физически,
                  *  иначе только добавляем поле к таблице
                  */
-                if (($s22 = $this->createNewTableOrJustAddField($tblname, $name, $tbl['id'], $tbl['table_type'], $default, $fld_type_id)) <> '') {
-                    $err .= $s22;
-                    return $err;
+                if (!$this->createNewTableOrJustAddField($tblname, $name, $tbl['id'], 
+                        $tbl['table_type'], $default, $fld_type_id)) {
+                    return;
                 }
-                if ($err == '') {
+                if (!$this->hasErr()) {
                     $obj = $db->qobj("select max(ordr) as mx from yy_columns where table_id = $tbl_id");
                     $n2 = ($obj ? $obj->mx : 0) + 1;
                     if (!$db->qdirectNoErrorMessage("insert into yy_columns (name,descr,"
                             . "parameters,table_id,ordr,field_type) values"
                             . "($1, $2, $3, $4, $5, $6)", [$name, $descr, $params2, $tbl_id, $n2, $fld_type_id])) {
-                        $err .= __('Error modifying table structure');
-                        return $err;
+                        $this->setErr('', __('Error modifying table structure'));
+                        return;
                     }
                     
                 }
@@ -107,31 +126,33 @@ class BasicModel {
                             . " $old_col_name $name bool")) {
                         // !!! it does not result in error if the table does not exist
                         //   don't now why 
-                        $err .= __('Error modifying table: ' . sprintf ("Error %s\n", $db->handle->errorInfo()[2]));
-                        return $err;
+                        $this->setErr('', __('Error modifying table: ' . 
+                                sprintf ("Error %s\n", $db->handle->errorInfo()[2])));
+                        return;
                     }
                 }
-                if ($err == '') {
+                if (!$this->hasErr()) {
                     if (!$db->qdirectNoErrorMessage("alter table $tblname alter"
                             . " $name set default $default")) {
-                        $err .= __('Error setting default value: ' . sprintf ("Error %s\n", $db->handle->errorInfo()[2]));
-                        return $err;
+                        $this->setErr('default', __('Error setting default value: ' . 
+                                sprintf ("Error %s\n", $db->handle->errorInfo()[2])));
+                        return;
                     }
                     
                 }
-                if ($err == '') {
+                if (!$this->hasErr()) {
                     if (!$db->qdirectNoErrorMessage("update yy_columns set name=$1,descr=$2,"
                             . "parameters=$3 where table_id = $4 and id=$5",
                             [$name, $descr, $params2, $tbl_id, $r['id']])) {
-                        $err .= __('Error modifying table structure');
-                        return $err;
+                        $this->setErr('', __('Error modifying table structure'));
+                        return;
                     }
                 }
                     
             }
         }
         //$db->qdirect("unlock tables");
-        return $err;
+        //return $err;
         
     }
     
@@ -157,7 +178,8 @@ class BasicModel {
                 if (!$result) { # table already exists 
                         $message = __('Error') . ' ' . 
                                 $db->errorMessage;
-                        return $message;
+                        $this->setErr('', $message);
+                        return false;
                 }
             
             }
@@ -167,10 +189,36 @@ class BasicModel {
                             . " default $default_value")) {
                 $message = __('Error') . ' ' . 
                         $db->errorMessage;
-                return $message;
+                $this->setErr('', $message);
+                return false;
             }
         }
-        return '';
+        return true;
     }
+    /**
+     * удаление поля из структуры таблицы
+     *   !!! контроллер вызывается через ajax
+     * @param array $column - запись из yy_columns (структура полей в таблицах)
+     * @param array $fld - запись из таблицы определений типов полей
+     * @param array $tbl - запись из таблицы yy_tables (данные таблиц)
+     * @param array $r - входные параметры скрипта
+     * @return string - '', либо строка сообщения об ошибке
+     */
+    public function delete(array $column, array $fld, array $tbl, array $r) {
+        global $yy, $db;
+
+        $err = '';
+        $tblname= $tbl['name'];
+        $name = $column['name'];
+        if (!$db->qdirectNoErrorMessage("alter table $tblname drop column $name")) {
+            $err .= sprintf ("Error %s\n", $db->errorMessage);
+            return $err;
+        }
+        if ($err == '') {
+            $err .= \Alxnv\Nesttab\Models\StructColumnsModel::delete($column['id']);
+        }
+        return $err;
+    }
+
     
 }

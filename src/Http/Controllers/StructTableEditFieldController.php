@@ -115,15 +115,15 @@ dd($s);*/
         if (is_null($fld)) \yy::gotoErrorPage('Field def in table is not found');
         $s2 = '\\Alxnv\\Nesttab\\Models\\field_struct\\mysql\\' . ucfirst($fld['name']) .'Model';
         $field_model = new $s2();
-        $s = $field_model->save($tbl, $fld, $r, $old_values);
-        if ($s == '') {
+        $field_model->save($tbl, $fld, $r, $old_values);
+        if (!$field_model->hasErr()) {
             Session::save();
             \yy::redirectNow($yy->baseurl . 'nesttab/struct-change-table/edit/' . $table_id . '/0');
             exit;
         } else {
             //\yy::gotoErrorPage($s);
             $lnk = \yy::getErrorEditSession();
-            session([$lnk => $s]);
+            session([$lnk => $field_model->err->err]);
             $lnk2 = \yy::getEditSession();
             session([$lnk2 => $r]);
             Session::save();

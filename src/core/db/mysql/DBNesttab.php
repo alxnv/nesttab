@@ -35,10 +35,11 @@ class DbNesttab extends \Alxnv\Nesttab\core\db\BasicDbNesttab {
         global $yy;
         $err = '';
       	if (!preg_match('/^[a-z][a-z0-9\_]+$/', $fld_name)) {
-            $err .=  chr(13) . __("The name of the field is not correct. It must begin with a-z. Next symbols allowed: a-z, 0-9, '_'");
+            $err .=  __("The name of the field is not correct. It must begin with a-z. Next symbols allowed: a-z, 0-9, '_'");
 	}
         if (mb_strlen($fld_name) > $yy->db_settings['max_custom_field_size']) {
-            $err .= chr(13) . __("The name of the table's field is too long. It mustn't exceed") .
+            if ($err <> '') $err .= chr(13);
+            $err .= __("The name of the table's field is too long. It mustn't exceed") .
                     $yy->db_settings['max_custom_field_size'] . __("characters");
         }
         return $err;

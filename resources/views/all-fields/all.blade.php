@@ -11,5 +11,5 @@ $r['descr'] = mb_substr($r['descr'], 0, 200);
 if (isset($r['id'])) echo '<input type="hidden" name="id" value="' . intval($r['id']) . '" />';
 ?>
 <input type="hidden" name="field_type_id" value="<?=intval($r['field_type_id'])?>" />
+<?=$e->getErr('descr')?>
 <?=__('Description')?> : <input type="text" name="descr" size="40" value="<?=\yy::qs($r['descr'])?>" /><br/>
-<?=__('Physical name of field')?> : <input type="text" name="name" size="25" value="<?=\yy::qs($r['name'])?>" /><br/>

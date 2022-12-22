@@ -12,6 +12,7 @@
     <script type="text/javascript" src="<?=asset('/nsttab/js/jquery-3.6.0.min.js')?>"></script>
     <script type="text/javascript" src="<?=asset('/nsttab/js/jquery-confirm.min.js')?>"></script>
     <script type="text/javascript" src="<?=asset('/nsttab/' . \yy::getJsLangFile())?>"></script>
+    <script type="text/javascript" src="<?=asset('/nsttab/js/vue.global.js')?>"></script>
     <script type="text/javascript" src="<?=asset('/nsttab/js/functions.js')?>"></script>
     
   </head>
