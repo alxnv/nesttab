@@ -17,7 +17,7 @@ class TableHelper {
             case 1 :
                 return 'bool';
             default:
-                throw new Exception("Table type is not defined");
+                throw new \Exception("Table type is not defined");
         }
     }
 
@@ -62,7 +62,7 @@ class TableHelper {
                         . ")"
                        ];
             default:
-                throw new Exception("Table type is not defined");
+                throw new \Exception("Table type is not defined");
         }
     }
 
@@ -96,7 +96,7 @@ class TableHelper {
                         . " primary key (id))",
                     "alter table $table_name add unique key(ordr)"];
             default:
-                throw new Exception("Table type is not defined");
+                throw new \Exception("Table type is not defined");
         }
     }
 

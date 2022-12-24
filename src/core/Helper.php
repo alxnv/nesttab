@@ -25,14 +25,14 @@ class Helper {
 
     public static function get_prev_link_str($s) {
         global $yy;
-        if (count($s) < 2) throw new Exception('Link data is not defined', 64003);
+        if (count($s) < 2) throw new \Exception('Link data is not defined', 64003);
         switch ($s[0]) {
             case 1: 
                 return $yy->baseurl . 'struct-change-table/edit/t/' . $s[1]; // !todo - еще добавить
                     // передачу prev->link
                 break;
             default:
-                throw new Exception('Link id is not defined', 64004);
+                throw new \Exception('Link id is not defined', 64004);
                 break;
         }
     }
