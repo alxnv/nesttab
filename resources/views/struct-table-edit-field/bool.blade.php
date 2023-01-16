@@ -60,7 +60,7 @@ echo '</p>';
 */
 ?>
 <div id="app">
-<input type="checkbox" name="opt_fields" id="opt_fields" v-model="checked" /> <label for="opt_fields"><?=__('Optional fields')?></label><br />
+<input type="checkbox" name="opt_fields" id="opt_fields" v-model="checked" /> <label for="opt_fields"><?=__('Additional fields')?></label><br />
 <div v-show="checked">
 <?=$e->getErr('name')?>
 <?=__('Physical name of the field')?> : <input type="text" name="name" size="25" value="<?=\yy::qs($r['name'])?>" /><br/>

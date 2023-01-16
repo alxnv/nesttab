@@ -13,8 +13,9 @@ class TableHelper {
      * @throws Exception
      */
     function getFieldDef(int $n) {
+        global $db;
         switch ($n) {
-            case 1 :
+            case $db::BOOL_TYPE :
                 return 'bool';
             default:
                 throw new \Exception("Table type is not defined");

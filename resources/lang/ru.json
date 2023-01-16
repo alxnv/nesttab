@@ -64,6 +64,6 @@
     "The name of the table is too long. It mustn't exceed" : "Имя таблицы слишком длинное. Оно не должно превышать",
     "The name of the table's field is too long. It mustn't exceed" : "Имя поля таблицы слишком длинное. Оно не должно превышать",
     "The table does not exist" : "Таблица не существует",
-    "Optional fields" : "Необязательные поля"
+    "Additional fields" : "Дополнительные поля"
     
 }
