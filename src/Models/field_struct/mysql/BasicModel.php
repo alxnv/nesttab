@@ -62,7 +62,9 @@ class BasicModel {
         $required = (isset($r['req']) ? 1 : 0);
         $fld_type_id = $fld['id'];
         $tblname= $tbl['name'];
-
+        $s = "\\Alxnv\\Nesttab\\core\\db\\" . config('nesttab.db_driver') . "\\TableHelper";
+        $th = new $s();
+        $definition = $th->getFieldDef($fld_type_id);
         /*if (!$db->qdirectNoErrorMessage("lock tables yy_columns write")){
             $err .= __('The table does not exist');
             return $err;
@@ -104,7 +106,7 @@ class BasicModel {
                  *  иначе только добавляем поле к таблице
                  */
                 if (!$this->addField($tblname, $name, $tbl['id'], 
-                        $tbl['table_type'], $default, $fld_type_id)) {
+                        $tbl['table_type'], $default, $fld_type_id, $th)) {
                     return;
                 }
                 if (!$this->hasErr()) {
@@ -123,7 +125,7 @@ class BasicModel {
                 $old_col_name = $old_values['name'];
                 if ($old_col_name <> $name) {
                     if (!$db->qdirectNoErrorMessage("alter table $tblname change"
-                            . " $old_col_name $name bool")) {
+                            . " $old_col_name $name $definition")) {
                         // !!! it does not result in error if the table does not exist
                         //   don't now why 
                         $this->setErr('', __('Error modifying table: ' . 
@@ -132,8 +134,9 @@ class BasicModel {
                     }
                 }
                 if (!$this->hasErr()) {
+                    $df5 = $db->escape($default);
                     if (!$db->qdirectNoErrorMessage("alter table $tblname alter"
-                            . " $name set default $default")) {
+                            . " $name set default $df5")) {
                         $this->setErr('default', __('Error setting default value: ' . 
                                 sprintf ("Error %s\n", $db->handle->errorInfo()[2])));
                         return;
@@ -164,13 +167,12 @@ class BasicModel {
      * @param string $field_name - имя поля
      * @param type $table_id - id таблицы
      */
-    protected function addField(string $table_name, string $field_name, int $table_id, string $table_type, $default_value, int $fld_type_id) {
+    protected function addField(string $table_name, string $field_name, int $table_id, string $table_type, $default_value, int $fld_type_id, $th) {
         global $db;
-        $s = "\\Alxnv\\Nesttab\\core\\db\\" . config('nesttab.db_driver') . "\\TableHelper";
-        $th = new $s();
-        $def = $th->getFieldDef($fld_type_id); // вернуть определение поля типа bool для create table
+        $df2 = $db->escape($default_value);
+        $def = $th->getFieldDef($fld_type_id); // вернуть определение поля типа для create table
         if (!$db->qdirectNoErrorMessage("alter table $table_name add $field_name $def not null"
-                        . " default $default_value")) {
+                        . " default $df2")) {
             $message = __('Error') . ' ' . 
                     $db->errorMessage;
             $this->setErr('', $message);
@@ -193,10 +195,8 @@ class BasicModel {
         $err = '';
         $tblname= $tbl['name'];
         $name = $column['name'];
-        if (!$db->qdirectNoErrorMessage("alter table $tblname drop column $name")) {
-            $err .= sprintf ("Error %s\n", $db->errorMessage);
-            return $err;
-        }
+        $yy->whithout_layout = 1;
+        $db->qdirectSpec("alter table $tblname drop column $name", [42000]);
         if ($err == '') {
             $err .= \Alxnv\Nesttab\Models\StructColumnsModel::delete($column['id']);
         }

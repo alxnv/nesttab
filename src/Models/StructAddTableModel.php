@@ -38,8 +38,8 @@ class StructAddTableModel {
         $arr_commands = $th->getCreateTableStrings($arr_table_names_short[$tbl_idx], $tbl_name);
         //var_dump($arr_commands);exit;
         foreach ($arr_commands as $command) {
-                $sth = $db->qdirectSpec($command, [1050]);
-                if (!$sth && $db->errorCode == '1050') { # table already exists 
+                $sth = $db->qdirectSpec($command, ['42S01']);
+                if (!$sth && $db->errorCode == '42S01') { # table already exists 
                         $message = __('The table') . ' ' . \yy::qs($tbl_name) 
                                 . ' ' . __('is already exists');
                         return false;

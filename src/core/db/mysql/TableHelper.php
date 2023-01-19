@@ -17,6 +17,8 @@ class TableHelper {
         switch ($n) {
             case $db::BOOL_TYPE :
                 return 'bool';
+            case $db::BOOL_TEXT :
+                return 'text';
             default:
                 throw new \Exception("Table type is not defined");
         }

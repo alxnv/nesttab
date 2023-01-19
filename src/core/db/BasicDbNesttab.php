@@ -10,6 +10,7 @@ class BasicDbNesttab {
      * Типы данных представленные в БД
      */
     const BOOL_TYPE = 1; 
+    const BOOL_TEXT = 4; 
 /*
     function connect() {
 		global $yy;

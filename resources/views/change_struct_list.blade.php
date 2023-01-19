@@ -30,7 +30,7 @@ for ($i = 0; $i < count($list); $i++) {
     echo '<a href="' . $yy->baseurl . 'nesttab/struct-change-table/edit/' .
             $list[$i]['id'] . '/">' .
             \yy::qs(trim($list[$i]['descr']) == '' ? '------' : $list[$i]['descr']) .
-            ' (' . $list[$i]['name'] . ')</a><br />';
+            ' (' . \yy::qs($list[$i]['name']) . ')</a><br />';
 }
 ?>
 @endsection

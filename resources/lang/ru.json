@@ -12,6 +12,7 @@
         "physical name" : "физическое имя",
         "Add field" : "Добавить поле",
     "Change" : "Изменить",
+    "Is required" : "Требуемое",
     "Default value" : "Значение по умолчанию",
     "Checked" : "Отмечено",
     "Add nested table" : "Добавить вложенную таблицу",

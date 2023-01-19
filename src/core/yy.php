@@ -17,6 +17,7 @@ class yy {
     public $user_data;
     public $Engine_Path;
     public $db_settings;
+    public $whithout_layout = 0; // отображать сообщения об ошибках без включения layout
 	
     function __construct() {
         $this->Engine_Path = base_path() . '/vendor/alxnv/nesttab';
@@ -45,7 +46,7 @@ class yy {
         $lnk = \yy::getErrorSession();
         session([$lnk => $s]);
         Session::save();
-        static::redirectNow($yy->baseurl . 'nesttab/error');
+        static::redirectNow($yy->baseurl . 'nesttab/error?wl=' . $yy->whithout_layout);
         //exit;
     }
 
