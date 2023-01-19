@@ -31,36 +31,27 @@ class TableHelper {
      * @return array массив строк для создания пустой таблицы заданного типа (с возможными
      *    дополнительными коммандами
      */
-    function getCreateTableStrings(string $table_type, string $table_name, string $field_def, string $field_name, $default_value):array {
+    function getCreateTableStrings(string $table_type, string $table_name):array {
         global $db;
-        $df = $db->escape($default_value);
         switch ($table_type) {
-            case 'O':
+            case 'O': // one record table
                 return ["create table $table_name (`id` int NOT NULL default 1, " 
-                    . $field_name . ' ' . $field_def . ' not null'
-                    . " default " . $df
-                    . " ,PRIMARY KEY (`id`))",
-                    "insert into $table_name ($field_name) values ($df)"];
-            case 'L':
+                    . " PRIMARY KEY (`id`))",
+                    "insert into $table_name (id) values (1)"];
+            case 'L': // list table
                 return ["create table $table_name (id int NOT NULL AUTO_INCREMENT,"
                         . " ordr int not null,"
-                        . $field_name . ' ' . $field_def . ' not null'
-                        . " default " . $df
                         . " primary key (id))",
                     "alter table $table_name add unique key(ordr)"];
-            case 'C':
+            case 'C': // tree table
                 return ["create table $table_name (id int NOT NULL AUTO_INCREMENT,"
                         . " parent_id int not null,"
                         . " ordr int not null,"
-                        . $field_name . ' ' . $field_def . ' not null'
-                        . " default " . $df
                         . " primary key (id))",
                     "alter table $table_name add unique key(parent_id, ordr)"];
-            case 'V':
-                return ["create table $table_name ("
-                        . $field_name . ' ' . $field_def . ' not null'
-                        . " default " . $df
-                        . ")"
+            case 'V': // ord table
+                return ["create table $table_name (`id` int NOT NULL AUTO_INCREMENT, " 
+                    . " PRIMARY KEY (`id`))"
                        ];
             default:
                 throw new \Exception("Table type is not defined");

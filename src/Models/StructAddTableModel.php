@@ -30,8 +30,12 @@ class StructAddTableModel {
         }
 	$tbl_name2 = $db->escape($tbl_name);
         /*
-         * не создаем саму таблицу
-        $arr_commands = getInitTableStruct($arr_table_names_short[$tbl_idx], $tbl_name);
+         * создаем саму таблицу
+         */
+        $s = "\\Alxnv\\Nesttab\\core\\db\\" . config('nesttab.db_driver') . "\\TableHelper";
+        $th = new $s();
+
+        $arr_commands = $th->getCreateTableStrings($arr_table_names_short[$tbl_idx], $tbl_name);
         //var_dump($arr_commands);exit;
         foreach ($arr_commands as $command) {
                 $sth = $db->qdirectSpec($command, [1050]);
@@ -42,8 +46,6 @@ class StructAddTableModel {
                 }
             
         }
-         * 
-         */
 
         // Записываем данные таблицы в yy_tables
         $s3 = $db->escape($tbl_descr);

@@ -103,7 +103,7 @@ class BasicModel {
                  * Новая запись - если эта первая запись, то создаем таблицы физически,
                  *  иначе только добавляем поле к таблице
                  */
-                if (!$this->createNewTableOrJustAddField($tblname, $name, $tbl['id'], 
+                if (!$this->addField($tblname, $name, $tbl['id'], 
                         $tbl['table_type'], $default, $fld_type_id)) {
                     return;
                 }
@@ -164,34 +164,17 @@ class BasicModel {
      * @param string $field_name - имя поля
      * @param type $table_id - id таблицы
      */
-    protected function createNewTableOrJustAddField(string $table_name, string $field_name, int $table_id, string $table_type, $default_value, int $fld_type_id) {
+    protected function addField(string $table_name, string $field_name, int $table_id, string $table_type, $default_value, int $fld_type_id) {
         global $db;
         $s = "\\Alxnv\\Nesttab\\core\\db\\" . config('nesttab.db_driver') . "\\TableHelper";
         $th = new $s();
         $def = $th->getFieldDef($fld_type_id); // вернуть определение поля типа bool для create table
-        $cnt_obj = $db->qobj("select count(*) as cnt from yy_columns where table_id = $table_id");
-        if ($cnt_obj->cnt == 0) {
-
-            $arr_commands = $th->getCreateTableStrings($table_type, $table_name, $def, $field_name, $default_value);
-            foreach ($arr_commands as $command) {
-                $result = $db->qdirectNoErrorMessage($command);
-                if (!$result) { # table already exists 
-                        $message = __('Error') . ' ' . 
-                                $db->errorMessage;
-                        $this->setErr('', $message);
-                        return false;
-                }
-            
-            }
-
-        } else {
-            if (!$db->qdirectNoErrorMessage("alter table $table_name add $field_name $def not null"
-                            . " default $default_value")) {
-                $message = __('Error') . ' ' . 
-                        $db->errorMessage;
-                $this->setErr('', $message);
-                return false;
-            }
+        if (!$db->qdirectNoErrorMessage("alter table $table_name add $field_name $def not null"
+                        . " default $default_value")) {
+            $message = __('Error') . ' ' . 
+                    $db->errorMessage;
+            $this->setErr('', $message);
+            return false;
         }
         return true;
     }
