@@ -2,12 +2,12 @@
 
 /* 
  * Класс работы со структурой таблицы
- * полями типа txt
+ * полями типа html
  */
 
 namespace Alxnv\Nesttab\Models\field_struct\mysql;
 
-class TxtModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
+class HtmlModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
 
     
     //public function data_type() {
@@ -20,9 +20,15 @@ class TxtModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
      * @param array $fld
      * @param array $r
      */
-    public function save(array $tbl, array $fld, array $r, array $old_values) {
+    public function save(array $tbl, array $fld, array &$r, array $old_values) {
         global $yy, $db;
-        $default = (isset($r['default']) ? mb_substr($r['default'], 0, 65535) : '');
+        if (isset($r['mce_0'])) {
+            $r['default'] = $r['mce_0'];
+            unset($r['mce_0']);
+            $default = mb_substr($r['default'], 0, 65535);
+        } else {
+            $default = '';
+        }
         return $this->saveStep2($tbl, $fld, $r, $old_values, $default);
 
     }

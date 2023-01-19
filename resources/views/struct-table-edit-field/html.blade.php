@@ -1,8 +1,11 @@
+<?php
+$with_tinymce = 1;
+?>
 @extends(config('nesttab.layout'))
 @section('content')
 <?php
 /**
- * редактирование структуры поля типа txt
+ * редактирование структуры поля типа html
  * 
  * если isset($r['is_error']), то произошел возврат к редактированию с ошибкой
  */
@@ -62,8 +65,8 @@ echo '</p>';
 <?=__('Physical name of the field')?> : <input type="text" name="name" size="25" value="<?=\yy::qs($r['name'])?>" /><br/>
 <?php
 echo $e->getErr('default');
-echo __('Default value') . ':<br /><textarea id="default"'
-        . ' name="default" cols="70" rows="5">' . (isset($r['default']) ? \yy::qs($r['default']) : '') . '</textarea>'
+echo __('Default value') . ':<br /><div class="myeditablediv" name="default">'
+        . (isset($r['default']) ? $r['default'] : '') . '</div>'
         . '<br />';
 
 echo $e->getErr('required');

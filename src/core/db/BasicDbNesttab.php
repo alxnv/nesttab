@@ -11,6 +11,7 @@ class BasicDbNesttab {
      */
     const BOOL_TYPE = 1; 
     const BOOL_TEXT = 4; 
+    const BOOL_HTML = 5; 
 /*
     function connect() {
 		global $yy;

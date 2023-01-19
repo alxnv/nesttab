@@ -19,6 +19,8 @@ class TableHelper {
                 return 'bool';
             case $db::BOOL_TEXT :
                 return 'text';
+            case $db::BOOL_HTML :
+                return 'text';
             default:
                 throw new \Exception("Table type is not defined");
         }

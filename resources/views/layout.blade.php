@@ -9,6 +9,20 @@
     <title><?=__("Administrator's module")?></title>
     <link rel="stylesheet" href="<?=asset('/nsttab/css/styles.css')?>">
     <link rel="stylesheet" href="<?=asset('/nsttab/css/jquery-confirm.min.css')?>">
+    <?php 
+    if (isset($with_tinymce)) {
+        echo '<script type="text/javascript" src="' . asset('/nsttab/js/tinymce/tinymce.min.js') . '"></script>';
+    ?>
+    
+    <script type="text/javascript">
+    tinymce.init({
+      selector: '.myeditablediv',
+      plugins: 'link, image, code, table, textcolor, lists',
+    });
+    </script>
+    <?php
+    }
+    ?>
     <script type="text/javascript" src="<?=asset('/nsttab/js/jquery-3.6.0.min.js')?>"></script>
     <script type="text/javascript" src="<?=asset('/nsttab/js/jquery-confirm.min.js')?>"></script>
     <script type="text/javascript" src="<?=asset('/nsttab/' . \yy::getJsLangFile())?>"></script>
