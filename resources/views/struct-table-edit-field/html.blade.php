@@ -11,6 +11,9 @@ $with_tinymce = 1;
  */
 global $yy, $db;
 
+echo '<a href="' . $yy->baseurl . 'nesttab/struct-change-table/edit/' . $tbl['id'] . '/0">'
+        .__('Back') . '</a><br /><br />';
+
 echo '<h1 class="center">' . __('Edit table') . ' "' . \yy::qs($tbl['descr']) . '" (' .
         __('physical name') . ': ' . \yy::qs($tbl['name']) .')<br /><br />';
 
@@ -70,9 +73,9 @@ echo __('Default value') . ':<br /><div class="myeditablediv" name="default">'
         . '<br />';
 
 echo $e->getErr('required');
-echo __('Is required') . ': <input id="required" type="checkbox"'
+echo '<input id="required" type="checkbox"'
         . ' name="req" ' .(isset($r['req']) ? 'checked="checked"' : '') . ' />'
-        . ' <label for="required">' .__('Checked') .'</label><br />';
+        . ' <label for="required">' . __('Is required') .'</label><br />';
 ?>
 </div>
 </div>

@@ -14,6 +14,8 @@ return [
         'col_categories' => [ 1 => __('Basic types of fields'),
             2 => __('Additional types of fields'),
             ],
+        'max_txt_size' => 500000, // max size in bytes of txt field
+        'max_html_size' => 500000, // max size in bytes of html field
 
     ];
 ?>

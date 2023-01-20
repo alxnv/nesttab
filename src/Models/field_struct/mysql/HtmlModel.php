@@ -25,7 +25,8 @@ class HtmlModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
         if (isset($r['mce_0'])) {
             $r['default'] = $r['mce_0'];
             unset($r['mce_0']);
-            $default = mb_substr($r['default'], 0, 65535);
+            $r['default'] = substr($r['default'], 0, $yy->settings2['max_html_size']);
+            $default = $r['default'];
         } else {
             $default = '';
         }

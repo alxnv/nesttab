@@ -20,9 +20,14 @@ class TxtModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
      * @param array $fld
      * @param array $r
      */
-    public function save(array $tbl, array $fld, array $r, array $old_values) {
+    public function save(array $tbl, array $fld, array &$r, array $old_values) {
         global $yy, $db;
-        $default = (isset($r['default']) ? mb_substr($r['default'], 0, 65535) : '');
+        if (isset($r['default'])) {
+            $r['default'] = substr($r['default'], 0, $yy->settings2['max_txt_size']);
+            $default = $r['default'];
+        } else {
+            $default = '';
+        }
         return $this->saveStep2($tbl, $fld, $r, $old_values, $default);
 
     }

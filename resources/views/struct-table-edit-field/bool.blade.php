@@ -8,6 +8,9 @@
  */
 global $yy, $db;
 
+echo '<a href="' . $yy->baseurl . 'nesttab/struct-change-table/edit/' . $tbl['id'] . '/0">'
+        .__('Back') . '</a><br /><br />';
+
 echo '<h1 class="center">' . __('Edit table') . ' "' . \yy::qs($tbl['descr']) . '" (' .
         __('physical name') . ': ' . \yy::qs($tbl['name']) .')<br /><br />';
 
