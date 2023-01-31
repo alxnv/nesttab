@@ -2,11 +2,15 @@
 @section('content')
 <?php
 /**
- * редактирование структуры поля типа boolean
+ * редактирование структуры поля типа int
  * 
  * если isset($r['is_error']), то произошел возврат к редактированию с ошибкой
  */
 global $yy, $db;
+
+if (!isset($r['default'])) {
+    $r['default'] = '0';
+}
 
 echo '<a href="' . $yy->baseurl . 'nesttab/struct-change-table/edit/' . $tbl['id'] . '/0">'
         .__('Back') . '</a><br /><br />';
@@ -37,7 +41,7 @@ if (isset($r['opt_fields'])) {
     $optOpened = true;
 } else {
     $optOpened = false;
-    if ($e->hasOneOf(['name', 'default'])) $optOpened = true; // если есть ошибки, относящиеся к
+    if ($e->hasOneOf(['name', 'default', 'required'])) $optOpened = true; // если есть ошибки, относящиеся к
        // имени поля, то открываем div с именем поля
 }
 
@@ -47,8 +51,15 @@ echo '<form method="post" action="' . $yy->baseurl . 'nesttab/struct-table-edit-
 ?>
 @csrf
 @include('nesttab::all-fields.all')
+<div id="app">
+<input type="checkbox" name="opt_fields" id="opt_fields" v-model="checked" /> <label for="opt_fields"><?=__('Additional fields')?></label><br />
+<div v-show="checked"  class="opt_fields">
 <?php
 
+echo $e->getErr('default');
+echo __('Default value') . ': <input type="text" size="30" id="default"'
+        . ' name="default" value="' . (isset($r['default']) ? \yy::qs($r['default']) : '') . '" />'
+        . '<br />';
 //echo '</p>';
 
 
@@ -58,17 +69,14 @@ $controller->render_partial(['r' => $r], 'additional', 'all-fields');
 echo '</p>';
 */
 ?>
-<div id="app">
-<input type="checkbox" name="opt_fields" id="opt_fields" v-model="checked" /> <label for="opt_fields"><?=__('Additional fields')?></label><br />
-<div v-show="checked"  class="opt_fields">
-<?php
-echo $e->getErr('default');
-echo __('Default value') . ': <input id="default" type="checkbox"'
-        . ' name="default" ' .(isset($r['default']) ? 'checked="checked"' : '') . ' />'
-        . ' <label for="default">' .__('Checked') .'</label><br />';
-?>
 <?=$e->getErr('name')?>
 <?=__('Physical name of the field')?> : <input type="text" name="name" size="25" value="<?=\yy::qs($r['name'])?>" /><br/>
+<?php
+echo $e->getErr('required');
+echo '<input id="required" type="checkbox"'
+        . ' name="req" ' .(isset($r['req']) ? 'checked="checked"' : '') . ' />'
+        . ' <label for="required">' . __('Is required') .'</label><br />';
+?>
 </div>
 </div>
 <br />

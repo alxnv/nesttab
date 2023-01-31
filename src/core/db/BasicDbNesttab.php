@@ -10,8 +10,10 @@ class BasicDbNesttab {
      * Типы данных представленные в БД
      */
     const BOOL_TYPE = 1; 
-    const BOOL_TEXT = 4; 
-    const BOOL_HTML = 5; 
+    const INT_TYPE = 2; 
+    const STR_TYPE = 3;
+    const TEXT_TYPE = 4; 
+    const HTML_TYPE = 5; 
 /*
     function connect() {
 		global $yy;
@@ -36,6 +38,16 @@ class BasicDbNesttab {
         $this->handle = DB::connection()->getPdo();
         $this->handle->setAttribute(\PDO::ATTR_AUTOCOMMIT,1);
     }
+    
+    /**
+     * escape name of field or table
+     * @param string $s
+     * @return string
+     */
+    public function nameEscape(string $s) {
+        return '`' . $s . '`';
+    }
+    
     public function escape($s) {
 	//	global $db;
 //        return mysqli_real_escape_string($this->handle, $s);

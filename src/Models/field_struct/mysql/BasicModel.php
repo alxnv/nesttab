@@ -58,12 +58,17 @@ class BasicModel {
         if (($s = $db->valid_field_name($name)) <> '') {
             $this->setErr('name', $s);
         }
-        if ($this->hasErr()) return;
         $required = (isset($r['req']) ? 1 : 0);
         $fld_type_id = $fld['id'];
         $tblname= $tbl['name'];
+        $tblname_2 = $db->nameEscape($tblname);
         $s = "\\Alxnv\\Nesttab\\core\\db\\" . config('nesttab.db_driver') . "\\TableHelper";
         $th = new $s();
+        if (($s = $th->testIfReservedField($tbl['table_type'], $name)) <> '') {
+            $this->setErr('name', $s);
+        }
+        $name_2 = $db->nameEscape($name);
+        if ($this->hasErr()) return;
         $definition = $th->getFieldDef($fld_type_id);
         /*if (!$db->qdirectNoErrorMessage("lock tables yy_columns write")){
             $err .= __('The table does not exist');
@@ -105,7 +110,7 @@ class BasicModel {
                  * Новая запись - если эта первая запись, то создаем таблицы физически,
                  *  иначе только добавляем поле к таблице
                  */
-                if (!$this->addField($tblname, $name, $tbl['id'], 
+                if (!$this->addField($tblname_2, $name_2, $tbl['id'], 
                         $tbl['table_type'], $default, $fld_type_id, $th)) {
                     return;
                 }
@@ -123,9 +128,10 @@ class BasicModel {
             } else {
                 // its existing record
                 $old_col_name = $old_values['name'];
+                $old_col_name_2 = $db->nameEscape($old_col_name);
                 if ($old_col_name <> $name) {
-                    if (!$db->qdirectNoErrorMessage("alter table $tblname change"
-                            . " $old_col_name $name $definition")) {
+                    if (!$db->qdirectNoErrorMessage("alter table $tblname_2 change"
+                            . " $old_col_name_2 $name_2 $definition not null")) {
                         // !!! it does not result in error if the table does not exist
                         //   don't now why 
                         $this->setErr('', __('Error modifying table: ' . 
@@ -135,8 +141,8 @@ class BasicModel {
                 }
                 if (!$this->hasErr()) {
                     $df5 = $db->escape($default);
-                    if (!$db->qdirectNoErrorMessage("alter table $tblname alter"
-                            . " $name set default $df5")) {
+                    if (!$db->qdirectNoErrorMessage("alter table $tblname_2 alter"
+                            . " $name_2 set default $df5")) {
                         $this->setErr('default', __('Error setting default value: ' . 
                                 sprintf ("Error %s\n", $db->handle->errorInfo()[2])));
                         return;

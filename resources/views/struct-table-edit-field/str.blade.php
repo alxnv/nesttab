@@ -2,7 +2,7 @@
 @section('content')
 <?php
 /**
- * редактирование структуры поля типа boolean
+ * редактирование структуры поля типа str
  * 
  * если isset($r['is_error']), то произошел возврат к редактированию с ошибкой
  */
@@ -37,7 +37,7 @@ if (isset($r['opt_fields'])) {
     $optOpened = true;
 } else {
     $optOpened = false;
-    if ($e->hasOneOf(['name', 'default'])) $optOpened = true; // если есть ошибки, относящиеся к
+    if ($e->hasOneOf(['name', 'default', 'required'])) $optOpened = true; // если есть ошибки, относящиеся к
        // имени поля, то открываем div с именем поля
 }
 
@@ -60,15 +60,20 @@ echo '</p>';
 ?>
 <div id="app">
 <input type="checkbox" name="opt_fields" id="opt_fields" v-model="checked" /> <label for="opt_fields"><?=__('Additional fields')?></label><br />
-<div v-show="checked"  class="opt_fields">
-<?php
-echo $e->getErr('default');
-echo __('Default value') . ': <input id="default" type="checkbox"'
-        . ' name="default" ' .(isset($r['default']) ? 'checked="checked"' : '') . ' />'
-        . ' <label for="default">' .__('Checked') .'</label><br />';
-?>
+<div v-show="checked" class="opt_fields">
 <?=$e->getErr('name')?>
 <?=__('Physical name of the field')?> : <input type="text" name="name" size="25" value="<?=\yy::qs($r['name'])?>" /><br/>
+<?php
+echo $e->getErr('default');
+echo __('Default value') . ': <input type="text" size="80" id="default"'
+        . ' name="default" value="' . (isset($r['default']) ? \yy::qs($r['default']) : '') . '" />'
+        . '<br />';
+
+echo $e->getErr('required');
+echo  '<input id="required" type="checkbox"'
+        . ' name="req" ' .(isset($r['req']) ? 'checked="checked"' : '') . ' />'
+        . ' <label for="required">' . __ ('Is required') .'</label><br />';
+?>
 </div>
 </div>
 <br />

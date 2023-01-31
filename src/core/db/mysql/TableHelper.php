@@ -5,7 +5,7 @@
 namespace Alxnv\Nesttab\core\db\mysql;
 
 
-class TableHelper {
+class TableHelper extends \Alxnv\Nesttab\core\db\BasicTableHelper {
     /**
      * Вернуть определение поля для функции create table
      * @param int $n - номер типа поля
@@ -17,10 +17,14 @@ class TableHelper {
         switch ($n) {
             case $db::BOOL_TYPE :
                 return 'bool';
-            case $db::BOOL_TEXT :
-                return 'text';
-            case $db::BOOL_HTML :
-                return 'text';
+            case $db::TEXT_TYPE :
+                return 'mediumtext';
+            case $db::HTML_TYPE :
+                return 'midiumtext';
+            case $db::STR_TYPE :
+                return 'varchar(255)';
+            case $db::INT_TYPE :
+                return 'int';
             default:
                 throw new \Exception("Table type is not defined");
         }
@@ -45,14 +49,20 @@ class TableHelper {
             case 'L': // list table
                 return ["create table $table_name (id int NOT NULL AUTO_INCREMENT,"
                         . " ordr int not null,"
+                        . " name varchar(255) not null,"
                         . " primary key (id))",
-                    "alter table $table_name add unique key(ordr)"];
+                    "alter table $table_name add key(ordr)",
+                    "alter table $table_name add key(name(40))",
+                    ];
             case 'C': // tree table
                 return ["create table $table_name (id int NOT NULL AUTO_INCREMENT,"
-                        . " parent_id int not null,"
+                        . " parent_leaf int not null,"
                         . " ordr int not null,"
+                        . " name varchar(255) not null,"
                         . " primary key (id))",
-                    "alter table $table_name add unique key(parent_id, ordr)"];
+                    "alter table $table_name add key(parent_leaf, ordr)",
+                    "alter table $table_name add key(parent_leaf, name(40))",
+                    ];
             case 'V': // ord table
                 return ["create table $table_name (`id` int NOT NULL AUTO_INCREMENT, " 
                     . " PRIMARY KEY (`id`))"
