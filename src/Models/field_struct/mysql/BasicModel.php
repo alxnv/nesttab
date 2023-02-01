@@ -115,14 +115,20 @@ class BasicModel {
                     return;
                 }
                 if (!$this->hasErr()) {
+                    if (!$db->qdirectNoErrorMessage("lock tables yy_columns write")){
+                        $this->setErr('', __('The table does not exist'));
+                        return;
+                    }
                     $obj = $db->qobj("select max(ordr) as mx from yy_columns where table_id = $tbl_id");
                     $n2 = ($obj ? $obj->mx : 0) + 1;
                     if (!$db->qdirectNoErrorMessage("insert into yy_columns (name,descr,"
                             . "parameters,table_id,ordr,field_type) values"
                             . "($1, $2, $3, $4, $5, $6)", [$name, $descr, $params2, $tbl_id, $n2, $fld_type_id])) {
                         $this->setErr('', __('Error modifying table structure'));
+                        $db->qdirect("unlock tables");
                         return;
                     }
+                    $db->qdirect("unlock tables");
                     
                 }
             } else {
@@ -202,7 +208,9 @@ class BasicModel {
         $tblname= $tbl['name'];
         $name = $column['name'];
         $yy->whithout_layout = 1;
-        $db->qdirectSpec("alter table $tblname drop column $name", [42000]);
+        $tblname_2 = $db->nameEscape($tblname);
+        $name_2 = $db->nameEscape($name);
+        $db->qdirectSpec("alter table $tblname_2 drop column $name_2", [42000]);
         if ($err == '') {
             $err .= \Alxnv\Nesttab\Models\StructColumnsModel::delete($column['id']);
         }

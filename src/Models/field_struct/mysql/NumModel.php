@@ -7,7 +7,7 @@
 
 namespace Alxnv\Nesttab\Models\field_struct\mysql;
 
-class IntModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
+class NumModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
 
     
     //public function data_type() {
