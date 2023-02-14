@@ -14,6 +14,7 @@ if (isset($r['allowed'])) {
     $r['allowed'] = '';
 }
 
+
 echo '<a href="' . $yy->baseurl . 'nesttab/struct-change-table/edit/' . $tbl['id'] . '/0">'
         .__('Back') . '</a><br /><br />';
 

@@ -1,6 +1,7 @@
 <?php
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Lang;
+use Illuminate\Support\Facades\Cache;
 
 class yy { 
 /**
@@ -18,7 +19,9 @@ class yy {
     public $Engine_Path;
     public $db_settings;
     public $whithout_layout = 0; // отображать сообщения об ошибках без включения layout
-	
+    public $locksToReleaseBeforeExit = []; // lock-и, которые нужно освободить перед
+       // выходом из скрипта
+    
     function __construct() {
         $this->Engine_Path = base_path() . '/vendor/alxnv/nesttab';
         $this->baseurl=dirname($_SERVER['SCRIPT_NAME']).'/';
@@ -35,11 +38,34 @@ class yy {
     function init() {
         //$this->register_autoload();
 	$this->settings2 = require('settings2.php');
+        $mx = ini_get('max_execution_time');
+        if ($mx === false) {
+            $mx = 200;
+        }
+        $this->settings2['max_exec'] = intval($mx);
+
         global $db;
         $db = new \Alxnv\Nesttab\core\db\mysql\DbNesttab();
         //mysqli_report(MYSQLI_REPORT_ALL | MYSQLI_REPORT_STRICT); // перехватывать все сообщения об ошибках mysqli
     }
 
+    /**
+     * указывается Lock, который нужно освободить перед gotoErrorPage и gotoMessagePage
+     * @param string $s
+     */
+    public function setExitReleaseLock(string $s) {
+        $this->locksToReleaseBeforeExit[$s] = 1;
+    }
+    
+    /**
+     * освобождает lock-s, указанные в $this->locksToReleaseBeforeExit
+     */
+    public function releaseLocks() {
+        $arr = array_keys($this->locksToReleaseBeforeExit);
+        foreach ($arr as $item) {
+            Cache::forget($item);
+        }
+    }
     
     public static function gotoErrorPage($s) {
         global $yy;
@@ -69,6 +95,10 @@ class yy {
      */
     public static function redirectNow($url, $code = 302)
     {
+        global $yy;
+        $yy->releaseLocks();
+
+
         try {
             \App::abort($code, '', ['Location' => $url]);
         } catch (\Exception $exception) {

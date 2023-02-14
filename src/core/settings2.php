@@ -16,6 +16,7 @@ return [
             ],
         'max_txt_size' => 500000, // max size in bytes of txt field
         'max_html_size' => 500000, // max size in bytes of html field
-
+        'time_to_lock_add_field' => 10, // time to lock process of adding or editing
+              // field, in seconds
     ];
 ?>

@@ -3,7 +3,8 @@ namespace Alxnv\Nesttab\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
-
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Contracts\Cache\LockTimeoutException;
 /**
  * Редактирование структуры - добавление поля к таблице
  */
@@ -115,7 +116,22 @@ dd($s);*/
         if (is_null($fld)) \yy::gotoErrorPage('Field def in table is not found');
         $s2 = '\\Alxnv\\Nesttab\\Models\\field_struct\\mysql\\' . ucfirst($fld['name']) .'Model';
         $field_model = new $s2();
-        $field_model->save($tbl, $fld, $r, $old_values);
+    
+        // adding or editing field, lock this process for max_execution_time seconds
+        $lock = Cache::lock('addfield', $yy->settings2['max_exec']);
+        try {
+            $yy->setExitReleaseLock('addfield');
+            $lock->block($yy->settings2['time_to_lock_add_field']);
+            $field_model->save($tbl, $fld, $r, $old_values);
+
+            // Lock acquired after waiting a maximum of 5 seconds...
+        } catch (LockTimeoutException $e) {
+            // Unable to acquire lock...
+            \yy::gotoErrorPage('Unable to lock process');
+        } finally {
+            optional($lock)->release();
+        }
+
         if (!$field_model->hasErr()) {
             Session::save();
             \yy::redirectNow($yy->baseurl . 'nesttab/struct-change-table/edit/' . $table_id . '/0');

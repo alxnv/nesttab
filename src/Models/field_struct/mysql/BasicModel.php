@@ -49,6 +49,8 @@ class BasicModel {
      */
     public function saveStep2(array $tbl, array $fld, array $r, array $old_values, $default, array $params = []) {
         global $yy, $db;
+                    //\yy::gotoErrorPage('Unable to lock process555555');
+
         $is_newrec = (!isset($r['id']));
         $name = (isset($r['name']) ? $r['name'] : '');
         $descr = (isset($r['descr']) ? $r['descr'] : '');
