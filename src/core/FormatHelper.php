@@ -22,4 +22,18 @@ class FormatHelper {
         if (($n < -2147483648) || ($n > 2147483647)) return false;
         return $n;
     }
+    
+    /**
+     * 
+     * @param string $s - строки, разделенные ","
+     * @return array - массив
+     */
+    public static function delimetedByCommaToArray(string $s) {
+        $arr = explode(',', $s);
+        for ($i = 0; $i < count($arr); $i++) {
+            $arr[$i] = trim($arr[$i]);
+        }
+        return $arr;
+    }
+            
 }

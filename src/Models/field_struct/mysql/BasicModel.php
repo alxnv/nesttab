@@ -45,8 +45,9 @@ class BasicModel {
      * @param array $tbl
      * @param array $fld
      * @param array $r
+     * @param array $params - дополнительные параметры поля, если не пустые
      */
-    public function saveStep2(array $tbl, array $fld, array $r, array $old_values, $default) {
+    public function saveStep2(array $tbl, array $fld, array $r, array $old_values, $default, array $params = []) {
         global $yy, $db;
         $is_newrec = (!isset($r['id']));
         $name = (isset($r['name']) ? $r['name'] : '');
@@ -94,7 +95,7 @@ class BasicModel {
            //$old_values = $this->prepare_old_values($old_values);
         }
         
-        $params = [];
+        //$params = [];
         if ($required) $params['req'] = 1;
         if ($default) $params['default'] = $default;
         

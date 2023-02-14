@@ -2,12 +2,12 @@
 
 /* 
  * Класс работы со структурой таблицы
- * полями типа str
+ * полями типа file
  */
 
 namespace Alxnv\Nesttab\Models\field_struct\mysql;
 
-class StrModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
+class FileModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
 
     
     //public function data_type() {
@@ -22,13 +22,17 @@ class StrModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
      */
     public function save(array $tbl, array $fld, array &$r, array $old_values) {
         global $yy, $db;
-        if (isset($r['default'])) {
-            $r['default'] = mb_substr($r['default'], 0, 255);
-            $default = $r['default'];
+        $fh = new \Alxnv\Nesttab\core\FormatHelper();
+        
+        $default = '';
+        if (isset($r['allowed'])) {
+            $r['allowed'] = $fh::delimetedByCommaToArray(mb_substr($r['allowed'], 0, 10000));
+            $allowed = $r['allowed'];
         } else {
-            $default = '';
+            $allowed = [];
         }
-        return $this->saveStep2($tbl, $fld, $r, $old_values, $default);
+        $params = ['allowed' => $allowed];
+        return $this->saveStep2($tbl, $fld, $r, $old_values, $default, $params);
 
     }
     

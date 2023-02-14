@@ -25,6 +25,10 @@ class TableHelper extends \Alxnv\Nesttab\core\db\BasicTableHelper {
                 return 'varchar(255)';
             case $db::INT_TYPE :
                 return 'int';
+            case $db::FILE_TYPE :
+                return 'text';
+            case $db::IMAGE_TYPE :
+                return 'text';
             default:
                 throw new \Exception("Table type is not defined");
         }

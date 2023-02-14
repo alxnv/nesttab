@@ -69,6 +69,9 @@
     "Field name" : "Имя поля",
     "is not valid" : "недопустимое",
     "int value" : "значение типа int",
-    "is reserved" : "зарезервировано"
+    "is reserved" : "зарезервировано",
+    "Enter file extensions delimeted by ','" : "Введите расширения файлов через запятую",
+    "or empty string if any extension is allowed" : "или пустую строку если допустимо любое расширение",
+    "Allowed extensions" : "Допустимые расширения"
     
 }
