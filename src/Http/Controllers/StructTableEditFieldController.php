@@ -118,7 +118,7 @@ dd($s);*/
         $field_model = new $s2();
     
         // adding or editing field, lock this process for max_execution_time seconds
-        $lock = Cache::lock('addfield', $yy->settings2['max_exec']);
+        $lock = Cache::lock('addfield', $yy->settings2['max_exec'] + 1);
         try {
             $yy->setExitReleaseLock('addfield');
             $lock->block($yy->settings2['time_to_lock_add_field']);
