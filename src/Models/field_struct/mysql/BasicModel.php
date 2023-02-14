@@ -106,17 +106,10 @@ class BasicModel {
             $tbl_id= $tbl['id'];
             $params2 = json_encode($params);
             if ($is_newrec) {
-                /**
-                 * Новая запись - если эта первая запись, то создаем таблицы физически,
-                 *  иначе только добавляем поле к таблице
-                 */
-                if (!$this->addField($tblname_2, $name_2, $tbl['id'], 
-                        $tbl['table_type'], $default, $fld_type_id, $th)) {
-                    return;
-                }
                 if (!$this->hasErr()) {
                     if (!$db->qdirectNoErrorMessage("lock tables yy_columns write")){
                         $this->setErr('', __('The table does not exist'));
+                        $db->qdirect("unlock tables");
                         return;
                     }
                     $obj = $db->qobj("select max(ordr) as mx from yy_columns where table_id = $tbl_id");
@@ -130,6 +123,10 @@ class BasicModel {
                     }
                     $db->qdirect("unlock tables");
                     
+                }
+                if (!$this->hasErr() && !$this->addField($tblname_2, $name_2, $tbl['id'], 
+                        $tbl['table_type'], $default, $fld_type_id, $th)) {
+                    return;
                 }
             } else {
                 // its existing record
@@ -210,9 +207,11 @@ class BasicModel {
         $yy->whithout_layout = 1;
         $tblname_2 = $db->nameEscape($tblname);
         $name_2 = $db->nameEscape($name);
-        $db->qdirectSpec("alter table $tblname_2 drop column $name_2", [42000]);
         if ($err == '') {
             $err .= \Alxnv\Nesttab\Models\StructColumnsModel::delete($column['id']);
+        }
+        if ($err == '') {
+            $db->qdirectSpec("alter table $tblname_2 drop column $name_2", [42000]);
         }
         return $err;
     }

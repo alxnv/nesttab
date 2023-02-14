@@ -20,7 +20,7 @@ class TableHelper extends \Alxnv\Nesttab\core\db\BasicTableHelper {
             case $db::TEXT_TYPE :
                 return 'mediumtext';
             case $db::HTML_TYPE :
-                return 'midiumtext';
+                return 'mediumtext';
             case $db::STR_TYPE :
                 return 'varchar(255)';
             case $db::INT_TYPE :
