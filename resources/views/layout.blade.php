@@ -57,7 +57,7 @@ if ($user['can_modify_structure']) {
 	@yield('content')
 	</div>
         </div>    
-        <div id="footer">&copy; 2022 by Alexander Vorobyov</div>
+        <div id="footer">&copy; 2022-2023 by Alexander Vorobyov</div>
       </div>
     <script>
     @stack('js')

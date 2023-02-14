@@ -385,6 +385,18 @@ static function parsestrall(&$mtch,&$mtchto,$regex,$str1) {
         return mb_strtoupper(mb_substr($string, 0, 1)).mb_substr($string, 1);
     }
      
+    /**
+     * Преобразует многострочную строку к такому виду, чтобы ее можно было вывести
+     *   в js заключенной в ""
+     * @param string $s - строка для преобразования
+     * @return string
+     */
+    public static function jsmstr(string $s) {
+        $s2 = str_replace("\\", "\\\\", $s);
+        $s2 = str_replace("\r", "\\\r", $s2);
+        $s2 = str_replace('"', "'", $s2);
+        return $s2;
+    }
 }
 
 global $yy;

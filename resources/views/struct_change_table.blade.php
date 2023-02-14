@@ -67,60 +67,86 @@ echo '<br /><p class="center"><a class="addfield" href="' . $yy->baseurl . 'nest
         . '</p>';
 
 
-echo '<br /><table id="idt" class="table center2">';
-echo '<tr><th>№</th><th>' . __('Name') . '</th>' //'<th>' . \yy::mb_ucfirst(__('physical name')) . '</th>'
-        . '<th>' . __('Type') . '</th>' //'<th>' . __('Description') . '</th>'
-        . '<th>' . __('Operations') . '</th></tr>';
-$n = 1;
-foreach ($flds as $f) {
-    echo '<tr><td>';
-    echo $f['ordr'];
-    echo '</td><td>';
-    echo \yy::qs(trim($f['descr']) == '' ? '-------' : $f['descr']);
-    echo '</td><td>';
-    //echo \yy::qs($f['name']);
-    //echo '</td><td>';
-    echo \yy::qs($f['descr_fld']);
-    //echo '</td><td>';
-    // $f['parameters']
-    echo '</td><td>';
-    echo '<input class="change-button" type="button" data-id="' . $f['id'] . '" value="' . __('Change') . '" />&nbsp;';
-    echo __('To position') . ': ';
-    echo '<input type="number" data_id="' . $f['id'] . '" id="e' . $n . '" class="table_edit" value="' . $f['ordr'] . '" />';
-    echo '&nbsp;<input type="button" class="move-button" data-id="' . 
-            $n . '" value="' . __('Move') . '" />';
-    echo '&nbsp;<input type="button" data-id="' . $f['id'] . '" class="delete-button" value="' . __('Delete') . '" />';
-    echo '</td></tr>';
-    $n++;
-}
-echo '</table>';
+echo '<br /><div id="idt" class="table center2 div-table">';
+echo '<div class="div-th"><span>№</span><span>' . __('Name') . '</span>' //'<th>' . \yy::mb_ucfirst(__('physical name')) . '</th>'
+        . '<span>' . __('Type') . '</span>' //'<th>' . __('Description') . '</th>'
+        . '<span>' . __('Operations') . '</span></div>';
+?>
+<table-elt
+      v-for="item in itemsList"
+      v-bind:item="item"
+      v-bind:key="item.id"
+    ></table-elt>
+
+<?php
+    
+
+echo '</div>';
 echo '</div>';
 echo '<div id="error_div"></div>';
 //var_dump($flds);
 ?>
 <script type="text/javascript">
-    $(function () {
-        $('#idt .change-button').click(function (e) {
-            let id = e.target.getAttribute('data-id');
+const TableElt = {
+  methods: {
+	onChange: function() {
+            //alert(this.item.text) 
             location.href=baseUrl + '/struct-table-edit-field/step2/<?=$tbl['id']?>/'
-                + id;
+                + this.item.id;
 
-        })
-        $('#idt .move-button').click(function (e) {
-            let n = e.target.getAttribute('data-id');
-            let input = document.getElementById('e' + n);
-            id = input.getAttribute('data_id');
-            //alert(input.value);
+        },
+        onDelete: function() {
+            confirm_it(this.item.id);
+        },
+        onMove: function() {
             location.href=baseUrl + '/struct-change-table/move/<?=$tbl['id']?>/'
-                + id + '/moveto/' + input.value;
+                + this.item.id + '/moveto/' + this.item.moveto;
+            
+        },
+  },
+  props: ['item'],
+  template: '<div><span>@{{item.pos}} </span>\
+  <span>@{{ item.text }}</span><span>@{{ item.flddescr }}</span>\
+<span><input class="change-button" type="button" value="<?=__('Change')?>" @click="onChange" />&nbsp;\
+    <?=__('To position')?>: \
+   <input type="number" class="table_edit" v-model="item.moveto" />\
+    &nbsp;<input type="button" class="move-button" @click="onMove" value="<?=__('Move')?>" />\
+    &nbsp;<input type="button" class="delete-button" @click="onDelete" value="<?=__('Delete')?>" />\
+  </span></div>'
+}
 
-        })
-        $('#idt .delete-button').click(function (e) {
-            let n = e.target.getAttribute('data-id');
-            confirm_it(n);
+const EltList = {
+  data() {
+    return {
+    itemsList: [
+<?php        
 
-        })
+foreach ($flds as $f) {
+    echo '{ pos:';
+    echo $f['ordr'];
+    echo ', moveto:';
+    echo $f['ordr'];
+    echo ', id:';
+    echo $f['id'];
+    echo ', text:"';
+    echo \yy::jsmstr(\yy::qs(trim($f['descr']) == '' ? '-------' : $f['descr']));
+    echo '"';
+    echo ', flddescr:"';
+    echo \yy::jsmstr(\yy::qs($f['descr_fld']));
+    echo '"';
+    echo ' },' . "\r\n";
+}
+?>
+    ]
+    }
+  },
+  components: {
+    TableElt
+  }
+}
 
-});
+const app = Vue.createApp(EltList)
+
+app.mount('#idt')
 </script>
 @endsection
