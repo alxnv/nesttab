@@ -72,6 +72,13 @@
     "is reserved" : "зарезервировано",
     "Enter file extensions delimeted by ','" : "Введите расширения файлов через запятую",
     "or empty string if any extension is allowed" : "или пустую строку если допустимо любое расширение",
-    "Allowed extensions" : "Допустимые расширения"
+    "Allowed extensions" : "Допустимые расширения",
+    "Digits overall" : "Всего знаков",
+    "float value" : "значение с плавающей запятой",
+    "Decimal places" : "Знаков после запятой",
+    "This number must be less than" : "Это число должно быть меньше чем",
+    "previous number" : "предыдущее число",
+    "This number must be positive" : "Это число должно быть положительным",
+    "If both last numbers are zero, it can be any floating point number" : "Если оба последних числа равны 0, это может быть любое число с плавающей запятой"
     
 }

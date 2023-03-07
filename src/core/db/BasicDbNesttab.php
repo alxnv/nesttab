@@ -16,6 +16,7 @@ class BasicDbNesttab {
     const HTML_TYPE = 5;
     const FILE_TYPE = 7;
     const IMAGE_TYPE = 8;
+    const FLOAT_TYPE = 9;
 /*
     function connect() {
 		global $yy;

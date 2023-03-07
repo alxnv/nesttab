@@ -72,7 +72,7 @@ class BasicModel {
         }
         $name_2 = $db->nameEscape($name);
         if ($this->hasErr()) return;
-        $definition = $th->getFieldDef($fld_type_id);
+        $definition = $th->getFieldDef($fld_type_id, $params);
         /*if (!$db->qdirectNoErrorMessage("lock tables yy_columns write")){
             $err .= __('The table does not exist');
             return $err;
@@ -128,14 +128,15 @@ class BasicModel {
                     
                 }
                 if (!$this->hasErr() && !$this->addField($tblname_2, $name_2, $tbl['id'], 
-                        $tbl['table_type'], $default, $fld_type_id, $th)) {
+                        $tbl['table_type'], $default, $fld_type_id, $definition)) {
                     return;
                 }
             } else {
                 // its existing record
                 $old_col_name = $old_values['name'];
                 $old_col_name_2 = $db->nameEscape($old_col_name);
-                if ($old_col_name <> $name) {
+                $old_params = $this->prepareOldParams($old_values);
+                if ($old_col_name <> $name || $this->colDefChanged($params, $old_params)) {
                     if (!$db->qdirectNoErrorMessage("alter table $tblname_2 change"
                             . " $old_col_name_2 $name_2 $definition not null")) {
                         // !!! it does not result in error if the table does not exist
@@ -172,6 +173,25 @@ class BasicModel {
     }
     
     /**
+     * stub for function that determines if col definition is changed
+     * @param array $params
+     * @param array $old_params
+     * @return boolean
+     */
+    protected function colDefChanged($params, $old_params) {
+        return false;
+    }
+
+    /**
+     * 
+     * @param array $old_values
+     * @return array - 'parameters' field of $old_values json decoded
+     */
+    protected function prepareOldParams(array $old_values) {
+        return (array)json_decode($old_values['parameters']);
+    }
+    
+    /**
      * Новая запись - если эта первая запись, то создаем таблицы физически,
      *  иначе добавляем поле к таблице
      * 
@@ -179,10 +199,10 @@ class BasicModel {
      * @param string $field_name - имя поля
      * @param type $table_id - id таблицы
      */
-    protected function addField(string $table_name, string $field_name, int $table_id, string $table_type, $default_value, int $fld_type_id, $th) {
+    protected function addField(string $table_name, string $field_name, int $table_id, string $table_type, $default_value, int $fld_type_id, string $def) {
         global $db;
         $df2 = $db->escape($default_value);
-        $def = $th->getFieldDef($fld_type_id); // вернуть определение поля типа для create table
+        //$def = $th->getFieldDef($fld_type_id); // вернуть определение поля типа для create table
         if (!$db->qdirectNoErrorMessage("alter table $table_name add $field_name $def not null"
                         . " default $df2")) {
             $message = __('Error') . ' ' . 

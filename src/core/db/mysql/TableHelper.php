@@ -12,7 +12,7 @@ class TableHelper extends \Alxnv\Nesttab\core\db\BasicTableHelper {
      * @return string - дефиниция поля для функции create table
      * @throws Exception
      */
-    function getFieldDef(int $n) {
+    function getFieldDef(int $n, array $params = []) {
         global $db;
         switch ($n) {
             case $db::BOOL_TYPE :
@@ -29,6 +29,14 @@ class TableHelper extends \Alxnv\Nesttab\core\db\BasicTableHelper {
                 return 'text';
             case $db::IMAGE_TYPE :
                 return 'text';
+            case $db::FLOAT_TYPE :
+                $m = $params['m'];
+                $d = $params['d'];
+                if ($m == 0) {
+                    return 'float';
+                } else {
+                    return 'float(' . $m . ',' . $d . ')';
+                }
             default:
                 throw new \Exception("Table type is not defined");
         }
