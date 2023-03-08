@@ -22,7 +22,8 @@ class FileModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
      */
     public function save(array $tbl, array $fld, array &$r, array $old_values) {
         global $yy, $db;
-        $fh = new \Alxnv\Nesttab\core\FormatHelper();
+        $s = '\\Alxnv\\Nesttab\\core\\db\\' . config('nesttab.db_driver') . '\\FormatHelper';
+        $fh = new $s();
         
         $default = '';
         if (isset($r['allowed'])) {

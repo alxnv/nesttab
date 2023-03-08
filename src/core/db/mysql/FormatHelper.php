@@ -6,7 +6,7 @@
  *
  * @author Alexander Vorobyov
  */
-namespace Alxnv\Nesttab\core;
+namespace Alxnv\Nesttab\core\db\mysql;
 
 class FormatHelper {
     /**
@@ -38,6 +38,20 @@ class FormatHelper {
         return $n;
     }
 
+    /**
+     * 
+     * @param string $s
+     * @return float|int - false, if this is not a string presentation
+     *   of mysql double type,
+     *    or this double otherwise
+     */
+    public static function doubleConv(string $s) {
+        //if (!preg_match('/^[\-]?[\d]{1,255}(\.\d{1,255})?(e\[\-|\+]?\d{1,3})?$/i', $s)) return false;
+        if (!preg_match('/^([-+]?\d*\.?\d+)(?:[eE]([-+]?\d+))?$/', $s)) return false;
+        $n = floatval($s);
+        if (($n < -1.7976931348623157E+308) || ($n > 1.7976931348623157E+308)) return false;
+        return $n;
+    }
     /**
      * 
      * @param string $s - строки, разделенные ","

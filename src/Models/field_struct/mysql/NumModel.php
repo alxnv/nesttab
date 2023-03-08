@@ -25,7 +25,10 @@ class NumModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
         if (isset($r['default'])) {
             $r['default'] = mb_substr(trim($r['default']), 0, 255);
             $default = $r['default'];
-            $fh = new \Alxnv\Nesttab\core\FormatHelper();
+            $s = '\\Alxnv\\Nesttab\\core\\db\\' . config('nesttab.db_driver') . '\\FormatHelper';
+            $fh = new $s();
+
+            //$fh = new \Alxnv\Nesttab\core\FormatHelper();
             if (false === $fh::IntConv($default)) {
                 $this->setErr('default', '"' . $default . '" ' . __('is not valid') . ' ' . __('int value'));
             }

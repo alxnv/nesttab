@@ -2,7 +2,7 @@
 
 /* 
  * Класс работы со структурой таблицы
- * полями типа float
+ * полями типа double
  */
 
 namespace Alxnv\Nesttab\Models\field_struct\mysql;
@@ -25,8 +25,11 @@ class FloatModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
         if (isset($r['default'])) {
             $r['default'] = mb_substr(trim($r['default']), 0, 255);
             $default = $r['default'];
-            $fh = new \Alxnv\Nesttab\core\FormatHelper();
-            if (false === $fh::floatConv($default)) {
+            $s = '\\Alxnv\\Nesttab\\core\\db\\' . config('nesttab.db_driver') . '\\FormatHelper';
+            $fh = new $s();
+
+            //$fh = new \Alxnv\Nesttab\core\FormatHelper();
+            if (false === $fh::doubleConv($default)) {
                 $this->setErr('default', '"' . $default . '" ' . __('is not valid') . ' ' . __('float value'));
             }
             $default = intval($default);

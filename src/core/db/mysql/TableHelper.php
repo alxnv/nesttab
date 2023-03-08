@@ -33,9 +33,9 @@ class TableHelper extends \Alxnv\Nesttab\core\db\BasicTableHelper {
                 $m = $params['m'];
                 $d = $params['d'];
                 if ($m == 0) {
-                    return 'float';
+                    return 'double';
                 } else {
-                    return 'float(' . $m . ',' . $d . ')';
+                    return 'double(' . $m . ',' . $d . ')';
                 }
             default:
                 throw new \Exception("Table type is not defined");
