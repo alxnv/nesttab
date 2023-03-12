@@ -24,7 +24,7 @@ class FormatHelper {
     }
     
     /**
-     * 
+     * !!! not used
      * @param string $s
      * @return float|int - false, if this is not a string presentation
      *   of mysql float type,
