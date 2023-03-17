@@ -5,6 +5,7 @@
 global $yy;
 
 return [  
+        'are_tests_accessible' => true, // отображается гиперссылка на страницу тестов
 	'table_types' => ['One record', 'List', 'Ordinary table', 'Catalogue'],
 	'table_names' => ['one', 'list', 'ord', 'cat'],
         'table_names_short' => ['O', 'L', 'V', 'C'],

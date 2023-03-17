@@ -427,6 +427,20 @@ static function parsestrall(&$mtch,&$mtchto,$regex,$str1) {
         $s2 = str_replace('"', "'", $s2);
         return $s2;
     }
+    
+    /**
+     * Подождать заданное количество секунд, запустив цикл ожидания
+     * @param int $seconds - количество секунд ожидания
+     */
+    public static function waitSeconds(int $seconds) {
+        $time = microtime(true);
+        do {
+            $t = microtime(true);
+            usleep(1); // ожидание 1 миллисекунду
+            for ($i=0; $i < 50000000; $i++) {};
+        }
+        while ($t - $time < $seconds);
+    }
 }
 
 global $yy;

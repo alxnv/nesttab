@@ -1,1 +1,2 @@
-проверить, что где стоит Cache::lock, там проставлен для этого лока setExitReleaseLock($lockname) (с указанием его имени)
+1) проверить, что где стоит Cache::lock, там проставлен для этого лока setExitReleaseLock($lockname) (с указанием его имени)
+2) settings2['are_tests_accessible'] должно быть false
