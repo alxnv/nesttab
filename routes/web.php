@@ -38,6 +38,9 @@ Route::prefix('nesttab')->group(function () {
       //              'uses' => 'ExController@show']);
     //dd(7);
     Route::get('/tests', CP9 . 'TestsController@index');
+    Route::get('/tests/ajax_infinite_sql', CP9 . 'TestsAjaxController@infiniteSql');
+    Route::get('/tests/ajax_infinite_run_sql', CP9 . 'TestsAjaxController@infiniteSqlRun');
+    Route::get('/tests/ajax_infinite_sql_make_table', CP9 . 'TestsAjaxController@infiniteSqlMakeTable');
     Route::get('/tests/ajax_infinite', CP9 . 'TestsAjaxController@infinite');
     Route::get('/tests/ajax_infinite_run', CP9 . 'TestsAjaxController@infiniteRun');
     Route::get('/struct-add-table', CP9 . 'StructAddTableController@index');
