@@ -28,6 +28,7 @@ global $yy;
         </div>
     </div>
 </div>
+Выполнялось почти полчаса, пока не остановил
 <script>
     var baseUrl = '<?=asset('/nesttab')?>';
     var toStop = 0;

@@ -1,2 +1,9 @@
 num - int 4 byte
 float - mysql double
+
+
+
+
+----------
+тип данных "decoration - ruler"
+ (просто при редактировании отображает <hr /> и текст с <h2>
