@@ -15,13 +15,13 @@ function confirm_it(id_passed) {
 //    debugger;
     $.confirm({
         useBootstrap: false,
-        content: captions_and_names[3],
+        content: __lang('Do you really want to delete this element?'),
         title: '',
         backgroundDismiss: true,
         id_passed: id_passed,
      buttons: {
             yes: {
-                text: captions_and_names[1],
+                text: __lang('Yes'),
                 action: function(){
               /*      $.alert({
                         title: 'Alert!',
@@ -39,7 +39,7 @@ function confirm_it(id_passed) {
                     }               
             },
             no: {
-                text: captions_and_names[2],
+                text: __lang('No'),
                 action: function(){
                     //$.alert('A or B was pressed');
                     return true;

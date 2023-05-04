@@ -1,0 +1,2 @@
+var lang_data = {
+}
