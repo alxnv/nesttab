@@ -26,6 +26,10 @@ if(!isset($r['id'])) {
 };
 echo '<br />';
 
+?>
+@include('nesttab::struct-table-edit-field.rec-inc')
+<?php
+
 $e = new \Alxnv\Nesttab\Models\ErrorModel();
 if (isset($r['is_error'])) {
     $lnk_err = \yy::getErrorEditSession();

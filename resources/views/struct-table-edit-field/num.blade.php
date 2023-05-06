@@ -26,6 +26,9 @@ if(!isset($r['id'])) {
             \yy::qs($fld['descr']) . '"</p>';
 };
 echo '<br />';
+?>
+@include('nesttab::struct-table-edit-field.rec-inc')
+<?php
 
 $e = new \Alxnv\Nesttab\Models\ErrorModel();
 if (isset($r['is_error'])) {

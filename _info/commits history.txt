@@ -1,0 +1,2 @@
+commit 0c4bddcf8d565f3ccac50f7ecbc32cd8848da0d6
+  последняя версия, в которой в view struct-change-table выводился список полей с кнопками (с помощью vue)

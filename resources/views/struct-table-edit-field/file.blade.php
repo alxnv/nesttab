@@ -30,6 +30,9 @@ if(!isset($r['id'])) {
 };
 echo '<br />';
 
+?>
+@include('nesttab::struct-table-edit-field.rec-inc')
+<?php
 $e = new \Alxnv\Nesttab\Models\ErrorModel();
 if (isset($r['is_error'])) {
     $lnk_err = \yy::getErrorEditSession();
@@ -69,7 +72,7 @@ echo __('Allowed extensions') . ': <input type="text" size="50" id="allowed"'
         . ' name="allowed" value="' . (isset($r['allowed']) ? \yy::qs($r['allowed']) : '') . '" />'
         . '<br />';
 echo '<div class="comment">(' . __("Enter file extensions delimeted by ','") . 
-        '<br />' . __('or empty string if any extension is allowed') . ')<br /></div>';
+        ' ' . __('or empty string if any extension is allowed') . ')<br /></div>';
 ?>
 <div id="app">
 <input type="checkbox" name="opt_fields" id="opt_fields" v-model="checked" /> <label for="opt_fields"><?=__('Additional fields')?></label><br />
