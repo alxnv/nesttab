@@ -441,6 +441,34 @@ static function parsestrall(&$mtch,&$mtchto,$regex,$str1) {
         }
         while ($t - $time < $seconds);
     }
+    
+    /**
+     * Создает поле Html-редактирования текста
+     * @param string $fieldName - имя поля
+     * @param string $value - начальное содержание поля
+     * @param int $heightPixels - высота поля в пикселях
+     *    (ширина поля - 100% от ширины родительского элемента)
+     */
+    public static function htmlEditor(string $fieldName, string $value, int $heightPixels = 800) {
+        echo '<textarea class="html_editor" id="' . $fieldName . '"'
+                . ' name="' . $fieldName . '" height="' . $heightPixels . 'px">';
+        echo $value;
+        echo '</textarea>';
+        echo "<script>
+	CKEDITOR.replace( '" . $fieldName . "' );
+        </script>";
+    //        $('" . $fieldName . "').ckeditor();
+/*        echo "<script>
+                ClassicEditor
+		.create( document.querySelector( '#" . $fieldName . "' ) )
+		.catch( error => {
+			console.error( error );
+		} );
+</script>";*/
+        /*echo "
+<ckeditor v-model='editorData' />
+        ";*/
+    }
 }
 
 global $yy;

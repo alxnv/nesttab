@@ -1,8 +1,9 @@
 на данный момент эта опция недоступна, но в дальнейшем:
 
 1. создать проект laravel
+     composer create-project laravel/laravel nesttab
 1.1 создать и настроить базу данных
-2. установить laravel breeze
+2. установить laravel breeze (без vue)
 3. установить пакет alxnv/nesttab
 4. установить config/app.php locale => 'ru'
 5. добавить вызов сервис провайдера пакета в app.php:
@@ -11,4 +12,8 @@
          */
         Alxnv\Nesttab\Providers\RouteServiceProvider::class,
 5. скопировать файлы css, js
-
+  - или установить ckeditor4 :
+    1. скачать ckeditor4
+	2. скопировать содержимое каталога ckeditor4 подкаталогом в каталог public/nsttab/js
+	3. проверить в файле vendor\alxnv\nesttab\resources\views\layout.blade.php что скрипт указывает на ckeditor.js
+	     в каталоге ckeditor4

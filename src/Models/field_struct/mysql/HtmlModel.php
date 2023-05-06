@@ -22,13 +22,14 @@ class HtmlModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
      */
     public function save(array $tbl, array $fld, array &$r, array $old_values) {
         global $yy, $db;
-        if (isset($r['mce_0'])) {
-            $r['default'] = $r['mce_0'];
-            unset($r['mce_0']);
+        if (isset($r['default'])) {
+            //$r['default'] = $r['mce_0'];
+            //unset($r['mce_0']);
             $r['default'] = substr($r['default'], 0, $yy->settings2['max_html_size']);
             $default = $r['default'];
         } else {
             $default = '';
+            $r['default'] = '';
         }
         return $this->saveStep2($tbl, $fld, $r, $old_values, $default);
 

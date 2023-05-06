@@ -60,17 +60,20 @@ echo '<hr /><p align="left">';
 $controller->render_partial(['r' => $r], 'additional', 'all-fields');
 echo '</p>';
 */
+//\yy::htmlEditor('default', (isset($r['default']) ? $r['default'] : ''));
 ?>
+
 <div id="app">
-<input type="checkbox" name="opt_fields" id="opt_fields" v-model="checked" /> <label for="opt_fields"><?=__('Additional fields')?></label><br />
-<div v-show="checked" class="opt_fields">
+<input type="checkbox" name="opt_fields" id="opt_fields" /> <label for="opt_fields"><?=__('Additional fields')?></label><br />
+<div id="opt_div" class="opt_fields" <?=($optOpened ? '' : ' style="display:none" ')?>>
 <?=$e->getErr('name')?>
 <?=__('Physical name of the field')?> : <input type="text" name="name" size="25" value="<?=\yy::qs($r['name'])?>" /><br/>
 <?php
 echo $e->getErr('default');
-echo __('Default value') . ':<br /><div class="myeditablediv" name="default">'
-        . (isset($r['default']) ? $r['default'] : '') . '</div>'
-        . '<br />';
+echo __('Default value') . ':<br />';
+
+\yy::htmlEditor('default', (isset($r['default']) ? $r['default'] : ''));
+echo '<br />';
 
 echo $e->getErr('required');
 echo '<input id="required" type="checkbox"'
@@ -88,14 +91,11 @@ echo '</div>';
 echo '</form>';
 ?>
 <script>
-const app = Vue.createApp({
-  data() {
-    return {
-      checked: <?=($optOpened ? 'true' : 'false')?>
-    }
-  }
+$( document ).ready(function () {
+    $('#opt_fields').click(function() {
+        $('#opt_div').toggle();
+    });
 });
-app.mount('#app');
 </script>
 
 @endsection
