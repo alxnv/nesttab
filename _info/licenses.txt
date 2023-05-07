@@ -1,0 +1,22 @@
+jquery - You are free to use a jQuery project in commercial projects as long as the copyright header is left intact.
+-------
+vue - то же самое
+
+MIT License
+A short and simple permissive license with conditions only requiring preservation of copyright and license
+ notices. Licensed works, modifications, and larger works may be distributed under different terms and without
+ source code.
+-----------
+ckeditor 4
+
+CKEditor 4 is licensed under the terms of any of the following licenses of your choice: GPL, LGPL, and MPL.
+
+
+----
+Возможно ли коммерческое использование продукта, распространяемого по MPL 2.0?
+
+Конечно, в тексте лицензии нет ни строчки оговаривающей ограничения на использование в коммерческих целях.
+
+Но, тем не менее, вы обязаны указывать лицензию MPL 2.0 на ту часть, которую вы используете в своем проекте.
+ Кроме того, если вы модифицируете какие то файлы лицензированные под MPL 2.0, то вы должны их показать в
+ открытом коде. Более подробно читайте здесь.
