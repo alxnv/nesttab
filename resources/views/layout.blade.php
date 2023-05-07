@@ -27,6 +27,7 @@
         <div id="page_content">
 	<div id="admin_left">
 	@include('nesttab::menu_left')
+	@include('nesttab::tables_list_for_layout_left')
 <?php
 /*
 if ($user['can_modify_structure']) {

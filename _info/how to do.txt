@@ -1,0 +1,5 @@
+Удалить все таблицы:
+
+ выполнить команды mysql:
+ delete from yy_tables
+ delete from yy_columns

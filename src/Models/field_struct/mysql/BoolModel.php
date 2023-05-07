@@ -10,6 +10,19 @@ namespace Alxnv\Nesttab\Models\field_struct\mysql;
 class BoolModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
 
     
+    /**
+     * Вывод поля таблицы для редактирования
+     * @param array $rec - массив с данными поля
+     * @param array $errors - массив ошибок
+     */
+    public function editField(array $rec, array $errors) {
+        //echo $e->getErr('default');
+        echo '<input type="checkbox" id="' . $rec['name'] . '"'
+                . ' name="' . $rec['name'] . '" ' .($rec['value'] ? 'checked="checked"' : '') . ' />'
+                . ' <label for="' . $rec['name'] . '">' . \yy::qs($rec['descr']) .'</label><br />';
+        echo '<br />';
+    }
+    
     //public function data_type() {
     //    return 'tinyint(4)';
     //}

@@ -17,10 +17,9 @@ class StructChangeTableController extends BasicController {
             \yy::gotoErrorPage('Not valid table id as an argument');
         }
         $n = intval($id);
-        $tbl = $db->q("select * from yy_tables where id=$1", [$n]);
-        if (is_null($tbl)) \yy::gotoErrorPage('Table not found');
+        $tbl = \Alxnv\Nesttab\Models\TablesModel::getOne($n);
 
-        $flds = \Alxnv\Nesttab\Models\StructColumnsModel::getTableColumns($n);
+        $flds = \Alxnv\Nesttab\Models\ColumnsModel::getTableColumns($n);
         
         
         return view('nesttab::struct_change_table', ['tbl' => $tbl, 'tblname' => $tbl['name'], 'tbl_id' => $n,
@@ -40,10 +39,9 @@ class StructChangeTableController extends BasicController {
         }
         $n = intval($r['t']);
         //$prev = substr($r['prev'], 0, 200);
-        $tbl = $db->q("select * from yy_tables where id=$1", [$n]);
-        if (is_null($tbl)) \yy::gotoErrorPage('Table not found');
+        $tbl = \Alxnv\Nesttab\Models\TablesModel::getOne($n);
 
-        \Alxnv\Nesttab\Models\StructTableFieldsModel::move(intval($r['id']), intval($r['moveto']));
+        \Alxnv\Nesttab\Models\ColumnsModel::move(intval($r['id']), intval($r['moveto']));
         \yy::redirectNow($yy->baseurl . 'nesttab/struct-change-table/edit/' . $n . '/0');
         exit;
     }
@@ -59,7 +57,7 @@ class StructChangeTableController extends BasicController {
             if (!$column) $err .= chr(13) . 'The record in yy_columns not found';
         }
         if ($err == '') {
-            $fld =  (new \Alxnv\Nesttab\Models\StructTableFieldsModel())->getOne(intval($column['field_type']));
+            $fld =  (new \Alxnv\Nesttab\Models\ColTypesModel())->getOne(intval($column['field_type']));
             if (is_null($fld)) $err .= chr(13) . 'Field def in table is not found';
             
         }

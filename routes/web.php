@@ -37,6 +37,7 @@ Route::prefix('nesttab')->group(function () {
     //Route::get('/ex', ['as' => 'ex',
       //              'uses' => 'ExController@show']);
     //dd(7);
+    Route::get('/edit/{id?}', CP9 . 'EditController@index');
     Route::get('/tests', CP9 . 'TestsController@index');
     Route::get('/tests/ajax_infinite_sql', CP9 . 'TestsAjaxController@infiniteSql');
     Route::get('/tests/ajax_infinite_run_sql', CP9 . 'TestsAjaxController@infiniteSqlRun');

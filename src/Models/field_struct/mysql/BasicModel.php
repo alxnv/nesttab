@@ -21,6 +21,17 @@ class BasicModel {
     }
    
     /**
+     * Заглушка, вызываемая для вывода поля таблицы для редактирования
+     * @param array $rec - массив с данными поля
+     * @param array $errors - массив ошибок
+     */
+    public function editField(array $rec, array $errors) {
+        echo \yy::qs($rec['descr']);
+        echo '<br />';
+        echo (is_null($rec['value']) ? 'Not defined' : \yy::qs($rec['value']));
+        echo '<br /><br />';
+    }
+    /**
      * обрабатываем считанные из yy_columns данные и подготавливаем их для
      *   дальнейшей работы
      * @param type $ov
@@ -231,7 +242,7 @@ class BasicModel {
         $tblname_2 = $db->nameEscape($tblname);
         $name_2 = $db->nameEscape($name);
         if ($err == '') {
-            $err .= \Alxnv\Nesttab\Models\StructColumnsModel::delete($column['id']);
+            $err .= \Alxnv\Nesttab\Models\ColumnsModel::delete($column['id']);
         }
         if ($err == '') {
             $db->qdirectSpec("alter table $tblname_2 drop column $name_2", [42000]);

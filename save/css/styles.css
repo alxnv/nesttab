@@ -63,11 +63,11 @@ h2 {
 }
 
 .backlink::before {
-    content: "<< "
+    content: "[ "
 }
 
 .backlink::after {
-    content: " >>"
+    content: " ]"
 }
 
 body, html {
@@ -208,7 +208,7 @@ p {
     color: #666;
 }
 
-ul.left_menu {
+ul, ul.left_menu {
 	list-style-type: square;
 	margin:0 0 0 15px;
 	padding:0;
@@ -216,4 +216,8 @@ ul.left_menu {
 
 .html_editor {
 	width: 100%;
+}
+
+hr {
+	border: 1px solid green;
 }

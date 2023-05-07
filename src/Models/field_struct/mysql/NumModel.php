@@ -15,6 +15,20 @@ class NumModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
     //}
 
     /**
+     * Вывод поля таблицы для редактирования
+     * @param array $rec - массив с данными поля
+     * @param array $errors - массив ошибок
+     */
+    public function editField(array $rec, array $errors) {
+        //echo $e->getErr('default');
+        echo \yy::qs($rec['descr']);
+        echo '<br />';
+        echo '<input type="number" size="20" '
+            . ' name="' . $rec['name'] . '" value="' . (!is_null($rec['value']) ? \yy::qs($rec['value']) : '') . '" />'
+            . '<br />';
+        echo '<br />';
+    }
+    /**
      * пытается сохранить(изменить)  в таблице поле
      * @param array $tbl
      * @param array $fld
