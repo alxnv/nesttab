@@ -32,7 +32,8 @@ class ErrorModel {
     public function getErr($field_name) {
         if (isset($this->err[$field_name])) {
             return '<p class="error">' . 
-                    nl2br(\yy::qs($this->err[$field_name])) . '</p>';
+                    nl2br(\yy::qs($this->err[$field_name])) . '</p>' .
+                    ($field_name == '' ? '<br />' : '');
         } else {
             return '';
         }

@@ -12,10 +12,10 @@
     <script type="text/javascript" src="<?=asset('/nsttab/js/jquery-3.6.0.min.js')?>"></script>
     <script type="text/javascript" src="<?=asset('/nsttab/js/jquery-confirm.min.js')?>"></script>
     <script type="text/javascript" src="<?=asset('/nsttab/' . \yy::getJsLangFile())?>"></script>
-    <script type="text/javascript" src="<?=asset('/nsttab/js/vue.global.js')?>"></script>
+    <script type="text/javascript" src="<?=asset('/nsttab/js/vue/vue.global.js')?>"></script>
     <script type="text/javascript" src="<?=asset('/nsttab/js/functions.js')?>"></script>
     <?php 
-    if (isset($with_tinymce)) {
+    if (isset($with_html_editor)) {
         echo '<script src="' . asset('/nsttab/js/ckeditor4/ckeditor.js') . '"></script>';
     }
     ?>

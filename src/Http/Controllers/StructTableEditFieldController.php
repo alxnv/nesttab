@@ -73,7 +73,11 @@ dd($s);*/
             $r['field_type_id'] = $rec['field_type'];
             $params = json_decode($rec['parameters']);
             $rec = \yy::addKeys($rec, (array)$params);
-            if (!$b) $r = \yy::addKeys($r, $rec);
+            if ($b) {
+                $r['ordr'] = $rec['ordr'];
+            } else {
+                $r = \yy::addKeys($r, $rec);
+            }
             $fld =  (new \Alxnv\Nesttab\Models\ColTypesModel())->getOne(intval($r['field_type_id']));
         } else {
             if (!$request->has('field_type_id')) \yy::gotoErrorPage('Field type is not defined');
@@ -91,7 +95,7 @@ dd($s);*/
     
     /**
      * сохранить поле в структуре таблицы
-     * @param type $r
+     * @param type $id
      */
     public function save($id, Request $request) {
         global $db, $yy;

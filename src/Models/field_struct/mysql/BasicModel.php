@@ -44,13 +44,23 @@ class BasicModel {
     }
 
     
-    public function setErr($field, $errorString) {
+    /**
+     * Устанавливаем ошибку для указанного поля
+     * @param string $field - поле, для которого устанавливается ошибка
+     * @param string $errorString - сообщение об ошибке
+     */
+    public function setErr(string $field, string $errorString) {
         $this->err->setErr($field, $errorString);
     }
     
+    /**
+     * Проверяем, есть ли ошибка в данных
+     * @return boolean
+     */
     public function hasErr() {
         return $this->err->hasErr();
     }
+
     /**
      * пытается сохранить(изменить)  в таблице поле, шаг 2
      * @param array $tbl

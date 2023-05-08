@@ -16,7 +16,7 @@ echo '<hr />';
 echo '<ul>';
 
 foreach ($list as $tbl) {
-    echo '<li><a href="' . $yy->baseurl . 'nesttab/edit/' . $tbl['id'] . '">' .
+    echo '<li><a href="' . $yy->baseurl . 'nesttab/edit?id=' . $tbl['id'] . '">' .
             \yy::qs($tbl['descr']) . '</a></li>';
 }
 

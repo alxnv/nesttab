@@ -1,5 +1,5 @@
 <?php
-$with_tinymce = 1;
+$with_html_editor = 1;
 ?>
 @extends(config('nesttab.layout'))
 @section('content')

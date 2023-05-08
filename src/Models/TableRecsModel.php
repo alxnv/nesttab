@@ -10,6 +10,44 @@ use Illuminate\Support\Facades\DB;
 
 class TableRecsModel {
     /**
+     * объект с массивом ошибок с индексом по наименованиям полей формы
+     *  в которых ошибочные данные
+     * @var type array
+     */
+    public $err; 
+
+    public function __construct() {
+        $this->err = new \Alxnv\Nesttab\Models\ErrorModel();
+    }
+   
+    
+    /**
+     * Устанавливаем ошибку для указанного поля
+     * @param string $field - поле, для которого устанавливается ошибка
+     * @param string $errorString - сообщение об ошибке
+     */
+    public function setErr(string $field, string $errorString) {
+        $this->err->setErr($field, $errorString);
+    }
+    
+    /**
+     * Проверяем, есть ли ошибка в данных
+     * @return boolean
+     */
+    public function hasErr() {
+        return $this->err->hasErr();
+    }
+
+    /**
+     * Сохраняем данные редактирования в БД, либо устанваливаем сообщения об ошибках
+     * @param array $tbl - массив данных о таблице
+     * @param int $id - идентификатор записи
+     * @param array $r - (array)Request
+     */
+    public function save(array $tbl, int $id, array $r) {
+        $this->setErr('', 'fdsafd');
+    }
+    /**
      * Получаем запись таблицы, добавляя к ней соответствующие объекты для 
      *   различных типов полей
      * @param array $columns - массив структуры полей для данной таблицы

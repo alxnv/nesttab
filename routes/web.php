@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 |
 | Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
+| routes are floaded by the RouteServiceProvider within a group which
 | contains the "web" middleware group. Now create something great!
 |
 */
@@ -37,7 +37,8 @@ Route::prefix('nesttab')->group(function () {
     //Route::get('/ex', ['as' => 'ex',
       //              'uses' => 'ExController@show']);
     //dd(7);
-    Route::get('/edit/{id?}', CP9 . 'EditController@index');
+    Route::post('/edit/save_one/{id}', CP9 . 'EditController@saveOne');
+    Route::get('/edit', CP9 . 'EditController@index');
     Route::get('/tests', CP9 . 'TestsController@index');
     Route::get('/tests/ajax_infinite_sql', CP9 . 'TestsAjaxController@infiniteSql');
     Route::get('/tests/ajax_infinite_run_sql', CP9 . 'TestsAjaxController@infiniteSqlRun');

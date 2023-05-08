@@ -469,6 +469,49 @@ static function parsestrall(&$mtch,&$mtchto,$regex,$str1) {
 <ckeditor v-model='editorData' />
         ";*/
     }
+    
+    /**
+     * Возвращает intval($r[$index])
+     * Проверяем что указанное значение есть в массиве
+     *  если нет, выдаем ошибку
+     * затем если значение равно нулю, также выдаем ошибку
+     * @param array $r - массив из которого берем значение ((array)Request)
+     * @param string $index - индекс значения в массиве, которое получаем
+     * @return type
+     */
+    public static function testExistsNotZero(array $r, string $index) {
+        if (!isset($r[$index])) {
+            \yy::gotoErrorPage($index . ' not found');
+        }
+        $value = intval($r[$index]);
+
+        if ($value == 0) {
+            \yy::gotoErrorPage('Zero value ' . $index);
+        }
+        return $value;
+        
+    }
+    
+    /**
+     * Возвращает табличку с сообщением об успешном завершении либо об ошибке(
+     *  если установленны флаги "success_message" либо $e->hasErr()
+     * иначе возвращает пустую строку
+     * @param array $r - (array)Request
+     * @param object $e - ErrorModel() (заполнен данными в случае ошибки)
+     * @return string - в случае установленных флагов, возвращает табличку,
+     *   в ином случае - пустую строку
+     */
+    public static function getSuccessOrErrorMessage(array $r, object $e) {
+        if (isset($r['saved_succesfully'])) {
+            return '<div class="success_message">' . __('Data has been saved') .
+                    '</div><br /><br />';
+        }
+        if ($e->hasErr()) {
+            return '<div class="error_message">' . __('Error') .
+                    '</div><br /><br />';
+        }
+        return '';
+    }
 }
 
 global $yy;
