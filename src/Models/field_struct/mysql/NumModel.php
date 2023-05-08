@@ -10,10 +10,24 @@ namespace Alxnv\Nesttab\Models\field_struct\mysql;
 class NumModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
 
     
-    //public function data_type() {
-    //    return 'tinyint(4)';
-    //}
+    /**
+     * Проверяем на валидность значение $value, и в случае ошибки записываем ее в
+     *   $table_recs->err
+     * @param type $value
+     * @param object $table_recs (TableRecsModel)
+     * @param string $index - индекс в массиве ошибок для записи сообщения об ошибке
+     */
+    public function validate($value, object $table_recs, string $index) {
+        $s = '\\Alxnv\\Nesttab\\core\\db\\' . config('nesttab.db_driver') . '\\FormatHelper';
+        $fh = new $s();
 
+        //$fh = new \Alxnv\Nesttab\core\FormatHelper();
+        if (false === $fh::IntConv($value)) {
+            $table_recs->setErr($index, '"' . $value . '" ' . __('is not valid') . ' ' . __('int value'));
+        }
+        $value = intval($value);
+        return $value;
+    }
     /**
      * Вывод поля таблицы для редактирования
      * @param array $rec - массив с данными поля

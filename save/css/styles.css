@@ -221,3 +221,21 @@ ul, ul.left_menu {
 hr {
 	border: 1px solid green;
 }
+
+.error_message {
+	background: red;
+	color: white;
+	padding: 15px;
+	margin:0;
+	width:auto;
+	display: inline-block;
+}
+
+.success_message {
+	background: green;
+	color: white;
+	padding: 15px;
+	margin:0;
+	width:auto;
+	display: inline-block;
+}

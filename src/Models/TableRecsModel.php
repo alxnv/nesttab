@@ -45,8 +45,71 @@ class TableRecsModel {
      * @param array $r - (array)Request
      */
     public function save(array $tbl, int $id, array $r) {
-        $this->setErr('', 'fdsafd');
+        //$this->setErr('', 'fdsafd');
+        $columns = \Alxnv\Nesttab\Models\ColumnsModel::getTableColumnsWithNames($tbl['id']);
+        for ($i = 0; $i < count($columns); $i++)  {
+            $s2 = '\\Alxnv\\Nesttab\\Models\\field_struct\\' . config('nesttab.db_driver') . '\\'
+                    . ucfirst($columns[$i]['name_field']) .'Model';
+            $columns[$i]['obj'] = new $s2();
+            // значение для поля типа bool не будет в post массиве если он unchecked
+            if ($columns[$i]['name_field'] == 'bool') {
+                $columns[$i]['value'] = $columns[$i]['obj']
+                        ->validate(isset($r[$columns[$i]['name']]) ? 1 : 0, $this, $columns[$i]['name']);
+            } else {
+                if (isset($r[$columns[$i]['name']])) {
+                    // устанавливает сообщения об ошибках для $this
+                    $columns[$i]['value'] = $columns[$i]['obj']->validate($r[$columns[$i]['name']], $this, $columns[$i]['name']);
+                }
+            }
+        }
+
+        if (!$this->hasErr()) {
+            // ошибок нет. записываем данные в БД
+            $this->saveToDB($tbl, $columns, $id);
+        }
     }
+    
+    /**
+     * Записываем данные в БД
+     * @param array $tbl - массив с данными о таблице
+     * @param array $columns - массив с данными полей таблицы и их значениями
+     */
+    public function saveToDB(array $tbl, array $columns, int $id) {
+        global $db;
+        $arr = [];
+        // определяем, какие данные записывать
+        for ($i = 0; $i < count($columns); $i++) {
+            if (isset($columns[$i]['value'])) {
+                $arr[$columns[$i]['name']] = $columns[$i]['value'];
+            }
+        }
+        
+        if (count($arr) > 0) {
+            $db->update($tbl['name'], $arr, "where id=" . $id);
+        }
+        
+    }
+    
+    
+    /**
+     * Проставить в $recs соответствующие данные из $r ((array(Request) с предыдущими
+     *   данными из post)
+     * @param array $recs - массив с данными о полях, определенных в БД
+     * @param array $r - бывший post для редактирования с ошибкой
+     */
+    public static function setValues(array $recs, array $r) {
+        for ($i = 0; $i < count($recs); $i++) {
+            if ($recs[$i]['name_field'] == 'bool') {
+                $recs[$i]['value'] = (isset($r[$recs[$i]['name']]) ? 1 : 0);
+            } else {
+                if (isset($r[$recs[$i]['name']])) {
+                    $recs[$i]['value'] = $r[$recs[$i]['name']];
+                }
+            }
+        }
+        return $recs;
+    }
+    
     /**
      * Получаем запись таблицы, добавляя к ней соответствующие объекты для 
      *   различных типов полей

@@ -72,10 +72,10 @@ foreach ($flds as $f) {
     echo ', id:';
     echo $f['id'];
     echo ', text:"';
-    echo \yy::jsmstr(\yy::qs(trim($f['descr']) == '' ? '-------' : $f['descr']));
+    echo \yy::jsmstr((trim($f['descr']) == '' ? '-------' : $f['descr']));
     echo '"';
     echo ', flddescr:"';
-    echo \yy::jsmstr(\yy::qs($f['descr_fld']));
+    echo \yy::jsmstr(($f['descr_fld']));
     echo '"';
     echo ' },' . "\r\n";
 }

@@ -32,5 +32,31 @@ class TxtModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
 
     }
     
+    /**
+     * Проверяем на валидность значение $value, и в случае ошибки записываем ее в
+     *   $table_recs->err
+     * @param type $value
+     * @param object $table_recs (TableRecsModel)
+     * @param string $index - индекс в массиве ошибок для записи сообщения об ошибке
+     */
+    public function validate($value, object $table_recs, string $index) {
+        return $value;
+    }
+    /**
+     * Вывод поля таблицы для редактирования
+     * @param array $rec - массив с данными поля
+     * @param array $errors - массив ошибок
+     */
+    public function editField(array $rec, array $errors) {
+        //echo $e->getErr('default');
+        echo \yy::qs($rec['descr']);
+        echo '<br />';
+        echo '<textarea '
+        . ' name="' . $rec['name'] . '" cols="70" rows="5">' . (!is_null($rec['value']) ? \yy::qs($rec['value']) : '') . '</textarea>'
+        . '<br />';
+        echo '<br />';
+    }
+    
+    
     
 }

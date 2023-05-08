@@ -10,10 +10,39 @@ namespace Alxnv\Nesttab\Models\field_struct\mysql;
 class FloatModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
 
     
-    //public function data_type() {
-    //    return 'tinyint(4)';
-    //}
+    /**
+     * Вывод поля таблицы для редактирования
+     * @param array $rec - массив с данными поля
+     * @param array $errors - массив ошибок
+     */
+    public function editField(array $rec, array $errors) {
+        //echo $e->getErr('default');
+        echo \yy::qs($rec['descr']);
+        echo '<br />';
+        echo '<input type="text" size="20" '
+            . ' name="' . $rec['name'] . '" value="' . (!is_null($rec['value']) ? \yy::qs($rec['value']) : '') . '" />'
+            . '<br />';
+        echo '<br />';
+    }
 
+    /**
+     * Проверяем на валидность значение $value, и в случае ошибки записываем ее в
+     *   $table_recs->err
+     * @param type $value
+     * @param object $table_recs (TableRecsModel)
+     * @param string $index - индекс в массиве ошибок для записи сообщения об ошибке
+     */
+    public function validate($value, object $table_recs, string $index) {
+        $s = '\\Alxnv\\Nesttab\\core\\db\\' . config('nesttab.db_driver') . '\\FormatHelper';
+        $fh = new $s();
+
+        //$fh = new \Alxnv\Nesttab\core\FormatHelper();
+        if (false === $fh::doubleConv($value)) {
+            $table_recs->setErr($index, '"' . $value . '" ' . __('is not valid') . ' ' . __('float value'));
+        }
+        $value = floatval($value);
+        return $value;
+    }
     /**
      * пытается сохранить(изменить)  в таблице поле
      * @param array $tbl
@@ -32,7 +61,7 @@ class FloatModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
             if (false === $fh::doubleConv($default)) {
                 $this->setErr('default', '"' . $default . '" ' . __('is not valid') . ' ' . __('float value'));
             }
-            $default = intval($default);
+            $default = floatval($default);
         } else {
             $default = '';
             $this->setErr('default', '"" ' . __('is not valid') . ' ' . __('float value'));

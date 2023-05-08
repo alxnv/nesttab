@@ -168,6 +168,21 @@ class BasicDbNesttab {
         $f = $sth->fetch();
         return ($f ? $f : null);
     }
+    
+    /**
+     * Выполнить команду sql update для таблицы $tbl
+     * @param string $tbl - имя таблицы
+     * @param array $arr - массив вида 'поле' => 'значение'
+     * @param string $postfix - эта строка добавляется в конце к команде update
+     */
+    function update(string $tbl, array $arr, string $postfix) {
+        $arr2 = [];
+        foreach ($arr as $key => $value) {
+            $arr2[] = $this->nameEscape($key) . '=' . $this->escape($value);
+        }
+        $s = join(', ', $arr2);
+        $this->q("update $tbl set " . $s . ' ' . $postfix);
+    }
 /*
     function getkrohi($tab,$uid2) {
         $sth=$this->q("select a.uid as uid1,a.ordr as ord1,a.naim as naim1,a.topid as top1,

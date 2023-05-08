@@ -9,6 +9,17 @@ namespace Alxnv\Nesttab\Models\field_struct\mysql;
 
 class BoolModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
 
+    /**
+     * Проверяем на валидность значение $value, и в случае ошибки записываем ее в
+     *   $table_recs->err
+     * !!! никогда не выдает ошибку, так как это checkbox
+     * @param type $value
+     * @param object $table_recs (TableRecsModel)
+     * @param string $index - индекс в массиве ошибок для записи сообщения об ошибке
+     */
+    public function validate($value, object $table_recs, string $index) {
+        return $value;
+    }
     
     /**
      * Вывод поля таблицы для редактирования

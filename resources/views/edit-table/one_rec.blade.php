@@ -3,6 +3,8 @@
 <?php
 global $yy;
 
+$with_html_editor = 1;
+
 echo '<h1>' . __('Table') . ' "' . \yy::qs($tbl['descr']) . '"</h1><br />'; 
 //dd($recs);
 
@@ -23,6 +25,7 @@ echo '<form method="post" action="' . $yy->baseurl . 'nesttab/edit/save_one/' . 
 @csrf
 <?php
 foreach ($recs as $rec) {
+    echo $e->getErr($rec['name']);
     $rec['obj']->editField($rec, []);
 }
 echo '<input type="submit" value="' . __('Save') . '" />';

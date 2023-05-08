@@ -21,11 +21,24 @@ class BasicModel {
     }
    
     /**
+     * Проверяем на валидность значение $value, и в случае ошибки записываем ее в
+     *   $table_recs->err
+     * !!! выдает ошибку, так как обработчик для данного типа не определен
+     * @param type $value
+     * @param object $table_recs (TableRecsModel)
+     * @param string $index - индекс в массиве ошибок для записи сообщения об ошибке
+     */
+    public function validate($value, object $table_recs, string $index) {
+        $table_recs->setErr($index, 'Field processor is not defined');
+        return $value;
+    }
+    /**
      * Заглушка, вызываемая для вывода поля таблицы для редактирования
      * @param array $rec - массив с данными поля
      * @param array $errors - массив ошибок
      */
     public function editField(array $rec, array $errors) {
+        echo '<input type="hidden" name="' .$rec['name'] . '" value="1" />'; 
         echo \yy::qs($rec['descr']);
         echo '<br />';
         echo (is_null($rec['value']) ? 'Not defined' : \yy::qs($rec['value']));

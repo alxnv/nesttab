@@ -42,6 +42,14 @@ class EditController extends BasicController {
         // получаем строку с id=1 для one rec table (это единственная строка там)
         $columns = \Alxnv\Nesttab\Models\ColumnsModel::getTableColumnsWithNames($tbl['id']);
         $recs = \Alxnv\Nesttab\Models\TableRecsModel::getRecAddObjects($columns, $tbl['name'], 1);
+        $lnk2 = \yy::getEditSession();
+        if (Session::has($lnk2)) {
+            $r_edited = session($lnk2);
+            $r = \yy::addKeys($r, $r_edited);
+            // проставить значения полей из сессии (бывший post) в $recs
+            $recs = \Alxnv\Nesttab\Models\TableRecsModel::setValues($recs, $r);
+        }
+        //dd($r);
         return view('nesttab::edit-table.one_rec', ['tbl' => $tbl, 'recs' => $recs,
                 'r' => $r]);
         
@@ -66,6 +74,7 @@ class EditController extends BasicController {
             //\yy::gotoErrorPage($s);
             $lnk = \yy::getErrorEditSession();
             $request->session()->flash($lnk, $recs->err->err);
+            //dd($recs->err->err);
             $lnk2 = \yy::getEditSession();
             $request->session()->flash($lnk2, $r);
             Session::save();
