@@ -116,12 +116,20 @@ class TableRecsModel {
      * @param array $columns - массив структуры полей для данной таблицы
      * @param string $table - имя таблицы
      * @param int $id - идентификатор записи таблицы
+     * @param array $requires - сюда заносятся ключи 'need_html_editor', 'need_filepond'
+     *   этой функцией, если они нужны
      */
-    public static function getRecAddObjects(array $columns, string $table, int $id) {
+    public static function getRecAddObjects(array $columns, string $table, int $id, array &$requires = []) {
         global $db;
         $rec = $db->q("select * from $table where id=$1", [$id]);
         if (is_null($rec)) \yy::gotoErrorPage('Record not found');
         for ($i = 0; $i < count($columns); $i++) {
+            if ($columns[$i]['name_field'] == 'html') {
+                $requires['need_html_editor'] = 1;
+            }
+            if (in_array($columns[$i]['name_field'], ['image', 'file'])) {
+                $requires['need_filepond'] = 1;
+            }
             $s2 = '\\Alxnv\\Nesttab\\Models\\field_struct\\' . config('nesttab.db_driver') . '\\'
                     . ucfirst($columns[$i]['name_field']) .'Model';
             $columns[$i]['obj'] = new $s2();

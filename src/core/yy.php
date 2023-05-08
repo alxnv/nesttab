@@ -442,6 +442,14 @@ static function parsestrall(&$mtch,&$mtchto,$regex,$str1) {
         while ($t - $time < $seconds);
     }
     
+    public static function imageLoad(string $fieldName) {
+        echo '<input type="file" id = "' . $fieldName . '" name = "' . $fieldName . '" />';
+        echo "<script>
+    const inputElement = document.querySelector('#" . $fieldName . "');
+    const pond = FilePond.create(inputElement);
+    </script>";
+    }
+    
     /**
      * Создает поле Html-редактирования текста
      * @param string $fieldName - имя поля

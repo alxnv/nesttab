@@ -3,7 +3,7 @@
 <?php
 global $yy;
 
-$with_html_editor = 1;
+//$with_html_editor = 1;
 
 echo '<h1>' . __('Table') . ' "' . \yy::qs($tbl['descr']) . '"</h1><br />'; 
 //dd($recs);
@@ -24,11 +24,16 @@ echo '<form method="post" action="' . $yy->baseurl . 'nesttab/edit/save_one/' . 
 ?>
 @csrf
 <?php
+(new \Alxnv\Nesttab\Models\UploadModel())->moveFileToUpload(public_path() . '/file2.bin');
+//var_dump(\Alxnv\Nesttab\core\FileHelper::writeToFile(public_path() . '/file1.bin', 
+//        public_path() . '/file2.bin'));
 foreach ($recs as $rec) {
     echo $e->getErr($rec['name']);
     $rec['obj']->editField($rec, []);
 }
-echo '<input type="submit" value="' . __('Save') . '" />';
+if (count($recs) > 0) {
+    echo '<input type="submit" value="' . __('Save') . '" />';
+}
 echo '</form>';
 ?>
 @endsection

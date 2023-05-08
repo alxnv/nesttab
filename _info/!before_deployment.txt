@@ -1,2 +1,8 @@
 1) проверить, что где стоит Cache::lock, там проставлен для этого лока setExitReleaseLock($lockname) (с указанием его имени)
 2) settings2['are_tests_accessible'] должно быть false
+3) оставить в папке upload только пустую подпапку temp
+4) очистить таблицы:
+    truncate yy_tables;
+	truncate yy_columns;
+	
+	update yy_settings set one_counter=1, list_counter=1, ord_counter=1, cat_counter=1;

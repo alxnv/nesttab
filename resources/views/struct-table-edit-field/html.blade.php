@@ -1,5 +1,5 @@
 <?php
-$with_html_editor = 1;
+$requires = ['need_html_editor' => 1];
 ?>
 @extends(config('nesttab.layout'))
 @section('content')

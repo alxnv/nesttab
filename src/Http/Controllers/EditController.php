@@ -41,7 +41,8 @@ class EditController extends BasicController {
     public function editOneRecTable(array $tbl, array $r) {
         // получаем строку с id=1 для one rec table (это единственная строка там)
         $columns = \Alxnv\Nesttab\Models\ColumnsModel::getTableColumnsWithNames($tbl['id']);
-        $recs = \Alxnv\Nesttab\Models\TableRecsModel::getRecAddObjects($columns, $tbl['name'], 1);
+        $requires = [];
+        $recs = \Alxnv\Nesttab\Models\TableRecsModel::getRecAddObjects($columns, $tbl['name'], 1, $requires);
         $lnk2 = \yy::getEditSession();
         if (Session::has($lnk2)) {
             $r_edited = session($lnk2);
@@ -51,7 +52,7 @@ class EditController extends BasicController {
         }
         //dd($r);
         return view('nesttab::edit-table.one_rec', ['tbl' => $tbl, 'recs' => $recs,
-                'r' => $r]);
+                'r' => $r, 'requires' => $requires]);
         
     }
     

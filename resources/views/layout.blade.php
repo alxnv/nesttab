@@ -9,17 +9,24 @@
     <title><?=__("Administrator's module")?></title>
     <link rel="stylesheet" href="<?=asset('/nsttab/css/styles.css')?>">
     <link rel="stylesheet" href="<?=asset('/nsttab/css/jquery-confirm.min.css')?>">
+    <?php 
+    if (isset($requires) && isset($requires['need_filepond'])) {
+        echo '<link rel="stylesheet" href="' . asset('/nsttab/filepond/filepond.min.css') . '">';
+    }
+    ?>
     <script type="text/javascript" src="<?=asset('/nsttab/js/jquery-3.6.0.min.js')?>"></script>
     <script type="text/javascript" src="<?=asset('/nsttab/js/jquery-confirm.min.js')?>"></script>
     <script type="text/javascript" src="<?=asset('/nsttab/' . \yy::getJsLangFile())?>"></script>
     <script type="text/javascript" src="<?=asset('/nsttab/js/vue/vue.global.js')?>"></script>
     <script type="text/javascript" src="<?=asset('/nsttab/js/functions.js')?>"></script>
     <?php 
-    if (isset($with_html_editor)) {
+    if (isset($requires) && isset($requires['need_html_editor'])) {
         echo '<script src="' . asset('/nsttab/js/ckeditor4/ckeditor.js') . '"></script>';
     }
+    if (isset($requires) && isset($requires['need_filepond'])) {
+        echo '<script src="' . asset('/nsttab/filepond/filepond.min.js') . '"></script>';
+    }
     ?>
-    
   </head>
   <body>
       <div id="body-wrapper">
