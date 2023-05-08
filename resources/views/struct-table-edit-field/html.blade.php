@@ -79,10 +79,10 @@ echo __('Default value') . ':<br />';
 \yy::htmlEditor('default', (isset($r['default']) ? $r['default'] : ''));
 echo '<br />';
 
-echo $e->getErr('required');
+/*echo $e->getErr('required');
 echo '<input id="required" type="checkbox"'
         . ' name="req" ' .(isset($r['req']) ? 'checked="checked"' : '') . ' />'
-        . ' <label for="required">' . __('Is required') .'</label><br />';
+        . ' <label for="required">' . __('Is required') .'</label><br />';*/
 ?>
 </div>
 </div>

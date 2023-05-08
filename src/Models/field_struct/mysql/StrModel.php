@@ -16,8 +16,15 @@ class StrModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
      * @param type $value
      * @param object $table_recs (TableRecsModel)
      * @param string $index - индекс в массиве ошибок для записи сообщения об ошибке
+     * @param array $columns - массив всех колонок таблицы
+     * @param int $i - индекс текущего элемента в $columns
+     * @return mixed - возвращает валидированное (и, возможно, обработанное) значение
+     *   текущего поля
      */
-    public function validate($value, object $table_recs, string $index) {
+    public function validate($value, object $table_recs, string $index, array $columns, int $i) {
+        if (isset($columns[$i]['parameters']['req']) && (trim($value) == '')) {
+            $table_recs->setErr($index, __('This string must not be empty'));
+        }
         return $value;
     }
 

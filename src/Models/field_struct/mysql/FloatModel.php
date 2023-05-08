@@ -31,8 +31,12 @@ class FloatModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
      * @param type $value
      * @param object $table_recs (TableRecsModel)
      * @param string $index - индекс в массиве ошибок для записи сообщения об ошибке
+     * @param array $columns - массив всех колонок таблицы
+     * @param int $i - индекс текущего элемента в $columns
+     * @return mixed - возвращает валидированное (и, возможно, обработанное) значение
+     *   текущего поля
      */
-    public function validate($value, object $table_recs, string $index) {
+    public function validate($value, object $table_recs, string $index, array $columns, int $i) {
         $s = '\\Alxnv\\Nesttab\\core\\db\\' . config('nesttab.db_driver') . '\\FormatHelper';
         $fh = new $s();
 
@@ -41,6 +45,9 @@ class FloatModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
             $table_recs->setErr($index, '"' . $value . '" ' . __('is not valid') . ' ' . __('float value'));
         }
         $value = floatval($value);
+        if (isset($columns[$i]['parameters']['req']) && ($value == 0.0)) {
+            $table_recs->setErr($index, __('This value must not be equal to') . ' 0');
+        }
         return $value;
     }
     /**

@@ -11,7 +11,7 @@ class FileHelper {
      * Попытка записать в заданный файл
      * @param string $s - имя файла, в который пытаемся записать
      * @param string $file - имя файла, который пытаемся записать
-     * @return boolean
+     * @return boolean - удалась ли попытка записи в файл
      */
     public static function writeToFile(string $s, string $file) {
         try {

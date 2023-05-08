@@ -51,21 +51,36 @@ class TableRecsModel {
             $s2 = '\\Alxnv\\Nesttab\\Models\\field_struct\\' . config('nesttab.db_driver') . '\\'
                     . ucfirst($columns[$i]['name_field']) .'Model';
             $columns[$i]['obj'] = new $s2();
+            $columns[$i]['parameters'] = (array)json_decode($columns[$i]['parameters']);
             // значение для поля типа bool не будет в post массиве если он unchecked
             if ($columns[$i]['name_field'] == 'bool') {
                 $columns[$i]['value'] = $columns[$i]['obj']
-                        ->validate(isset($r[$columns[$i]['name']]) ? 1 : 0, $this, $columns[$i]['name']);
+                        ->validate(isset($r[$columns[$i]['name']]) ? 1 : 0, $this, $columns[$i]['name'], $columns, $i);
             } else {
-                if (isset($r[$columns[$i]['name']])) {
+                //if (isset($r[$columns[$i]['name']])) {
                     // устанавливает сообщения об ошибках для $this
-                    $columns[$i]['value'] = $columns[$i]['obj']->validate($r[$columns[$i]['name']], $this, $columns[$i]['name']);
-                }
+                $columns[$i]['value'] = $columns[$i]['obj']
+                        ->validate(isset($r[$columns[$i]['name']]) ?
+                                $r[$columns[$i]['name']] : '', $this,
+                                $columns[$i]['name'], $columns, $i);
+                
             }
         }
 
         if (!$this->hasErr()) {
             // ошибок нет. записываем данные в БД
+            $this->postProcess($columns); // записываем загруженные документы и изображения
             $this->saveToDB($tbl, $columns, $id);
+        }
+    }
+    
+    /**
+     * Записываем и обрабатываем загруженные документы и изображения
+     * @param array $columns - массив колонок
+     */
+    public function postProcess(array $columns) {
+        for ($i = 0; $i < count($columns); $i++) {
+            $columns[$i]['obj']->postProcess($this, $columns, $i);
         }
     }
     
@@ -104,6 +119,8 @@ class TableRecsModel {
             } else {
                 if (isset($r[$recs[$i]['name']])) {
                     $recs[$i]['value'] = $r[$recs[$i]['name']];
+                } else {
+                    $recs[$i]['value'] = '';
                 }
             }
         }

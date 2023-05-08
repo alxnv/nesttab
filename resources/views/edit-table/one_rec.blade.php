@@ -20,13 +20,14 @@ echo $e->getErr('');
 
 
 
-echo '<form method="post" action="' . $yy->baseurl . 'nesttab/edit/save_one/' . $tbl['id'] . '" >';
+echo '<form enctype="multipart/form-data" method="post" action="' . $yy->baseurl . 'nesttab/edit/save_one/' . $tbl['id'] . '" >';
 ?>
 @csrf
 <?php
-(new \Alxnv\Nesttab\Models\UploadModel())->moveFileToUpload(public_path() . '/file2.bin');
+//(new \Alxnv\Nesttab\Models\UploadModel())->moveFileToUpload(public_path() . '/file2.bin');
 //var_dump(\Alxnv\Nesttab\core\FileHelper::writeToFile(public_path() . '/file1.bin', 
 //        public_path() . '/file2.bin'));
+//dd($recs);
 foreach ($recs as $rec) {
     echo $e->getErr($rec['name']);
     $rec['obj']->editField($rec, []);

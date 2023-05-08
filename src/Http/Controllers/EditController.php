@@ -46,7 +46,7 @@ class EditController extends BasicController {
         $lnk2 = \yy::getEditSession();
         if (Session::has($lnk2)) {
             $r_edited = session($lnk2);
-            $r = \yy::addKeys($r, $r_edited);
+            $r = $r_edited; //\yy::addKeys($r, $r_edited);
             // проставить значения полей из сессии (бывший post) в $recs
             $recs = \Alxnv\Nesttab\Models\TableRecsModel::setValues($recs, $r);
         }
@@ -59,6 +59,8 @@ class EditController extends BasicController {
     public function saveOne($id, Request $request) {
         global $db, $yy;
         $r = $request->all();
+        $f = $request->file('file');
+        dd($r);
         $table_id = intval($id);
         if ($table_id == 0) {
             \yy::gotoErrorPage('Zero id');
@@ -83,7 +85,7 @@ class EditController extends BasicController {
             exit;
         }
         
-        dd($id);
+        //dd($id);
     }
 
     

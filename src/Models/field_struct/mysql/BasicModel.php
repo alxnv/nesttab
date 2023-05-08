@@ -20,6 +20,18 @@ class BasicModel {
         $this->err = new \Alxnv\Nesttab\Models\ErrorModel();
     }
    
+
+    /**
+     * Заглушка
+     * Постобработка данных в случае если не было ошибок валидации
+     *  (в основном для документов и изображений - загрузка их в каталог upload)
+     * @param object $table_recs - TableRecsModel
+     * @param array $columns - массив столбцов
+     * @param int $i - индекс в массиве столбцов
+     */
+    public function postProcess(object $table_recs, array $columns, int $i) {
+        
+    }
     /**
      * Проверяем на валидность значение $value, и в случае ошибки записываем ее в
      *   $table_recs->err
@@ -27,8 +39,12 @@ class BasicModel {
      * @param type $value
      * @param object $table_recs (TableRecsModel)
      * @param string $index - индекс в массиве ошибок для записи сообщения об ошибке
+     * @param array $columns - массив всех колонок таблицы
+     * @param int $i - индекс текущего элемента в $columns
+     * @return mixed - возвращает валидированное (и, возможно, обработанное) значение
+     *   текущего поля
      */
-    public function validate($value, object $table_recs, string $index) {
+    public function validate($value, object $table_recs, string $index, array $columns, int $i) {
         $table_recs->setErr($index, 'Field processor is not defined');
         return $value;
     }

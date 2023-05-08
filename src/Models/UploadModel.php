@@ -27,13 +27,14 @@ class UploadModel {
     /**
      * Копирует файл в подпапку папки upload, если нужно 
      *  создает подпапки с новыми номерами
+     * @param string $filename - исходное имя загруженного временного файла
      * @param string $file - адрес загруженного временного файла
      * @return string - подадрес в папке upload, в который был скопирован файл
      */
-    public function moveFileToUpload(string $file) {
+    public function copyFileToUpload(string $filename, string $file) {
         $n = intval(static::getCounterFile());
         if ($n == 0) {
-            $this->uploadToNewDir($file);
+            $this->uploadToNewDir($filename, $file, $dst_name);
         } else {
             $ids = [];
             $b = false;
@@ -52,14 +53,17 @@ class UploadModel {
                     continue;
                 }
                 $b = \Alxnv\Nesttab\core\FileHelper::writeToFile($s, $file);
+                $dst_name = $k . '/' . $filename;
                 $tries++;
             } while (!$b && ($tries < 3) && (count($ids) < $n));
-            if (!$b) $this->uploadToNewDir($file); // если так и не удалось записать
+            if (!$b) $this->uploadToNewDir($filename, $file, $dst_name); // если так и не удалось
+              //  записать
               // в существующие директории за 3 попытки, либо пока не просмотрели все
               //  существующие директории (если их меньше 4-х), 
               //  пытаемся записать в новую директорию
 
         }
+        return $dst_name;
     }       
 
     /**
@@ -67,9 +71,12 @@ class UploadModel {
      * создавая новую директорию,
      *  пока не запишем,
      *  либо пока не увеличим 10 раз, тогдк выдается ошибка
-     * @param string $file
+     * @param string $filename - исходное имя загруженного временного файла
+     * @param string $file - путь к файлу, который будем копировать
+     * @param mixed $dst_name - сюда записывается подадрес загруженного файла
+     *   в папке upload (например, "1/file.ext")
      */
-    public function uploadToNewDir(string $file) {
+    public function uploadToNewDir(string $filename, string $file, &$dst_name) {
         $i=0;
         do {
             $n = $this->increaseCounter();
@@ -85,6 +92,7 @@ class UploadModel {
         if ($i >= 10) {
             \yy::gotoErrorPage('Cannot upload file to new dir');
         }
+        $dst_name = '' . $n . '/'.  $filename;
     }
 
 

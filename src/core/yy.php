@@ -443,10 +443,23 @@ static function parsestrall(&$mtch,&$mtchto,$regex,$str1) {
     }
     
     public static function imageLoad(string $fieldName) {
-        echo '<input type="file" id = "' . $fieldName . '" name = "' . $fieldName . '" />';
+        echo '<input type="file" id = "' . $fieldName . '"  name = "' . $fieldName . '" />';
         echo "<script>
-    const inputElement = document.querySelector('#" . $fieldName . "');
-    const pond = FilePond.create(inputElement);
+    let inputElement_" . $fieldName . " = document.querySelector('#" . $fieldName . "');
+    const pond_" . $fieldName . " = FilePond.create(inputElement_" . $fieldName . ");
+    // Request encoded data
+    pond_" . $fieldName . ".onaddfile = (err, item) => {
+
+            if (err) {
+                console.warn(err);
+                return;
+            }
+            
+            let dataURL = item.getFileEncodeDataURL();
+
+            let base64String = item.getFileEncodeBase64String();
+            //alert(base64String);
+        }
     </script>";
     }
     
