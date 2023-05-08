@@ -63,7 +63,7 @@ dd($s);*/
         if (Session::has($lnk2)) {
             $r_edited = session($lnk2);
             $r = \yy::addKeys($r, $r_edited);
-            Session::remove($lnk2);
+            //Session::remove($lnk2);
             $b = true;
         }
 
@@ -140,9 +140,11 @@ dd($s);*/
         } else {
             //\yy::gotoErrorPage($s);
             $lnk = \yy::getErrorEditSession();
-            session([$lnk => $field_model->err->err]);
+            $request->session()->flash($lnk, $field_model->err->err);
+            //session([$lnk => $field_model->err->err]);
             $lnk2 = \yy::getEditSession();
-            session([$lnk2 => $r]);
+            $request->session()->flash($lnk2, $r);
+            //session([$lnk2 => $r]);
             Session::save();
             $ids = (isset($r['id']) ? 'id=' . intval($r['id']) . '&' : '');
             \yy::redirectNow($yy->baseurl . 'nesttab/struct-table-edit-field/step2/' . $table_id .
