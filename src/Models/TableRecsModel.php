@@ -44,7 +44,7 @@ class TableRecsModel {
      * @param int $id - идентификатор записи
      * @param array $r - (array)Request
      */
-    public function save(array $tbl, int $id, array $r) {
+    public function save(array $tbl, int $id, array &$r) {
         //$this->setErr('', 'fdsafd');
         $columns = \Alxnv\Nesttab\Models\ColumnsModel::getTableColumnsWithNames($tbl['id']);
         for ($i = 0; $i < count($columns); $i++)  {
@@ -55,21 +55,21 @@ class TableRecsModel {
             // значение для поля типа bool не будет в post массиве если он unchecked
             if ($columns[$i]['name_field'] == 'bool') {
                 $columns[$i]['value'] = $columns[$i]['obj']
-                        ->validate(isset($r[$columns[$i]['name']]) ? 1 : 0, $this, $columns[$i]['name'], $columns, $i);
+                        ->validate(isset($r[$columns[$i]['name']]) ? 1 : 0, $this, $columns[$i]['name'], $columns, $i, $r);
             } else {
                 //if (isset($r[$columns[$i]['name']])) {
                     // устанавливает сообщения об ошибках для $this
                 $columns[$i]['value'] = $columns[$i]['obj']
                         ->validate(isset($r[$columns[$i]['name']]) ?
                                 $r[$columns[$i]['name']] : '', $this,
-                                $columns[$i]['name'], $columns, $i);
+                                $columns[$i]['name'], $columns, $i, $r);
                 
             }
         }
 
         if (!$this->hasErr()) {
             // ошибок нет. записываем данные в БД
-            $this->postProcess($columns); // записываем загруженные документы и изображения
+            $this->postProcess($columns, $r); // записываем загруженные документы и изображения
             $this->saveToDB($tbl, $columns, $id);
         }
     }
@@ -77,10 +77,11 @@ class TableRecsModel {
     /**
      * Записываем и обрабатываем загруженные документы и изображения
      * @param array $columns - массив колонок
+     * @param $r - (array)Request
      */
-    public function postProcess(array $columns) {
+    public function postProcess(array &$columns, $r) {
         for ($i = 0; $i < count($columns); $i++) {
-            $columns[$i]['obj']->postProcess($this, $columns, $i);
+            $columns[$i]['obj']->postProcess($this, $columns, $i, $r);
         }
     }
     

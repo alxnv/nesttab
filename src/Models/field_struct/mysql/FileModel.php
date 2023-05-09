@@ -17,15 +17,35 @@ class FileModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
      * @param string $index - индекс в массиве ошибок для записи сообщения об ошибке
      * @param array $columns - массив всех колонок таблицы
      * @param int $i - индекс текущего элемента в $columns
+     * @param array $r - (array)Request
      * @return mixed - возвращает валидированное (и, возможно, обработанное) значение
      *   текущего поля
      */
-    public function validate($value, object $table_recs, string $index, array $columns, int $i) {
+    public function validate($value, object $table_recs, string $index, array $columns, int $i, array &$r) {
         $v2 = $value;
-        if (isset($_FILES[$index])) {
+        if (isset($r[$index])) {
             // загружен новый файл
+            $file = json_decode($r[$index]);
+            $ext = pathinfo($file->name, PATHINFO_EXTENSION);
+            if (!\Alxnv\Nesttab\core\FormatHelper::validExt($ext))
+                $table_recs->setErr($index, __('Wrong file type'));
+            $allowed = $columns[$i]['parameters']['allowed'];
+            if (count($allowed) > 0) {
+                if (!\Alxnv\Nesttab\core\FormatHelper::inListCaseInsensitive($ext,
+                    $allowed)) {
+                    $arr = \Alxnv\Nesttab\core\ArrayHelper::forArray($allowed,
+                            function($value) {
+                                return '"' . $value . '"';
+                            });
+                    $table_recs->setErr($index, __('Allowed extensions') . ': '
+                            . join(', ', $arr));
+                }
+            }
+            $r[$index . '_srv_2'] = $r[$index];
             $v2 = '1';
         };
+        $value = '';
+        $r[$index] = '';
         if (isset($columns[$i]['parameters']['req']) && (trim($v2) == '')) {
             $table_recs->setErr($index, __('The file must exist'));
         }
@@ -39,13 +59,16 @@ class FileModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
      * @param object $table_recs - TableRecsModel
      * @param array $columns - массив столбцов
      * @param int $i - индекс в массиве столбцов
+     * @param array $r - (array)Request
      */
-    public function postProcess(object $table_recs, array $columns, int $i) {
+    public function postProcess(object $table_recs, array &$columns, int $i, array $r) {
         $index = $columns[$i]['name'];
-        if (isset($_FILES[$index])) {
+        if (isset($r[$index . '_srv_2'])) {
             // загружен новый файл
+            $file = json_decode($r[$index . '_srv_2']);
+            
             $um = new \Alxnv\Nesttab\Models\UploadModel();
-            $value = $um->copyFileToUpload($_FILES[$index]['name'], $_FILES[$index]['tmp_name']);
+            $value = $um->copyFileToUpload($file->name, base64_decode($file->data));
             $columns[$i]['value'] = $value;
         };
         
@@ -59,7 +82,7 @@ class FileModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
     public function editField(array $rec, array $errors) {
         echo \yy::qs($rec['descr']);
         echo '<br />';
-        \yy::imageLoad($rec['name']);
+        \yy::imageLoad($rec['name'], basename($rec['value']));
         echo '<br />';
         //echo '<br />';
     }
@@ -81,9 +104,11 @@ class FileModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
         } else {
             $allowed = [];
         }
-        if (count($allowed) == 0) {
+        /*if (count($allowed) == 0) {
             $this->setErr('allowed', __('You must specify files extensions'));
-        }
+        }*/
+        $this->extensionsArrayTestValid($allowed); // проверить, нет ли в 
+         // массиве элементов вида 'php*', 'py'
         $params = ['allowed' => $allowed];
         return $this->saveStep2($tbl, $fld, $r, $old_values, $default, $params);
 

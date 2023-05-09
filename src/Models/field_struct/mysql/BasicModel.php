@@ -20,6 +20,17 @@ class BasicModel {
         $this->err = new \Alxnv\Nesttab\Models\ErrorModel();
     }
    
+    public function extensionsArrayTestValid(array $allowed) {
+        $arr = [];
+        foreach ($allowed as $a) {
+            if (!\Alxnv\Nesttab\core\FormatHelper::validExt($a))
+                $arr[] = ('"' . $a . '"');
+        }
+        if (count($arr) > 0) {
+            $this->setErr('allowed', __('Forbidden extensions') 
+                    . ': ' . join(', ', $arr));
+        }
+    }
 
     /**
      * Заглушка
@@ -28,8 +39,9 @@ class BasicModel {
      * @param object $table_recs - TableRecsModel
      * @param array $columns - массив столбцов
      * @param int $i - индекс в массиве столбцов
+     * @param array $r - (array)Request
      */
-    public function postProcess(object $table_recs, array $columns, int $i) {
+    public function postProcess(object $table_recs, array &$columns, int $i, array $r) {
         
     }
     /**
@@ -41,10 +53,11 @@ class BasicModel {
      * @param string $index - индекс в массиве ошибок для записи сообщения об ошибке
      * @param array $columns - массив всех колонок таблицы
      * @param int $i - индекс текущего элемента в $columns
+     * @param array $r - (array)Request
      * @return mixed - возвращает валидированное (и, возможно, обработанное) значение
      *   текущего поля
      */
-    public function validate($value, object $table_recs, string $index, array $columns, int $i) {
+    public function validate($value, object $table_recs, string $index, array $columns, int $i, array &$r) {
         $table_recs->setErr($index, 'Field processor is not defined');
         return $value;
     }

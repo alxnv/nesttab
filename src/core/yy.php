@@ -442,7 +442,12 @@ static function parsestrall(&$mtch,&$mtchto,$regex,$str1) {
         while ($t - $time < $seconds);
     }
     
-    public static function imageLoad(string $fieldName) {
+    /**
+     * Вывести поле загрузки файла
+     * @param string $fieldName - имя поля (латиница)
+     * @param string $value - значение поля
+     */
+    public static function imageLoad(string $fieldName, string $value) {
         echo '<input type="file" id = "' . $fieldName . '"  name = "' . $fieldName . '" />';
         echo "<script>
     let inputElement_" . $fieldName . " = document.querySelector('#" . $fieldName . "');
@@ -461,6 +466,12 @@ static function parsestrall(&$mtch,&$mtchto,$regex,$str1) {
             //alert(base64String);
         }
     </script>";
+        if (isset($value) && $value <> '') {
+            echo __('File') . ': ' . \yy::qs($value) . '<br />';
+            echo '<input type="checkbox" '
+            . 'name="' . $fieldName .'_srv_" id="' . $fieldName .'_srv_" /> ';
+            echo '<label for="' . $fieldName .'_srv_">' . __('Delete') . '</label><br />';
+        }
     }
     
     /**

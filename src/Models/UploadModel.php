@@ -28,11 +28,11 @@ class UploadModel {
      * Копирует файл в подпапку папки upload, если нужно 
      *  создает подпапки с новыми номерами
      * @param string $filename - исходное имя загруженного временного файла
-     * @param string $file - адрес загруженного временного файла
+     * @param string $file - содержимое загруженного файла
      * @return string - подадрес в папке upload, в который был скопирован файл
      */
     public function copyFileToUpload(string $filename, string $file) {
-        $n = intval(static::getCounterFile());
+        $n = intval(self::getCounterFile());
         if ($n == 0) {
             $this->uploadToNewDir($filename, $file, $dst_name);
         } else {
@@ -44,7 +44,7 @@ class UploadModel {
                 if (isset($ids[$k])) continue; // в эту директорию уже пытались записать
                 $ids[$k] = 1; // попробовали записать в эту директорию
                 $s = public_path() . '/upload/' .
-                    $k . '/' . basename($file);
+                    $k . '/' . $filename;
                 if (!\Alxnv\Nesttab\core\FileHelper::numberOfFilesInDirLessThen(public_path() .
                         '/upload/' . $k, $n + 2)) {
                     // если в директории больше файлов чем число в upload/counter.txt,
@@ -72,7 +72,7 @@ class UploadModel {
      *  пока не запишем,
      *  либо пока не увеличим 10 раз, тогдк выдается ошибка
      * @param string $filename - исходное имя загруженного временного файла
-     * @param string $file - путь к файлу, который будем копировать
+     * @param string $file - содержимое файла, который будем копировать
      * @param mixed $dst_name - сюда записывается подадрес загруженного файла
      *   в папке upload (например, "1/file.ext")
      */
@@ -81,7 +81,7 @@ class UploadModel {
         do {
             $n = $this->increaseCounter();
             $s = public_path() . '/upload/' .
-                    $n . '/' . basename($file);
+                    $n . '/' . $filename;
             $b = file_exists($s);
             @mkdir(public_path() . '/upload/' . $n);
             if (!$b) {

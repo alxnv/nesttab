@@ -9,6 +9,7 @@
 namespace Alxnv\Nesttab\core\db\mysql;
 
 class FormatHelper {
+    
     /**
      * 
      * @param string $s

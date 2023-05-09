@@ -72,6 +72,7 @@ echo __('Allowed extensions') . ': <input type="text" size="50" id="allowed"'
         . ' name="allowed" value="' . (isset($r['allowed']) ? \yy::qs($r['allowed']) : '') . '" />'
         . '<br />';
 echo '<div class="comment">(' . __("Enter file extensions delimeted by ','") . 
+        ', ' . __("or empty string, if any extension is allowed") .
          ')<br /></div>';
 ?>
 <div id="app">

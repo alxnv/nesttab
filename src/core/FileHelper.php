@@ -32,28 +32,13 @@ class FileHelper {
     /**
      * Скопировать данные из файла $file в файл, на который указывает $fp (handle)
      * @param type $fp - хэндлер файла в который записываем
-     * @param string $file - имя файла, из которого записываем
+     * @param string $file - содержимое файла, из которого записываем
      * @param int $suggest_delete - эта переменная устанавливается в 1 если нужно 
      *   будет после вызова этого метода удалить файл $fp
      * @return boolean - удалось ли записать файл
      */
     public static function writeFileToHandle($fp, string $file, &$suggest_delete = 0) {
-        try {
-            $fps = fopen($file, 'rb'); // открываем для чтения и записи, указатель
-              // помещается на начало файла
-        } catch (\Exception $ex) {
-            $fps = false;
-        }
-        if ($fps === false) {
-            $suggest_delete = 1;
-            return false;
-        }
-        do {
-            $s = fread($fps, 65536);
-            if ($s <> '') {
-                if (!fwrite($fp, $s)) return false;
-            }
-        } while ($s <> '');
+        if (!fwrite($fp, $file)) return false;
         return true;
     }
     

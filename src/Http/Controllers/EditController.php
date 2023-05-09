@@ -45,6 +45,11 @@ class EditController extends BasicController {
         $recs = \Alxnv\Nesttab\Models\TableRecsModel::getRecAddObjects($columns, $tbl['name'], 1, $requires);
         $lnk2 = \yy::getEditSession();
         if (Session::has($lnk2)) {
+            $lnk = \yy::getErrorEditSession();
+            $er2 = session($lnk);
+            $lnk = \yy::getErrorEditSession();
+            $er2 = session($lnk);
+            //dd($er2);
             $r_edited = session($lnk2);
             $r = $r_edited; //\yy::addKeys($r, $r_edited);
             // проставить значения полей из сессии (бывший post) в $recs
@@ -59,8 +64,7 @@ class EditController extends BasicController {
     public function saveOne($id, Request $request) {
         global $db, $yy;
         $r = $request->all();
-        $f = $request->file('file');
-        dd($r);
+        //dd($r);
         $table_id = intval($id);
         if ($table_id == 0) {
             \yy::gotoErrorPage('Zero id');
@@ -76,9 +80,11 @@ class EditController extends BasicController {
         } else {
             //\yy::gotoErrorPage($s);
             $lnk = \yy::getErrorEditSession();
+            //session([$lnk => $recs->err->err]);
             $request->session()->flash($lnk, $recs->err->err);
             //dd($recs->err->err);
             $lnk2 = \yy::getEditSession();
+            //session([$lnk2 => $r]);
             $request->session()->flash($lnk2, $r);
             Session::save();
             \yy::redirectNow($yy->baseurl . 'nesttab/edit?id=' . $table_id);

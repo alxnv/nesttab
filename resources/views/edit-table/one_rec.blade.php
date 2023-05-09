@@ -13,6 +13,7 @@ $e = new \Alxnv\Nesttab\Models\ErrorModel();
 $lnk_err = \yy::getErrorEditSession();
 if (Session::has($lnk_err)) {
     $e->err = session($lnk_err);
+    //if (count($e->err) > 0 ) dd($e);
 }
 echo \yy::getSuccessOrErrorMessage($r, $e);
 echo $e->getErr('');
