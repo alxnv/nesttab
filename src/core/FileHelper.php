@@ -7,6 +7,28 @@
 namespace Alxnv\Nesttab\core;
 
 class FileHelper {
+
+    /** 
+     * Удаляет директорию с содержимым (пока что не рекурсивно)
+     * @param string $dir
+     */ 
+    public static function deleteDir(string $dir) {
+        try {
+            $files = scandir($dir, SCANDIR_SORT_NONE);
+        } catch (\Exception $ex) {
+            return false;
+        }
+        if ($files === false) return false;
+        foreach ($files as $file) {
+            if (($file <> '.') && ($file <> '..')) @unlink($dir . '/' . $file);
+        }
+        try {
+            $b = rmdir($dir);
+        } catch (\Exception $ex) {
+            return false;
+        }
+        return $b;
+    }
     /**
      * Попытка записать в заданный файл
      * @param string $s - имя файла, в который пытаемся записать

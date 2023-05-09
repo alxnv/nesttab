@@ -445,7 +445,7 @@ static function parsestrall(&$mtch,&$mtchto,$regex,$str1) {
     /**
      * Вывести поле загрузки файла
      * @param string $fieldName - имя поля (латиница)
-     * @param string $value - значение поля
+     * @param string $value - имя загруженного ранее файла
      */
     public static function imageLoad(string $fieldName, string $value) {
         echo '<input type="file" id = "' . $fieldName . '"  name = "' . $fieldName . '" />';

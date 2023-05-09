@@ -8,7 +8,9 @@ global $yy;
 echo '<h1>' . __('Table') . ' "' . \yy::qs($tbl['descr']) . '"</h1><br />'; 
 //dd($recs);
 
-
+(new \Alxnv\Nesttab\Models\TokenUploadModel)->deleteOldTokens();
+//$b = \Alxnv\Nesttab\core\FileHelper::deleteDir(public_path() . '/upload/dir1');
+//dd($b);
 $e = new \Alxnv\Nesttab\Models\ErrorModel();
 $lnk_err = \yy::getErrorEditSession();
 if (Session::has($lnk_err)) {
