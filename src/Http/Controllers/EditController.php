@@ -73,9 +73,9 @@ class EditController extends BasicController {
         $recs = new \Alxnv\Nesttab\Models\TableRecsModel();
         $recs->save($tbl, 1, $r); // сохраняем запись с id=1
         if (!$recs->hasErr()) {
+            $request ->session()->flash('saved_successfully', 1);
             Session::save();
-            \yy::redirectNow($yy->baseurl . 'nesttab/edit?id=' . $table_id . 
-                    '&saved_succesfully=1');
+            \yy::redirectNow($yy->baseurl . 'nesttab/edit?id=' . $table_id);
             exit;
         } else {
             //\yy::gotoErrorPage($s);

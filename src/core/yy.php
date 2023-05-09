@@ -534,7 +534,7 @@ static function parsestrall(&$mtch,&$mtchto,$regex,$str1) {
      *   в ином случае - пустую строку
      */
     public static function getSuccessOrErrorMessage(array $r, object $e) {
-        if (isset($r['saved_succesfully'])) {
+        if (Session::has('saved_successfully')) {
             return '<div class="success_message">' . __('Data has been saved') .
                     '</div><br /><br />';
         }
@@ -543,6 +543,15 @@ static function parsestrall(&$mtch,&$mtchto,$regex,$str1) {
                     '</div><br /><br />';
         }
         return '';
+    }
+    
+    /**
+     * Текстовое представление даты
+     * @param int $date
+     * @return string
+     */
+    public static function ds(int $date) {
+        return date('d.m.Y H:i:s', $date);
     }
 }
 
