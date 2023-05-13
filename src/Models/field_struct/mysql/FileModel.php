@@ -66,9 +66,10 @@ class FileModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
         if (isset($r[$index . '_srv_2'])) {
             // загружен новый файл
             $file = json_decode($r[$index . '_srv_2']);
+            $fname = basename($file->name); // validate input values
             
             $um = new \Alxnv\Nesttab\Models\UploadModel();
-            $value = $um->copyFileToUpload($file->name, base64_decode($file->data));
+            $value = $um->copyFileToUpload($fname, base64_decode($file->data));
             $columns[$i]['value'] = $value;
         };
         

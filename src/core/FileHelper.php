@@ -8,6 +8,29 @@ namespace Alxnv\Nesttab\core;
 
 class FileHelper {
 
+    /**
+     * Создает директорию $dirname
+     *  создает также родительские директории, если они не существуют
+     * @param string $dirname
+     */
+    public static function createDir(string $dirname) {
+        
+    }
+    
+    /**
+     * Создает из строки $dirname массив кусков строки, вида '/\//temp',
+     *        'c:\rrr', '\uuu'
+     *   (разбивает строку на эти подстроки)
+     * @param string $dirname - полный путь к директории
+     */
+    public static function _getCDChunks(string $dirname) {
+        if (preg_match('/^[a-zA-Z]{1}$/', substr($dirname, 0, 1)) &&
+                (substr($dirname, 1, 2) == ":\\")) {
+            $n = self::_oneCDChunk($dirname, 3);
+        }
+    }
+
+
     /** 
      * Удаляет директорию с содержимым (пока что не рекурсивно)
      * @param string $dir

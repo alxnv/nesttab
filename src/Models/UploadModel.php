@@ -91,6 +91,9 @@ class UploadModel {
      * @return string - подадрес в папке upload, в который был скопирован файл
      */
     public function copyFileToUpload(string $filename, string $file) {
+        // в каталоге могут создаваться директории 1-4, так что убедимся, что не будет
+        //  файлов с такими именами
+        if (in_array($filename, ['1', '2', '3', '4'])) $filename .= '_';
         $n = intval(self::getCounterFile());
         if ($n == 0) {
             $this->uploadToNewDir($filename, $file, $dst_name);
