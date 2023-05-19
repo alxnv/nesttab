@@ -20,3 +20,14 @@ CKEditor 4 is licensed under the terms of any of the following licenses of your 
 Но, тем не менее, вы обязаны указывать лицензию MPL 2.0 на ту часть, которую вы используете в своем проекте.
  Кроме того, если вы модифицируете какие то файлы лицензированные под MPL 2.0, то вы должны их показать в
  открытом коде. Более подробно читайте здесь.
+ 
+ -----
+ filepond 
+ mit license
+ 
+ Disabling Credits
+FilePond is given to you for free. Please support the project by not removing the tiny Powered by PQINA footer.
+
+If you don't like the way the footer looks but still want to support FilePond, please link to https://pqina.nl somewhere else on your website.
+
+You can also restyle the footer by adjusting the .filepond--credits CSS class.
