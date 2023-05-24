@@ -486,7 +486,9 @@ static function parsestrall(&$mtch,&$mtchto,$regex,$str1) {
                 . ' name="' . $fieldName . '" height="' . $heightPixels . 'px">';
         echo $value;
         echo '</textarea>';
-        echo "<script>
+        // jquery domready block add
+        \blocks::add('jquery', "new nicEditor().panelInstance('" . $fieldName . "');");
+/*        echo "<script>
 	CKEDITOR.replace( '" . $fieldName . "' );
         </script>";
     //        $('" . $fieldName . "').ckeditor();

@@ -1,4 +1,5 @@
-- поставить html editor wymeditor (xhtml dual license mit), не markitup (mit license, но не wisywig), или nicedit (mit license, но давно сделан - в 2008 году)
+----- не поставить html editor wymeditor (xhtml dual license mit) -  конфликт с текущей версией jquery,
+- не markitup (mit license, но не wisywig), или nicedit (mit license, но давно сделан - в 2008 году)
 
 - можно отслеживать violation ключей бд при добавлении-изменении записей
  тогда выдается сообщение mysql:

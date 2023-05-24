@@ -21,7 +21,8 @@
     <script type="text/javascript" src="<?=asset('/nsttab/js/functions.js')?>"></script>
     <?php 
     if (isset($requires) && isset($requires['need_html_editor'])) {
-        echo '<script src="' . asset('/nsttab/js/ckeditor4/ckeditor.js') . '"></script>';
+        //echo '<link rel="stylesheet" href="' . asset('/nsttab/wymeditor/skins/default/skin.css') . '">';
+        echo '<script src="' . asset('/nsttab/nicedit/nicEdit.js') . '"></script>';
     }
     ?>
   </head>
@@ -68,9 +69,13 @@ if ($user['can_modify_structure']) {
         </div>    
         <div id="footer">&copy; 2022-2023 by Alexander Vorobyov</div>
       </div>
-    <script>
-    @stack('js')
-    </script>
+    <script type="text/javascript">
+        $(function() {
+            <?php
+            \blocks::show('jquery');
+            ?>
+        });
+    </script>      
   </body>
 </html>
                 

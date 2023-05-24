@@ -14,5 +14,6 @@ class BasicController extends Controller
     {
         //dd(vendor_path());
         require(__DIR__ . '/../../core/yy.php');
+        require(__DIR__ . '/../../core/blocks.php');
     }
 }
