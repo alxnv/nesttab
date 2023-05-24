@@ -22,7 +22,7 @@
     <?php 
     if (isset($requires) && isset($requires['need_html_editor'])) {
         //echo '<link rel="stylesheet" href="' . asset('/nsttab/wymeditor/skins/default/skin.css') . '">';
-        echo '<script src="' . asset('/nsttab/nicedit/nicEdit.js') . '"></script>';
+        echo '<script src="' . asset('/nsttab/js/ckeditor4/ckeditor.js') . '"></script>';
     }
     ?>
   </head>

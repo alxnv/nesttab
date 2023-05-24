@@ -65,7 +65,6 @@ $controller->render_partial(['r' => $r], 'additional', 'all-fields');
 echo '</p>';
 */
 //\yy::htmlEditor('default', (isset($r['default']) ? $r['default'] : ''));
-\yy::htmlEditor('default', (isset($r['default']) ? $r['default'] : ''));
 ?>
 
 <div id="app">
