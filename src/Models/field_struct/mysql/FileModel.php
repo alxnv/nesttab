@@ -75,6 +75,40 @@ class FileModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
         
     }
     
+    
+    /**
+     * Вывести поле загрузки файла
+     * @param string $fieldName - имя поля (латиница)
+     * @param string $value - имя загруженного ранее файла
+     */
+    public static function fileLoad(string $fieldName, string $value) {
+        echo '<input type="file" id = "' . $fieldName . '"  name = "' . $fieldName . '" />';
+        echo "<script>
+    let inputElement_" . $fieldName . " = document.querySelector('#" . $fieldName . "');
+    const pond_" . $fieldName . " = FilePond.create(inputElement_" . $fieldName . ");
+    // Request encoded data
+    pond_" . $fieldName . ".onaddfile = (err, item) => {
+
+            if (err) {
+                console.warn(err);
+                return;
+            }
+            
+            let dataURL = item.getFileEncodeDataURL();
+
+            let base64String = item.getFileEncodeBase64String();
+            //alert(base64String);
+        }
+    </script>";
+        if (isset($value) && $value <> '') {
+            echo __('File') . ': ' . \yy::qs($value) . '<br />';
+            echo '<input type="checkbox" '
+            . 'name="' . $fieldName .'_srv_" id="' . $fieldName .'_srv_" /> ';
+            echo '<label for="' . $fieldName .'_srv_">' . __('Delete') . '</label><br />';
+        }
+    }
+    
+    
     /**
      * Вывод поля таблицы для редактирования
      * @param array $rec - массив с данными поля
@@ -83,7 +117,7 @@ class FileModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
     public function editField(array $rec, array $errors) {
         echo \yy::qs($rec['descr']);
         echo '<br />';
-        \yy::imageLoad($rec['name'], basename($rec['value']));
+        self::fileLoad($rec['name'], basename($rec['value']));
         echo '<br />';
         //echo '<br />';
     }

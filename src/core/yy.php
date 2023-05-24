@@ -443,38 +443,6 @@ static function parsestrall(&$mtch,&$mtchto,$regex,$str1) {
     }
     
     /**
-     * Вывести поле загрузки файла
-     * @param string $fieldName - имя поля (латиница)
-     * @param string $value - имя загруженного ранее файла
-     */
-    public static function imageLoad(string $fieldName, string $value) {
-        echo '<input type="file" id = "' . $fieldName . '"  name = "' . $fieldName . '" />';
-        echo "<script>
-    let inputElement_" . $fieldName . " = document.querySelector('#" . $fieldName . "');
-    const pond_" . $fieldName . " = FilePond.create(inputElement_" . $fieldName . ");
-    // Request encoded data
-    pond_" . $fieldName . ".onaddfile = (err, item) => {
-
-            if (err) {
-                console.warn(err);
-                return;
-            }
-            
-            let dataURL = item.getFileEncodeDataURL();
-
-            let base64String = item.getFileEncodeBase64String();
-            //alert(base64String);
-        }
-    </script>";
-        if (isset($value) && $value <> '') {
-            echo __('File') . ': ' . \yy::qs($value) . '<br />';
-            echo '<input type="checkbox" '
-            . 'name="' . $fieldName .'_srv_" id="' . $fieldName .'_srv_" /> ';
-            echo '<label for="' . $fieldName .'_srv_">' . __('Delete') . '</label><br />';
-        }
-    }
-    
-    /**
      * Создает поле Html-редактирования текста
      * @param string $fieldName - имя поля
      * @param string $value - начальное содержание поля
