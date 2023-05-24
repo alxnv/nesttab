@@ -20,6 +20,10 @@ class BasicModel {
         $this->err = new \Alxnv\Nesttab\Models\ErrorModel();
     }
    
+    /**
+     * Проверяет, что значения из массива разрешены (не 'py', 'pl', не 'php*')
+     * @param array $allowed
+     */
     public function extensionsArrayTestValid(array $allowed) {
         $arr = [];
         foreach ($allowed as $a) {
