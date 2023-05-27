@@ -37,8 +37,21 @@ Route::prefix('nesttab')->group(function () {
     //Route::get('/ex', ['as' => 'ex',
       //              'uses' => 'ExController@show']);
     //dd(7);
+    
+    /**
+     * руты для уровня пользователя "модератор"
+     */
     Route::post('/edit/save_one/{id}', CP9 . 'EditController@saveOne');
     Route::get('/edit', CP9 . 'EditController@index');
+    Route::get('/error', CP9 . 'ErrorController');
+    Route::get('/message', CP9 . 'MessageController');
+    Route::get('/', CP9 . 'IndexController@index');
+    
+    
+
+    /**
+     * руты для уровня пользователя "администратор"
+     */
     Route::get('/tests', CP9 . 'TestsController@index');
     Route::get('/tests/ajax_infinite_sql', CP9 . 'TestsAjaxController@infiniteSql');
     Route::get('/tests/ajax_infinite_run_sql', CP9 . 'TestsAjaxController@infiniteSqlRun');
@@ -55,9 +68,6 @@ Route::prefix('nesttab')->group(function () {
     Route::get('/struct-change-table/delete/{id}', CP9 . 'StructChangeTableController@delete');
     Route::get('/struct-change-table/move/{tbl_id}/{id}/moveto/{pos}', CP9 . 'StructChangeTableController@move');
     Route::get('/change-struct-list', CP9 . 'ChangeStructListController');
-    Route::get('/error', CP9 . 'ErrorController');
-    Route::get('/message', CP9 . 'MessageController');
-    Route::get('/', CP9 . 'IndexController@index');
     //Route::get('/not-req/{id?}', 'NotReqParamsController');
         //->whereNumber('id');
     //Route::resource('edit', 'EditController');
