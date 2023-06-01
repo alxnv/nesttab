@@ -523,6 +523,7 @@ static function parsestrall(&$mtch,&$mtchto,$regex,$str1) {
     public static function ds(int $date) {
         return date('d.m.Y H:i:s', $date);
     }
+    
 }
 
 global $yy;

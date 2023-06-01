@@ -1,6 +1,9 @@
 ----- не поставить html editor wymeditor (xhtml dual license mit) -  конфликт с текущей версией jquery,
 - не markitup (mit license, но не wisywig), не nicedit (mit license, но давно сделан - в 2008 году - конфликт с jquery) 
 - то есть оставляю ckeditor4, но делаю его отдельно (он по copyleft лицензии)
+-------------
+- посмотреть, как будет работать сохранение записи при key violation in db
+
 
 - можно отслеживать violation ключей бд при добавлении-изменении записей
  тогда выдается сообщение mysql:

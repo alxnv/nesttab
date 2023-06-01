@@ -69,8 +69,16 @@ class TableRecsModel {
 
         if (!$this->hasErr()) {
             // ошибок нет. записываем данные в БД
-            $this->postProcess($columns, $r); // записываем загруженные документы и изображения
-            $this->saveToDB($tbl, $columns, $id);
+            $b = $this->saveToDB($tbl, $columns, $id);
+            if ($b) {
+                // если основные поля сохранены без ошибок
+                $this->postProcess($columns, $r); // записываем загруженные документы и изображения
+                // ошибок нет. записываем данные в БД
+                $b = $this->saveToDBFiles($tbl, $columns, $id);
+            } else {
+                // todo - в случае если было нарушение (дублирование) ключа, здесь обрабатываем
+                //  и возвращаем ошибку
+            }
         }
     }
     
@@ -93,19 +101,81 @@ class TableRecsModel {
     public function saveToDB(array $tbl, array $columns, int $id) {
         global $db;
         $arr = [];
-        // определяем, какие данные записывать
+        // определяем, какие данные записывать (кроме полей типа image и file
         for ($i = 0; $i < count($columns); $i++) {
-            if (isset($columns[$i]['value'])) {
+            // $columns[$i]['name_field'] - тип поля
+            if (isset($columns[$i]['value']) 
+                    && !in_array($columns[$i]['name_field'], ['image', 'file'])) {
                 $arr[$columns[$i]['name']] = $columns[$i]['value'];
             }
         }
         
         if (count($arr) > 0) {
             $db->update($tbl['name'], $arr, "where id=" . $id);
+            return ($db->errorCode == 0);
+        }
+        return true;
+    }
+    
+    /**
+     * Записываем данные файлов и изображений в БД
+     * @param array $tbl - массив с данными о таблице
+     * @param array $columns - массив с данными полей таблицы и их значениями
+     */
+    public function saveToDBFiles(array $tbl, array $columns, int $id) {
+        global $db;
+        $arr = [];
+        $arind = [];
+        // определяем, какие данные записывать (поля типа image и file)
+        for ($i = 0; $i < count($columns); $i++) {
+            // $columns[$i]['name_field'] - тип поля
+            if (isset($columns[$i]['value']) 
+                    && in_array($columns[$i]['name_field'], ['image', 'file'])) {
+                $arr[$columns[$i]['name']] = $columns[$i]['value'];
+                $arind[$columns[$i]['name']] = $i;
+            }
+        }
+        
+        // удаляем файлы, которые были ранее указаны в БД
+        $this->deletePrevious($columns, $tbl['name'], $arr, $arind, $id);
+        // записываем значения
+        if (count($arr) > 0) {
+            $db->update($tbl['name'], $arr, "where id=" . $id);
+            return ($db->errorCode == 0);
+        }
+        return true;
+    }
+
+    /**
+     * Удалить предыдущие версии файлов image, file
+     * @global type $db
+     * @param array $columns - $columns array
+     * @param string $tbl - имя таблицы
+     * @param array $arr - массив имен полей типа image, file которые поменялись
+     * @param array $arind - массив индексов в $columns имен полей из $arr
+     * @param int $id - id в таблице
+     */
+    public function deletePrevious(array $columns, string $tbl, array $arr, array $arind, int $id) {
+        global $db;
+        if (count($arr) == 0) return;
+        $ar2 = array_keys($arr);
+        $ar3 = [];
+        for ($i = 0; $i < count($ar2); $i++) {
+            $ar3[] = $db->nameEscape($ar2[$i]) . ' as v' . $i;
+        }
+        $s = join(', ', $ar3);
+        $tbl2 = $db->nameEscape($tbl);
+        
+        $ar4 = $db->q("select $s from $tbl2 where id = $id");
+        for ($i = 0; $i < count($ar2); $i++) {
+            $value = $ar4['v' . $i];
+            if ($value <> '') {
+                // удаляем предыдущие файлы
+                $columns[$arind[$ar2[$i]]]['obj']->deleteFiles($value);
+            }
         }
         
     }
-    
     
     /**
      * Проставить в $recs соответствующие данные из $r ((array(Request) с предыдущими

@@ -24,7 +24,7 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
      *   текущего поля
      */
     public function validate($value, object $table_recs, string $index, array $columns, int $i, array &$r) {
-        $v2 = $value;
+        /*$v2 = $value;
         if (isset($r[$index])) {
             // загружен новый файл
             $file = json_decode($r[$index]);
@@ -50,8 +50,22 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
         $r[$index] = '';
         if (isset($columns[$i]['parameters']['req']) && (trim($v2) == '')) {
             $table_recs->setErr($index, __('The file must exist'));
-        }
+        }*/
         return $value;
+    }
+    
+    /**
+     * Удаляем файлы в upload соответствующие $fn (нужно еще удалить файлы в подкаталогах
+     *   1. 2. 3. 4)
+     * @param type $fn - имя файла для удаления
+     */
+    public function deleteFiles($fn) {
+        @unlink(public_path() . '/upload/' . $fn);
+        $pn = pathinfo($fn);
+        for ($i = 1; $i < 5; $i++) {
+            $s = public_path() . '/upload/' . $pn['dirname'] . '/' . $i . '/' . $pn['basename'];
+            @unlink($s);
+        }
     }
     
     
@@ -65,16 +79,23 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
      */
     public function postProcess(object $table_recs, array &$columns, int $i, array $r) {
         $index = $columns[$i]['name'];
-        if (isset($r[$index . '_srv_2'])) {
+        if (isset($r[$index])) {
             // загружен новый файл
-            $file = json_decode($r[$index . '_srv_2']);
-            $fname = basename($file->name); // validate input values
-            
+            $token = $r[$index];
+            if (!preg_match('/^[0-9a-f]{8}$/', $token)) {
+                return false;
+            }
             $um = new \Alxnv\Nesttab\Models\UploadModel();
-            $value = $um->copyFileToUpload($fname, base64_decode($file->data));
-            $columns[$i]['value'] = $value;
+            $value = $um->moveFilesToUpload($token);
+            if ($value !== false) {
+                $columns[$i]['value'] = $value; // если не было ошибки
+            } else {
+                return false;
+            }
+        } else {
+            // файл остается прежним, ничего не делаем
         };
-        
+        return true;
     }
     
     
@@ -93,7 +114,8 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
     let inputElement_" . $fieldName . " = document.querySelector('#" . $fieldName . "');
     const pond_" . $fieldName . " = FilePond.create(inputElement_" . $fieldName . ", {
         server: {
-        process: '" . ('/nesttab/public/nesttab/upload_image') . "',
+        process: '" . asset('/nesttab/upload_image') . "?file=" . $fieldName . "',
+        revert: '" . asset('/nesttab/upload_image/revert') . "?file=" . $fieldName . "',
         headers: {
             'X-CSRF-TOKEN': '" . Session::token() . "',
         }}

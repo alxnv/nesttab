@@ -52,6 +52,13 @@ class FileModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
         return $value;
     }
     
+    /**
+     * Удаляем файлы в upload соответствующие $fn
+     * @param type $fn - имя файла для удаления
+     */
+    public function deleteFiles($fn) {
+        @unlink(public_path() . '/upload/' . $fn);
+    }
     
     /**
      * Постобработка данных в случае если не было ошибок валидации
@@ -62,7 +69,7 @@ class FileModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
      * @param array $r - (array)Request
      */
     public function postProcess(object $table_recs, array &$columns, int $i, array $r) {
-        $index = $columns[$i]['name'];
+        /*$index = $columns[$i]['name'];
         if (isset($r[$index . '_srv_2'])) {
             // загружен новый файл
             $file = json_decode($r[$index . '_srv_2']);
@@ -72,7 +79,7 @@ class FileModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
             $value = $um->copyFileToUpload($fname, base64_decode($file->data));
             $columns[$i]['value'] = $value;
         };
-        
+        */
     }
     
     
@@ -117,7 +124,7 @@ class FileModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
     public function editField(array $rec, array $errors) {
         echo \yy::qs($rec['descr']);
         echo '<br />';
-        self::fileLoad($rec['name'], basename($rec['value']));
+        static::fileLoad($rec['name'], basename($rec['value']));
         echo '<br />';
         //echo '<br />';
     }

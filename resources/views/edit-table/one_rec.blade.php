@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Session;
 
 //$with_html_editor = 1;
 
-echo '<h1>' . __('Table') . ' "' . \yy::qs($tbl['descr']) . '"</h1><br />'; 
+echo '<h1>"' . \yy::qs($tbl['descr']) . '"</h1><br />'; 
 //dd($recs);
 
 //(new \Alxnv\Nesttab\Models\TokenUploadModel)->deleteOldTokens();
@@ -37,7 +37,7 @@ echo '<form enctype="multipart/form-data" method="post" action="' . $yy->baseurl
 //dd($recs);
 foreach ($recs as $rec) {
     echo $e->getErr($rec['name']);
-    $rec['obj']->editField($rec, []); //, Session::token()
+    $rec['obj']->editField($rec, []);
 }
 if (count($recs) > 0) {
     echo '<input type="submit" value="' . __('Save') . '" />';

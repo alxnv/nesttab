@@ -86,17 +86,23 @@ class UploadModel {
     /**
      * Копирует файл в подпапку папки upload, если нужно 
      *  создает подпапки с новыми номерами
-     * @param string $filename - исходное имя загруженного временного файла
-     * @param string $file - содержимое загруженного файла
-     * @return string - подадрес в папке upload, в который был скопирован файл
+     * @param string $token - токен загруженного файла
+     * @return string | boolean - подадрес в папке upload, в который был скопирован файл
+     *   либо false, если произошла ошибка
      */
-    public function copyFileToUpload(string $filename, string $file) {
+    public function moveFilesToUpload(string $token) {
         // в каталоге могут создаваться директории 1-4, так что убедимся, что не будет
         //  файлов с такими именами
+        
+        $tm = new \Alxnv\Nesttab\Models\TokenUploadModel();
+        $filename = $tm->getFileName($token); // получить имя загруженного в токен файла
+
+        if ($filename === false) return false;
+        
         if (in_array($filename, ['1', '2', '3', '4'])) $filename .= '_';
-        $n = intval(self::getCounterFile());
+        $n = intval(static::getCounterFile());
         if ($n == 0) {
-            $this->uploadToNewDir($filename, $file, $dst_name);
+            $this->uploadToNewDir($filename, $token, $dst_name, $tm);
         } else {
             $ids = [];
             $b = false;
@@ -114,11 +120,11 @@ class UploadModel {
                     $tries++;
                     continue;
                 }
-                $b = \Alxnv\Nesttab\core\FileHelper::writeToFile($s, $file);
+                $b = $this->moveTokenToFile($s, $filename, $token, $tm);
                 $dst_name = $k . '/' . $filename;
                 $tries++;
             } while (!$b && ($tries < 3) && (count($ids) < $n));
-            if (!$b) $this->uploadToNewDir($filename, $file, $dst_name); // если так и не удалось
+            if (!$b) $this->uploadToNewDir($filename, $token, $dst_name, $tm); // если так и не удалось
               //  записать
               // в существующие директории за 3 попытки, либо пока не просмотрели все
               //  существующие директории (если их меньше 4-х), 
@@ -129,6 +135,21 @@ class UploadModel {
     }       
 
     /**
+     * 
+     * @param string $file - имя файла с путем в который пытаемся переместить файл из токена
+     * @param string $fn - имя файла в который пытаемся переместить файл из токена
+     * @param string $token - токен (TokenUploadModel)
+     * @param object $tm - TokenUploadModel
+     * @return type
+     */
+    public function moveTokenToFile(string $file, string $fn, string $token, object $tm) {
+        
+        $fn2 = public_path() . '/upload/temp/' . $token . '/' . $fn;
+        $b = \Alxnv\Nesttab\core\FileHelper::writeToFileName($file, $fn2);
+        if ($b) $tm->deleteTokenDir($token);
+        return $b;
+    }
+    /**
      * Увеличивать счетчик директорий на единицу и пытаться записать файл,
      * создавая новую директорию,
      *  пока не запишем,
@@ -138,16 +159,22 @@ class UploadModel {
      * @param mixed $dst_name - сюда записывается подадрес загруженного файла
      *   в папке upload (например, "1/file.ext")
      */
-    public function uploadToNewDir(string $filename, string $file, &$dst_name) {
+    public function uploadToNewDir(string $filename, string $token, &$dst_name, object $tm) {
         $i=0;
+        $fn2 = public_path() . '/upload/temp/' . $token . '/' . $filename;
         do {
             $n = $this->increaseCounter();
             $s = public_path() . '/upload/' .
                     $n . '/' . $filename;
             $b = file_exists($s);
-            @mkdir(public_path() . '/upload/' . $n);
+            try {
+                @mkdir(public_path() . '/upload/' . $n);
+            } catch (\Exception $ex) {
+                $b = true;
+            }
             if (!$b) {
-                $b = !(\Alxnv\Nesttab\core\FileHelper::writeToFile($s, $file));
+                $b = !(\Alxnv\Nesttab\core\FileHelper::writeToFileName($s, $fn2));
+                if (!$b) $tm->deleteTokenDir($token);
             }
             $i++;
         } while ($b && ($i < 10));

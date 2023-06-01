@@ -162,7 +162,12 @@ class BasicDbNesttab {
 			@return array (или null если 0 записей)
 		*/
         $sth = $this->handle->prepare(\yy::dbEscape($s, $params));
-        $sth->execute();
+        $this->errorCode = 0;
+        try {
+            $sth->execute();
+        } catch (\Exception $e) {
+            $this->setExceptionReturnValues($e->getCode(), $e->getMessage());
+        }
         
         //$sth=$this->qdirect($s, $params);
         $f = $sth->fetch();
@@ -174,6 +179,7 @@ class BasicDbNesttab {
      * @param string $tbl - имя таблицы
      * @param array $arr - массив вида 'поле' => 'значение'
      * @param string $postfix - эта строка добавляется в конце к команде update
+     * @return mixed sth | null (null если была ошибка)
      */
     function update(string $tbl, array $arr, string $postfix) {
         $arr2 = [];
@@ -181,7 +187,7 @@ class BasicDbNesttab {
             $arr2[] = $this->nameEscape($key) . '=' . $this->escape($value);
         }
         $s = join(', ', $arr2);
-        $this->q("update $tbl set " . $s . ' ' . $postfix);
+        return $this->q("update $tbl set " . $s . ' ' . $postfix);
     }
 /*
     function getkrohi($tab,$uid2) {

@@ -53,9 +53,9 @@ class TokenUploadModel {
  */
     public function deleteOldTokens() {
         $time = \Alxnv\Nesttab\core\DateTimeHelper::dateSpan(time()
-                - self::oldIfCurrentTimeMinus * 60, self::timeSpan);
+                - static::oldIfCurrentTimeMinus * 60, static::timeSpan);
         $list = DB::select("select * from yy_tokens where time < ? order by time"
-                . " limit 0,?", [date('Y-m-d H:i:s', $time), self::batchSize]);
+                . " limit 0,?", [date('Y-m-d H:i:s', $time), static::batchSize]);
         //echo \yy::ds($time);
         //dd($list);
         $this->_tokenList = $list;
@@ -66,11 +66,40 @@ class TokenUploadModel {
     }
  
     /**
-     * Удаляет директорию с токеном
+     * Удаляет директорию с токеном (токен проверяется на валидность)
      * @param string $token
      */   
     public function deleteTokenDir(string $token) {
-        \Alxnv\Nesttab\core\FileHelper::deleteDir(public_path() . '/upload/temp/' . $token);
+        if (preg_match('/^[0-9a-f]{8}$/', $token)) {
+            \Alxnv\Nesttab\core\FileHelper::deleteDir(public_path() . '/upload/temp/' . $token);
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    /**
+     * Получить имя файла, загруженного в каталог токена
+     *  (в каталоге еще может быть файл вида thumbnail.{ext})
+     * @param string $token
+     * @return mixed string | boolean (имя файла, либо false если произошла ошибка)
+     */
+    public function getFileName(string $token) {
+        $dir = public_path() . '/upload/temp/' . $token;
+        try {
+            $files = scandir($dir, SCANDIR_SORT_NONE);
+        } catch (\Exception $ex) {
+            return false;
+        }
+        if ($files === false) return false;
+        foreach ($files as $file) {
+            if (($file <> '.') && ($file <> '..')) {
+                $pn = pathinfo($file);
+                if ($pn['filename'] == 'thumbnail') continue;
+                return $file;
+            }
+        }
+        return false;        
     }
     
     public function deleteTokensFromDB() {

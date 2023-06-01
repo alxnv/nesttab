@@ -35,7 +35,7 @@ class FileHelper {
     /**
      * Попытка записать в заданный файл
      * @param string $s - имя файла, в который пытаемся записать
-     * @param string $file - имя файла, который пытаемся записать
+     * @param string $file - содержимое файла, который пытаемся записать
      * @return boolean - удалась ли попытка записи в файл
      */
     public static function writeToFile(string $s, string $file) {
@@ -55,6 +55,28 @@ class FileHelper {
     }
     
     /**
+     * Попытка записать в заданный файл
+     * @param string $s - имя файла, в который пытаемся записать
+     * @param string $file - имя файла, который пытаемся записать
+     * @return boolean - удалась ли попытка записи в файл
+     */
+    public static function writeToFileName(string $s, string $file) {
+        try {
+            $fp = fopen($s, 'xb'); // открываем для чтения и записи, указатель
+              // помещается на начало файла
+        } catch (\Exception $ex) {
+            $fp = false;
+        }
+        if ($fp === false) return false;
+        $b = static::writeFileNameToHandle($fp, $file, $suggest_delete);
+        fclose($fp);
+        if ($suggest_delete) {
+            @unlink($s);
+        }
+        return $b;
+    }
+    
+    /**
      * Скопировать данные из файла $file в файл, на который указывает $fp (handle)
      * @param type $fp - хэндлер файла в который записываем
      * @param string $file - содержимое файла, из которого записываем
@@ -64,6 +86,24 @@ class FileHelper {
      */
     public static function writeFileToHandle($fp, string $file, &$suggest_delete = 0) {
         if (!fwrite($fp, $file)) return false;
+        return true;
+    }
+    
+    /**
+     * Скопировать данные из файла $file в файл, на который указывает $fp (handle)
+     * @param type $fp - хэндлер файла в который записываем
+     * @param string $file - имя файла, из которого записываем
+     * @param int $suggest_delete - эта переменная устанавливается в 1 если нужно 
+     *   будет после вызова этого метода удалить файл $fp
+     * @return boolean - удалось ли записать файл
+     */
+    public static function writeFileNameToHandle($fp, string $file, &$suggest_delete = 0) {
+        $sp = fopen($file, 'r');
+        while (!feof($sp)) {
+            $buffer = fread($sp, 65536);  // use a buffer of 65536 bytes
+            fwrite($fp, $buffer);
+        }
+        fclose($sp);
         return true;
     }
     
