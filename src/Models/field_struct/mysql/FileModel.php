@@ -134,7 +134,7 @@ class FileModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
         
         $default = '';
         if (isset($r['allowed'])) {
-            $r['allowed'] = $fh::delimetedByCommaToArray(mb_substr($r['allowed'], 0, 10000));
+            $r['allowed'] = $fh::delimetedByCommaToArray(mb_strtolower(mb_substr($r['allowed'], 0, 10000)));
             $allowed = $r['allowed'];
         } else {
             $allowed = [];

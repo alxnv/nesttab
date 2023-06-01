@@ -76,4 +76,27 @@ class TokenUploadModel {
     public function deleteTokensFromDB() {
         
     }
+    
+    public function generateToken() {
+        return bin2hex(random_bytes(4));
+    }
+    
+    /**
+     * Try to create token dir (upload/temp/{token}), where token like '9b02c5ff'
+     * @return mixed string | boolean - token string or false, if permission denied
+     *  creating directory
+     */
+    public function createTokenDir() {
+        do {
+            $token = $this->generateToken();
+            $s = public_path(). '/upload/temp/' . $token;
+            try {
+                $b = mkdir($s, 0777, true);
+            } catch (\Exception $ex) {
+                $b = false;
+            }
+            if (!$b && !file_exists($s)) return false;
+        } while (!$b);
+        return $token;
+    }
 }  

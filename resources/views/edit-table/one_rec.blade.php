@@ -2,6 +2,7 @@
 @section('content')
 <?php
 global $yy;
+use Illuminate\Support\Facades\Session;
 
 //$with_html_editor = 1;
 
@@ -11,6 +12,9 @@ echo '<h1>' . __('Table') . ' "' . \yy::qs($tbl['descr']) . '"</h1><br />';
 //(new \Alxnv\Nesttab\Models\TokenUploadModel)->deleteOldTokens();
 //$b = \Alxnv\Nesttab\core\FileHelper::deleteDir(public_path() . '/upload/dir1');
 //dd($b);
+//$obj = new \Alxnv\Nesttab\Models\TokenUploadModel();
+//for ($i=0; $i < 10; $i++) $obj->createTokenDir();
+//echo url('njkjk/yuiyui');
 $e = new \Alxnv\Nesttab\Models\ErrorModel();
 $lnk_err = \yy::getErrorEditSession();
 if (Session::has($lnk_err)) {
@@ -33,7 +37,7 @@ echo '<form enctype="multipart/form-data" method="post" action="' . $yy->baseurl
 //dd($recs);
 foreach ($recs as $rec) {
     echo $e->getErr($rec['name']);
-    $rec['obj']->editField($rec, []);
+    $rec['obj']->editField($rec, []); //, Session::token()
 }
 if (count($recs) > 0) {
     echo '<input type="submit" value="' . __('Save') . '" />';

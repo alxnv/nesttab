@@ -1,3 +1,6 @@
+laravel, laravel breeze - mit license
+-----------
+
 jquery - You are free to use a jQuery project in commercial projects as long as the copyright header is left intact.
 -------
 vue - то же самое

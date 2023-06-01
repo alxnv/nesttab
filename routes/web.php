@@ -41,6 +41,7 @@ Route::prefix('nesttab')->group(function () {
     /**
      * руты для уровня пользователя "модератор"
      */
+    Route::post('/upload_image', CP9 . 'UploadImageController');
     Route::post('/edit/save_one/{id}', CP9 . 'EditController@saveOne');
     Route::get('/edit', CP9 . 'EditController@index');
     Route::get('/error', CP9 . 'ErrorController');

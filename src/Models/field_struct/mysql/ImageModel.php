@@ -7,6 +7,8 @@
 
 namespace Alxnv\Nesttab\Models\field_struct\mysql;
 
+use Illuminate\Support\Facades\Session;
+
 class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
 
     /**
@@ -74,37 +76,6 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
         };
         
     }
-    /**
-     * Вывести поле загрузки файла
-     * @param string $fieldName - имя поля (латиница)
-     * @param string $value - имя загруженного ранее файла
-     */
-    public static function imageLoad(string $fieldName, string $value) {
-        echo '<input type="file" id = "' . $fieldName . '"  name = "' . $fieldName . '" />';
-        echo "<script>
-    let inputElement_" . $fieldName . " = document.querySelector('#" . $fieldName . "');
-    const pond_" . $fieldName . " = FilePond.create(inputElement_" . $fieldName . ");
-    // Request encoded data
-    pond_" . $fieldName . ".onaddfile = (err, item) => {
-
-            if (err) {
-                console.warn(err);
-                return;
-            }
-            
-            let dataURL = item.getFileEncodeDataURL();
-
-            let base64String = item.getFileEncodeBase64String();
-            //alert(base64String);
-        }
-    </script>";
-        if (isset($value) && $value <> '') {
-            echo __('File') . ': ' . \yy::qs($value) . '<br />';
-            echo '<input type="checkbox" '
-            . 'name="' . $fieldName .'_srv_" id="' . $fieldName .'_srv_" /> ';
-            echo '<label for="' . $fieldName .'_srv_">' . __('Delete') . '</label><br />';
-        }
-    }
     
     
     /**
@@ -115,7 +86,26 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
     public function editField(array $rec, array $errors) {
         echo \yy::qs($rec['descr']);
         echo '<br />';
-        self::imageLoad($rec['name'], basename($rec['value']));
+        $fieldName = $rec['name'];
+        $value = basename($rec['value']);
+        echo '<input type="file" id = "' . $fieldName . '"  name = "' . $fieldName . '" />';
+        echo "<script>
+    let inputElement_" . $fieldName . " = document.querySelector('#" . $fieldName . "');
+    const pond_" . $fieldName . " = FilePond.create(inputElement_" . $fieldName . ", {
+        server: {
+        process: '" . ('/nesttab/public/nesttab/upload_image') . "',
+        headers: {
+            'X-CSRF-TOKEN': '" . Session::token() . "',
+        }}
+    });
+    </script>";
+        if (isset($value) && $value <> '') {
+            echo __('File') . ': ' . \yy::qs($value) . '<br />';
+            echo '<input type="checkbox" '
+            . 'name="' . $fieldName .'_srv_" id="' . $fieldName .'_srv_" /> ';
+            echo '<label for="' . $fieldName .'_srv_">' . __('Delete') . '</label><br />';
+        }
+        
         echo '<br />';
         //echo '<br />';
     }
@@ -132,7 +122,7 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
         
         $default = '';
         if (isset($r['allowed'])) {
-            $r['allowed'] = $fh::delimetedByCommaToArray(mb_substr($r['allowed'], 0, 10000));
+            $r['allowed'] = $fh::delimetedByCommaToArray(mb_strtolower(mb_substr($r['allowed'], 0, 10000)));
             $allowed = $r['allowed'];
         } else {
             $allowed = [];

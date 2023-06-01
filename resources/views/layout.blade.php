@@ -11,7 +11,8 @@
     <link rel="stylesheet" href="<?=asset('/nsttab/css/jquery-confirm.min.css')?>">
     <?php 
     if (isset($requires) && isset($requires['need_filepond'])) {
-        echo '<link rel="stylesheet" href="' . asset('/nsttab/filepond-master/dist/filepond.min.css') . '">';
+        echo '<link rel="stylesheet" href="' . asset('/nsttab/filepond/filepond.min.css') . '">';
+        echo '<link rel="stylesheet" href="' . asset('/nsttab/filepond/filepond-plugin-image-preview.css') . '">';
     }
     ?>
     <script type="text/javascript" src="<?=asset('/nsttab/js/jquery-3.6.0.min.js')?>"></script>
@@ -31,12 +32,11 @@
       <?php
       //echo '<script src="https://unpkg.com/filepond/dist/filepond.js"></script>';
       if (isset($requires) && isset($requires['need_filepond'])) {
-          echo '<script src="' . asset('/nsttab/filepond/filepond-plugin-file-encode.js') . '"></script>';
-          echo '<script src="' . asset('/nsttab/filepond-master/dist/filepond.min.js') . '"></script>';
+          echo '<script src="' . asset('/nsttab/filepond/filepond-plugin-image-preview.js') . '"></script>';
+          echo '<script src="' . asset('/nsttab/filepond/filepond.min.js') . '"></script>';
           echo '<script>
-        // Register the plugin with FilePond
-        FilePond.registerPlugin(FilePondPluginFileEncode);
-        </script>';
+            FilePond.registerPlugin(FilePondPluginImagePreview);
+          </script>';
       }
       ?>
 
