@@ -16,4 +16,14 @@ class BasicController extends Controller
         require(__DIR__ . '/../../core/yy.php');
         require(__DIR__ . '/../../core/blocks.php');
     }
+    
+    public function maintain() {
+        // поддержка работоспособности сервера
+        
+        // удаление устаревших токенов
+        if (rand(1,5) == 1) {
+            $tm = new \Alxnv\Nesttab\Models\TokenUploadModel();
+            $tm->deleteOldTokens();
+        };
+    }
 }

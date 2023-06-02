@@ -22,7 +22,6 @@
     <script type="text/javascript" src="<?=asset('/nsttab/js/functions.js')?>"></script>
     <?php 
     if (isset($requires) && isset($requires['need_html_editor'])) {
-        //echo '<link rel="stylesheet" href="' . asset('/nsttab/wymeditor/skins/default/skin.css') . '">';
         echo '<script src="' . asset('/nsttab/js/ckeditor4/ckeditor.js') . '"></script>';
     }
     ?>
@@ -30,12 +29,15 @@
   <body>
 
       <?php
-      //echo '<script src="https://unpkg.com/filepond/dist/filepond.js"></script>';
       if (isset($requires) && isset($requires['need_filepond'])) {
           echo '<script src="' . asset('/nsttab/filepond/filepond-plugin-image-preview.js') . '"></script>';
           echo '<script src="' . asset('/nsttab/filepond/filepond.min.js') . '"></script>';
+          echo '<script src="' . asset('/nsttab/filepond/filepond-plugin-image-resize.js') . '"></script>';
+          echo '<script src="' . asset('/nsttab/filepond/filepond-plugin-image-transform.js') . '"></script>';
           echo '<script>
             FilePond.registerPlugin(FilePondPluginImagePreview);
+            FilePond.registerPlugin(FilePondPluginImageResize);
+            FilePond.registerPlugin(FilePondPluginImageTransform);
           </script>';
       }
       ?>

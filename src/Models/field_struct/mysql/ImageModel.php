@@ -113,7 +113,8 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
         echo "<script>
     let inputElement_" . $fieldName . " = document.querySelector('#" . $fieldName . "');
     const pond_" . $fieldName . " = FilePond.create(inputElement_" . $fieldName . ", {
-        server: {
+    allowImageTransform: false,
+    server: {
         process: '" . asset('/nesttab/upload_image') . "?file=" . $fieldName . "',
         revert: '" . asset('/nesttab/upload_image/revert') . "?file=" . $fieldName . "',
         headers: {

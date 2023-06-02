@@ -103,7 +103,15 @@ class TokenUploadModel {
     }
     
     public function deleteTokensFromDB() {
-        
+        $list = $this->_tokenList;
+        $arr = [];
+        foreach ($list as $rec) {
+            $arr[] = "'" . $rec->token . "'";
+        }
+        if (count($arr) > 0) {
+            $s = join(', ', $arr);
+            DB::delete("delete from yy_tokens where token in ($s)");
+        }
     }
     
     public function generateToken() {
@@ -126,6 +134,8 @@ class TokenUploadModel {
             }
             if (!$b && !file_exists($s)) return false;
         } while (!$b);
+        $this->addTokenToDB($token); // добавляет токен к базе данных для удаления
+          //  в дальнейшем устаревших токенов
         return $token;
     }
 }  

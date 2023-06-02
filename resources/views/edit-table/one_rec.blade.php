@@ -15,6 +15,7 @@ echo '<h1>"' . \yy::qs($tbl['descr']) . '"</h1><br />';
 //$obj = new \Alxnv\Nesttab\Models\TokenUploadModel();
 //for ($i=0; $i < 10; $i++) $obj->createTokenDir();
 //echo url('njkjk/yuiyui');
+
 $e = new \Alxnv\Nesttab\Models\ErrorModel();
 $lnk_err = \yy::getErrorEditSession();
 if (Session::has($lnk_err)) {

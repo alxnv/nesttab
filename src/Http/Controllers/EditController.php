@@ -18,6 +18,7 @@ class EditController extends BasicController {
         
         global $db, $yy;
 
+        $this->maintain(); // поддержка работоспособности сервера
         $r = $request->all();
         $table_id = \yy::testExistsNotZero($r, 'id');
         $tbl = \Alxnv\Nesttab\Models\TablesModel::getOne($table_id);
