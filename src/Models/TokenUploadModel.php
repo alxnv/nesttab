@@ -60,7 +60,7 @@ class TokenUploadModel {
         //dd($list);
         $this->_tokenList = $list;
         foreach ($list as $rec) {
-            $this->deleteTokenDir($rec->token);
+            $this->deleteTokenDir($rec->token, false);
         }
         $this->deleteTokensFromDB();
     }
@@ -68,11 +68,12 @@ class TokenUploadModel {
     /**
      * Удаляет директорию с токеном (токен проверяется на валидность)
      * @param string $token
+     * @param bool $delFromDB - удалять ли еще соответствующую запись в БД
      */   
-    public function deleteTokenDir(string $token) {
+    public function deleteTokenDir(string $token, bool $delFromDB = true) {
         if (preg_match('/^[0-9a-f]{8}$/', $token)) {
             \Alxnv\Nesttab\core\FileHelper::deleteDir(public_path() . '/upload/temp/' . $token);
-            $this->deleteFromDBToken($token);
+            if ($delFromDB) $this->deleteFromDBToken($token);
             return true;
         } else {
             return false;
