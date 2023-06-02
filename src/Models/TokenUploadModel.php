@@ -72,6 +72,7 @@ class TokenUploadModel {
     public function deleteTokenDir(string $token) {
         if (preg_match('/^[0-9a-f]{8}$/', $token)) {
             \Alxnv\Nesttab\core\FileHelper::deleteDir(public_path() . '/upload/temp/' . $token);
+            $this->deleteFromDBToken($token);
             return true;
         } else {
             return false;
@@ -102,6 +103,9 @@ class TokenUploadModel {
         return false;        
     }
     
+    /**
+     * Delete obsolete tokens from DB
+     */
     public function deleteTokensFromDB() {
         $list = $this->_tokenList;
         $arr = [];
@@ -112,6 +116,10 @@ class TokenUploadModel {
             $s = join(', ', $arr);
             DB::delete("delete from yy_tokens where token in ($s)");
         }
+    }
+    
+    public function deleteFromDBToken(string $token) {
+        DB::delete("delete from yy_tokens where token = '$token'");
     }
     
     public function generateToken() {
@@ -137,5 +145,14 @@ class TokenUploadModel {
         $this->addTokenToDB($token); // добавляет токен к базе данных для удаления
           //  в дальнейшем устаревших токенов
         return $token;
+    }
+    
+    /**
+     * Добавляем токен к БД для удаления в дальнейшем устаревших токенов
+     * @param string $token - токен
+     */
+    public function addTokenToDB(string $token) {
+        $s = "replace into yy_tokens (token, type_id, time) values ('$token', 1, current_timestamp())";
+        DB::statement($s);
     }
 }  
