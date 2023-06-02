@@ -34,6 +34,10 @@ h2 {
 .table_edit {
     width: 35px;
 }
+.img_width, .img_height {
+	width: 50px !important;
+}
+
 
 #page_content {
   height: 100%;
