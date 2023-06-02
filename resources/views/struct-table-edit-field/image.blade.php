@@ -1,5 +1,10 @@
 @extends(config('nesttab.layout'))
 @section('content')
+<script>
+    var fields_new = {width:0, height:0, type:'contain'}; // новая запись для параметров
+     // трансформации (добавляется по нажатию кнопки "+"
+    var _this;
+</script>
 <?php
 /**
  * редактирование структуры поля типа image
@@ -14,7 +19,13 @@ if (isset($r['allowed'])) {
     $r['allowed'] = '';
 }
 
-$image_params = [[0, 0, 'contain'], [200, 150, 'contain']];
+if (isset($r['iprm'])) {
+    //dd($r['iprm']);
+    $image_params = $r['iprm'];
+} else {
+    $image_params = [(object)['w' => 0, 'h' => 0, 't' => 'contain'], 
+        (object)['w' => 200, 'h' => 150, 't' => 'contain']];
+}
 
 echo '<a href="' . $yy->baseurl . 'nesttab/struct-change-table/edit/' . $tbl['id'] . '/0">'
         .__('Back') . '</a><br /><br />';
@@ -50,7 +61,7 @@ if (isset($r['opt_fields'])) {
     $optOpened = true;
 } else {
     $optOpened = false;
-    if ($e->hasOneOf(['name', 'required'])) $optOpened = true; // если есть ошибки, относящиеся к
+    if ($e->hasOneOf(['name', 'required', 'iprm', 'iprm0', 'iprm1', 'iprm2', 'iprm3', 'iprm4'])) $optOpened = true; // если есть ошибки, относящиеся к
        // имени поля, то открываем div с именем поля
 }
 
@@ -94,8 +105,12 @@ echo  '<input id="required" type="checkbox"'
 <hr />
 <p class="center"><?=__("Image transformations")?></p>
 <br />
+<?php
+echo $e->getErr('iprm');
+?>
     <template v-for="(field, index) in fields" />
-    <div v-if="index > 1"><button>-</button></div>
+    <div v-html="field.err"></div>
+    <div class="minus_button" v-if="index > 1"><input type="button" value="-" @click="del(index)" /></div>
     <table class="table">
         <th colspan="2">
             @{{captions[index]}}
@@ -117,8 +132,8 @@ echo  '<input id="required" type="checkbox"'
             </td>
         </tr>
     </table>
-    <div v-if="index == 0" class="comment"><span class="red">*</span> <?=__("If width = 0 and height = 0 for the main image, the image is loaded as is, without size transformation")?></div>
-    <div v-if="index > 0"><input type="button" value="+" @click="add(index)" /></div>
+    <div v-if="index == 0" class="comment"><span class="red">*</span> <?=__("If width = 0 and height = 0 for the main image, this image is loaded as is, without size transformation")?></div>
+    <div v-if="(index > 0) && (index < 4)" class="plus_button"><input type="button" value="+" @click="add(index)" /></div>
     <br />    
     </template>
 </div>
@@ -133,6 +148,31 @@ echo '</div>';
 echo '</form>';
 ?>
 <script>
+function confirm_del_param(index) {
+    $.confirm({
+        useBootstrap: false,
+        content: __lang('Do you really want to delete this element?'),
+        title: '',
+        backgroundDismiss: true,
+        index: index,
+     buttons: {
+            yes: {
+                text: __lang('Yes'),
+                action: function(){
+                    _this.delete2(this.index);
+                    return true;
+                    }               
+            },
+            no: {
+                text: __lang('No'),
+                action: function(){
+                    return true;
+                }
+            }
+        }
+    });
+}
+    
 const app = Vue.createApp({
   data() {
     return {
@@ -141,9 +181,10 @@ const app = Vue.createApp({
 <?php
 for ($i = 0; $i < count($image_params); $i++) {
     echo "{
-        width: " . $image_params[$i][0] . ",
-        height: " . $image_params[$i][1] . ",
-        type: '" . $image_params[$i][2] . "'},
+        width: " . $image_params[$i]->w . ",
+        height: " . $image_params[$i]->h . ",
+        type: '" . $image_params[$i]->t . "',
+        err: " . '"' . \yy::jsmstr($e->getErr('iprm' . $i)) . '"' .  "   },
             "; 
 }
 ?>
@@ -159,8 +200,18 @@ for ($i = 0; $i < count($image_params); $i++) {
   },
   methods: {
     add(index) {
-      alert(index);
-  },  
+      if (this.fields.length < 5) {
+        this.fields.splice(index + 1, 0, {...fields_new});
+      }
+    },  
+    del(index) {
+        _this = this;
+        confirm_del_param(index);
+    },
+    delete2(index) {
+        // called from del if confirmed
+        this.fields.splice(index, 1);
+    },
   }
 });
 app.mount('#app');

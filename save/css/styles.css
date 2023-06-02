@@ -243,3 +243,15 @@ hr {
 	width:auto;
 	display: inline-block;
 }
+.minus_button {
+	margin-bottom: 5px;
+}
+
+.plus_button {
+	margin-top: 5px;
+}
+
+.minus_button input, .plus_button input {
+	width: 30px;
+	height: 30px;
+}

@@ -140,6 +140,7 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
      */
     public function save(array $tbl, array $fld, array &$r, array $old_values) {
         global $yy, $db;
+        //dd($r);
         $s = '\\Alxnv\\Nesttab\\core\\db\\' . config('nesttab.db_driver') . '\\FormatHelper';
         $fh = new $s();
         
@@ -155,7 +156,26 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
         }*/
         $this->imageArrayTestValid($allowed); // проверить, нет ли в 
          // массиве элементов вида 'php*', 'py'
-        $params = ['allowed' => $allowed];
+        $arr = [];
+        for ($i = 0; $i < count($r['i_type']); $i++) {
+            $w = intval($r['i_width'][$i]);
+            $h = intval($r['i_height'][$i]);
+            $arr[] = (object)['w' => $w,
+                'h' => $h,
+                't' => $r['i_type'][$i]];
+            if ($i == 0) {
+                if ((($w == 0) && ($h <> 0)) || (($w <> 0) && ($h == 0))) {
+                    $this->setErr('iprm' . $i, __('There are zero values'));
+                }
+            } else {
+                if (($w == 0) || ($h == 0)) {
+                    $this->setErr('iprm' . $i, __('There are zero values'));
+                }
+            }
+        }
+        $r['iprm'] = $arr;
+        
+        $params = ['allowed' => $allowed, 'iprm' => $arr];
         return $this->saveStep2($tbl, $fld, $r, $old_values, $default, $params);
 
     }
