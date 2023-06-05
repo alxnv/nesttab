@@ -35,6 +35,8 @@
     "Checked" : "Отмечено",
     "This string must not be empty" : "Эта строка не должна быть пустой",
     "Add nested table" : "Добавить вложенную таблицу",
+    "Negative number" : "Отрицательное число",
+    "Too big number" : "Слишком большое число",
     "Description must not be empty" : "Описание не должно быть пустым",
     "One level up" : "Уровень вверх",
     "Tables" : "Таблицы",

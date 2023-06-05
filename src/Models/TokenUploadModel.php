@@ -53,7 +53,9 @@ class TokenUploadModel {
  */
     public function deleteOldTokens() {
         $time = \Alxnv\Nesttab\core\DateTimeHelper::dateSpan(time()
-                - static::oldIfCurrentTimeMinus * 60, static::timeSpan);
+                - static::oldIfCurrentTimeMinus * 60, static::timeSpan * 60);
+        // почему-то вместо -1 часа выдает -4 часа (time() выдает на 3 часа более
+        ///  раннее время (5.06.2023)
         $list = DB::select("select * from yy_tokens where time < ? order by time"
                 . " limit 0,?", [date('Y-m-d H:i:s', $time), static::batchSize]);
         //echo \yy::ds($time);

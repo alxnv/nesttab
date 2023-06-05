@@ -17,3 +17,4 @@
 	2. скопировать содержимое каталога ckeditor4 подкаталогом в каталог public/nsttab/js
 	3. проверить в файле vendor\alxnv\nesttab\resources\views\layout.blade.php что скрипт указывает на ckeditor.js
 	     в каталоге ckeditor4
+6. config/app.php проставить свою таймзону, если она не Europe/Moscow

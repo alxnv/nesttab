@@ -172,6 +172,12 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
                     $this->setErr('iprm' . $i, __('There are zero values'));
                 }
             }
+            if (($w < 0) || ($h < 0)) {
+                $this->setErr('iprm' . $i, __('Negative number'));
+            }
+            if (($w > 1000000) || ($h > 1000000)) {
+                $this->setErr('iprm' . $i, __('Too big number'));
+            }
         }
         $r['iprm'] = $arr;
         

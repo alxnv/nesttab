@@ -5,6 +5,10 @@
 - посмотреть, как будет работать сохранение записи при key violation in db
 
 
++ app.php поставил timezone Europe/Moscow
+     - time() выдает время на 3 часа раньше текущего 
+   ---- TOkenUploadModel->deleteOldTokens() - timeSpan почему-то выдает -4 часа вместо -1
+
 - можно отслеживать violation ключей бд при добавлении-изменении записей
  тогда выдается сообщение mysql:
 	#1062 - Duplicate entry '1-0' for key 'id2'
