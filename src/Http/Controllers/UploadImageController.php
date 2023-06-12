@@ -28,6 +28,7 @@ class UploadImageController extends BasicController {
            // загрузке файла
         $from = $_FILES[$index]['tmp_name'];
         $to = public_path() . '/upload/temp/' . $token . '/' . $_FILES[$index]['name'];
+        if (!is_uploaded_file($from)) \App::abort(404);
         move_uploaded_file($from, $to);
         return $token;
     }

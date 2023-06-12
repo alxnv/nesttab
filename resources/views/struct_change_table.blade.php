@@ -22,7 +22,7 @@ echo '<br /><p class="center"><a class="addfield" href="' . $yy->baseurl . 'nest
 
 
 echo '<br /><div id="idt" class="table center2 div-table">';
-echo '<div class="div-th"><span>№</span><span>' . __('Name') . '</span>' //'<th>' . \yy::mb_ucfirst(__('physical name')) . '</th>'
+echo '<div class="div-th"><span>№</span><span>' . __('Name') . '</span><span>' . \yy::mb_ucfirst(__('physical name')) . '</span>'
         . '<span>' . __('Type') . '</span>' //'<th>' . __('Description') . '</th>'
         .  '</div>';
 ?>
@@ -54,6 +54,8 @@ const TableElt = {
   template: '<div><span>@{{item.pos}} </span>\
   <span><a href="#"  @click="onChange">\
 @{{ item.text }}</a></span>\
+<span><a href="#"  @click="onChange">\
+@{{ item.name }}</a></span>\
 <span><a href="#"  @click="onChange">@{{ item.flddescr }}</a></span>\
   </div>'
 }
@@ -73,6 +75,9 @@ foreach ($flds as $f) {
     echo $f['id'];
     echo ', text:"';
     echo \yy::jsmstr((trim($f['descr']) == '' ? '-------' : $f['descr']));
+    echo '"';
+    echo ', name:"';
+    echo \yy::jsmstr((trim($f['name']) == '' ? '-------' : $f['name']));
     echo '"';
     echo ', flddescr:"';
     echo \yy::jsmstr(($f['descr_fld']));
