@@ -9,7 +9,13 @@ use Illuminate\Support\Facades\Session;
 echo '<h1>"' . \yy::qs($tbl['descr']) . '"</h1><br />'; 
 //dd($recs);
 
-//(new \Alxnv\Nesttab\Models\TokenUploadModel)->deleteOldTokens();
+/*
+@unlink(public_path() . '/upload/2.png');
+(new \Alxnv\Nesttab\Models\ImageResizeModel())->
+        resizeImage(public_path() . '/upload/1.gif',
+                public_path() . '/upload/2.gif', 300, 400, 'cover');
+ * 
+ */
 //$b = \Alxnv\Nesttab\core\FileHelper::deleteDir(public_path() . '/upload/dir1');
 //dd($b);
 //$obj = new \Alxnv\Nesttab\Models\TokenUploadModel();

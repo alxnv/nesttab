@@ -60,7 +60,7 @@ class FileHelper {
      * @param string $file - имя файла, который пытаемся записать
      * @return boolean - удалась ли попытка записи в файл
      */
-    public static function writeToFileName(string $s, string $file) {
+    public static function copyFile(string $s, string $file) {
         try {
             $fp = fopen($s, 'xb'); // открываем для чтения и записи, указатель
               // помещается на начало файла

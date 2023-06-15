@@ -18,3 +18,4 @@
 	3. проверить в файле vendor\alxnv\nesttab\resources\views\layout.blade.php что скрипт указывает на ckeditor.js
 	     в каталоге ckeditor4
 6. config/app.php проставить свою таймзону, если она не Europe/Moscow
+7. убедиться, что в php включено расширение gd

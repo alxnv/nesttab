@@ -145,7 +145,7 @@ class UploadModel {
     public function moveTokenToFile(string $file, string $fn, string $token, object $tm) {
         
         $fn2 = public_path() . '/upload/temp/' . $token . '/' . $fn;
-        $b = \Alxnv\Nesttab\core\FileHelper::writeToFileName($file, $fn2);
+        $b = \Alxnv\Nesttab\core\FileHelper::copyFile($file, $fn2);
         if ($b) $tm->deleteTokenDir($token);
         return $b;
     }
@@ -173,7 +173,7 @@ class UploadModel {
                 $b = true;
             }
             if (!$b) {
-                $b = !(\Alxnv\Nesttab\core\FileHelper::writeToFileName($s, $fn2));
+                $b = !(\Alxnv\Nesttab\core\FileHelper::copyFile($s, $fn2));
                 if (!$b) $tm->deleteTokenDir($token);
             }
             $i++;
