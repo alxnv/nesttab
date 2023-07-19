@@ -115,8 +115,7 @@ dd($s);*/
         }
         $fld =  (new \Alxnv\Nesttab\Models\ColTypesModel())->getOne(intval($r['field_type_id']));
         if (is_null($fld)) \yy::gotoErrorPage('Field def in table is not found');
-        $s2 = '\\Alxnv\\Nesttab\\Models\\field_struct\\mysql\\' . ucfirst($fld['name']) .'Model';
-        $field_model = new $s2();
+        $field_model = \Alxnv\Nesttab\Models\Factory::createFieldModel($fld['id'], $fld['name']);
     
         // adding or editing field, lock this process for max_execution_time seconds
         $lock = Cache::lock('addfield', $yy->settings2['max_exec'] + 1);

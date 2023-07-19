@@ -48,9 +48,9 @@ class TableRecsModel {
         //$this->setErr('', 'fdsafd');
         $columns = \Alxnv\Nesttab\Models\ColumnsModel::getTableColumnsWithNames($tbl['id']);
         for ($i = 0; $i < count($columns); $i++)  {
-            $s2 = '\\Alxnv\\Nesttab\\Models\\field_struct\\' . config('nesttab.db_driver') . '\\'
-                    . ucfirst($columns[$i]['name_field']) .'Model';
-            $columns[$i]['obj'] = new $s2();
+            //$s2 = '\\Alxnv\\Nesttab\\Models\\field_struct\\' . config('nesttab.db_driver') . '\\'
+            //        . ucfirst($columns[$i]['name_field']) .'Model';
+            $columns[$i]['obj'] = \Alxnv\Nesttab\Models\Factory::createFieldModel($columns[$i]['field_type'], $columns[$i]['name_field']);
             $columns[$i]['parameters'] = (array)json_decode($columns[$i]['parameters']);
             // значение для поля типа bool не будет в post массиве если он unchecked
             if ($columns[$i]['name_field'] == 'bool') {
@@ -218,9 +218,7 @@ class TableRecsModel {
             if (in_array($columns[$i]['name_field'], ['image', 'file'])) {
                 $requires['need_filepond'] = 1;
             }
-            $s2 = '\\Alxnv\\Nesttab\\Models\\field_struct\\' . config('nesttab.db_driver') . '\\'
-                    . ucfirst($columns[$i]['name_field']) .'Model';
-            $columns[$i]['obj'] = new $s2();
+            $columns[$i]['obj'] = \Alxnv\Nesttab\Models\Factory::createFieldModel($columns[$i]['field_type'], $columns[$i]['name_field']);
             if (isset($rec[$columns[$i]['name']])) {
                 $columns[$i]['value'] = $rec[$columns[$i]['name']];
             } else {

@@ -66,9 +66,7 @@ class StructChangeTableController extends BasicController {
         if (is_null($tbl)) $err .= 'Table definition is not found';
         
         if ($err == '') {
-            $s2 = '\\Alxnv\\Nesttab\\Models\\field_struct\\' . config('nesttab.db_driver') . '\\'
-                    . ucfirst($fld['name']) .'Model';
-            $field_model = new $s2();
+            $field_model = \Alxnv\Nesttab\Models\Factory::createFieldModel($fld['id'], $fld['name']);
             $s = $field_model->delete($column, $fld, $tbl, $r);
             $err .= $s;
         }
