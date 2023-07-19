@@ -5,6 +5,8 @@
 - посмотреть, как будет работать сохранение записи при key violation in db
 
 
+- BasicModel->saveStep2() - чтобы работало если не хватает места на диске
+
 + app.php поставил timezone Europe/Moscow
      - time() выдает время на 3 часа раньше текущего 
    ---- TOkenUploadModel->deleteOldTokens() - timeSpan почему-то выдает -4 часа вместо -1

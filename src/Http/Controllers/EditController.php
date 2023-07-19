@@ -14,14 +14,15 @@ class EditController extends BasicController {
      * @global type $yy
      * @param type $r
      */
-    public function index(Request $request) {
+    public function index(int $id, Request $request) {
         
         global $db, $yy;
 
         $this->maintain(); // поддержка работоспособности сервера
         $r = $request->all();
-        $table_id = \yy::testExistsNotZero($r, 'id');
-        $tbl = \Alxnv\Nesttab\Models\TablesModel::getOne($table_id);
+        //$table_id = \yy::testExistsNotZero($r, 'id');
+        
+        $tbl = \Alxnv\Nesttab\Models\TablesModel::getOne($id);
 
         switch ($tbl['table_type']) {
             case 'O': //one record
@@ -76,7 +77,7 @@ class EditController extends BasicController {
         if (!$recs->hasErr()) {
             $request ->session()->flash('saved_successfully', 1);
             Session::save();
-            \yy::redirectNow($yy->baseurl . 'nesttab/edit?id=' . $table_id);
+            \yy::redirectNow($yy->baseurl . 'nesttab/edit/' . $table_id);
             exit;
         } else {
             //\yy::gotoErrorPage($s);
@@ -88,7 +89,7 @@ class EditController extends BasicController {
             //session([$lnk2 => $r]);
             $request->session()->flash($lnk2, $r);
             Session::save();
-            \yy::redirectNow($yy->baseurl . 'nesttab/edit?id=' . $table_id);
+            \yy::redirectNow($yy->baseurl . 'nesttab/edit/' . $table_id);
             exit;
         }
         

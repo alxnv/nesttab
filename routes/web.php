@@ -44,7 +44,7 @@ Route::prefix('nesttab')->group(function () {
     Route::delete('/upload_image/revert', CP9 . 'UploadImageController@revert');
     Route::post('/upload_image', CP9 . 'UploadImageController');
     Route::post('/edit/save_one/{id}', CP9 . 'EditController@saveOne');
-    Route::get('/edit', CP9 . 'EditController@index');
+    Route::get('/edit/{id}', CP9 . 'EditController@index');
     Route::get('/error', CP9 . 'ErrorController');
     Route::get('/message', CP9 . 'MessageController');
     Route::get('/', CP9 . 'IndexController@index');
