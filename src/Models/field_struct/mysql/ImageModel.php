@@ -98,6 +98,28 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
         return true;
     }
     
+    /**
+     * get array of accepted file types in mime form
+     * @param array $allowed - array of types
+     * @return array - array of mime type strings 
+     */
+    public function getAcceptedFileTypes(array $allowed) {
+        if (count($allowed) == 0) {
+            return ['image/*'];
+        };
+        $arr = [];
+        $arr2 = [];
+        foreach ($allowed as $a) {
+            if ($a == 'gif') $arr['gif'] = 1;
+            if ($a == 'jpg') $arr['jpg'] = 1;
+            if ($a == 'jpeg') $arr['jpg'] = 1;
+            if ($a == 'png') $arr['png'] = 1;
+        }
+        if (isset($arr['jpg'])) $arr2[] = 'image/jpeg';
+        if (isset($arr['gif'])) $arr2[] = 'image/gif';
+        if (isset($arr['png'])) $arr2[] = 'image/png';
+        return $arr2;
+    }
     
     /**
      * Вывод поля таблицы для редактирования
@@ -105,6 +127,14 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
      * @param array $errors - массив ошибок
      */
     public function editField(array $rec, array $errors) {
+        $params = json_decode($rec['parameters']);
+        //var_dump($params);
+        $accepted = $this->getAcceptedFileTypes($params->allowed);
+        $arr = \Alxnv\Nesttab\core\ArrayHelper::forArray($accepted, 
+                function($s) {
+                    return "'" . $s . "'";
+                });
+        $s = join(', ', $arr);
         echo \yy::qs($rec['descr']);
         echo '<br />';
         $fieldName = $rec['name'];
@@ -114,6 +144,7 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
     let inputElement_" . $fieldName . " = document.querySelector('#" . $fieldName . "');
     const pond_" . $fieldName . " = FilePond.create(inputElement_" . $fieldName . ", {
     allowImageTransform: false,
+    acceptedFileTypes: [" . $s . "],
     server: {
         process: '" . asset('/nesttab/upload_image') . "?file=" . $fieldName . "',
         revert: '" . asset('/nesttab/upload_image/revert') . "?file=" . $fieldName . "',

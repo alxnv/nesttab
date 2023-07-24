@@ -34,10 +34,12 @@
           echo '<script src="' . asset('/nsttab/filepond/filepond.min.js') . '"></script>';
           echo '<script src="' . asset('/nsttab/filepond/filepond-plugin-image-resize.js') . '"></script>';
           echo '<script src="' . asset('/nsttab/filepond/filepond-plugin-image-transform.js') . '"></script>';
+          echo '<script src="' . asset('/nsttab/filepond/filepond-plugin-file-validate-type.js') . '"></script>';
           echo '<script>
             FilePond.registerPlugin(FilePondPluginImagePreview);
             FilePond.registerPlugin(FilePondPluginImageResize);
             FilePond.registerPlugin(FilePondPluginImageTransform);
+            FilePond.registerPlugin(FilePondPluginFileValidateType);
           </script>';
       }
       ?>

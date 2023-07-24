@@ -178,13 +178,17 @@ class TableRecsModel {
     }
     
     /**
-     * Проставить в $recs соответствующие данные из $r ((array(Request) с предыдущими
+     * Проставить в $recs[$i]['value'] соответствующие данные из $r 
+     *   ((array(Request) с предыдущими
      *   данными из post)
+     *  в value_old сохраняем значение из бд
      * @param array $recs - массив с данными о полях, определенных в БД
      * @param array $r - бывший post для редактирования с ошибкой
      */
     public static function setValues(array $recs, array $r) {
         for ($i = 0; $i < count($recs); $i++) {
+            $recs[$i]['value_old'] = (isset($recs[$i]['value']) 
+                        ? $recs[$i]['value'] : '');
             if ($recs[$i]['name_field'] == 'bool') {
                 $recs[$i]['value'] = (isset($r[$recs[$i]['name']]) ? 1 : 0);
             } else {
