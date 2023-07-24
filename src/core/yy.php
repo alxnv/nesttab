@@ -185,13 +185,13 @@ class yy {
      * @return string
      */
     
-    /*
     public static function pathDefend(string $path) {
         $s = str_replace('..', '', $path);
         $s = str_replace('"', '', $s);
         $s = str_replace("'", '', $s);
         return $s;
     }
+    /*
 
     public function translateAliases($path) {
         $n = strpos($path, '\\');

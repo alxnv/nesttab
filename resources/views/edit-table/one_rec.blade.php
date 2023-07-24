@@ -44,7 +44,7 @@ echo '<form enctype="multipart/form-data" method="post" action="' . $yy->baseurl
 //dd($recs);
 foreach ($recs as $rec) {
     echo $e->getErr($rec['name']);
-    $rec['obj']->editField($rec, []);
+    $rec['obj']->editField($rec, [], $table_id, $rec_id);
 }
 if (count($recs) > 0) {
     echo '<input type="submit" value="' . __('Save') . '" />';

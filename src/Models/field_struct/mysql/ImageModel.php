@@ -125,10 +125,12 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
      * Вывод поля таблицы для редактирования
      * @param array $rec - массив с данными поля
      * @param array $errors - массив ошибок
+     * @param int $table_id - id of the table
+     * @param int $rec_id - 'id' of the record in the table
      */
-    public function editField(array $rec, array $errors) {
+    public function editField(array $rec, array $errors, int $table_id, int $rec_id) {
         $params = json_decode($rec['parameters']);
-        //var_dump($params);
+        //var_dump($rec);
         $accepted = $this->getAcceptedFileTypes($params->allowed);
         $arr = \Alxnv\Nesttab\core\ArrayHelper::forArray($accepted, 
                 function($s) {
@@ -138,16 +140,33 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
         echo \yy::qs($rec['descr']);
         echo '<br />';
         $fieldName = $rec['name'];
-        $value = basename($rec['value']);
+        $isUploaded = (isset($rec['value']));
+        if ($isUploaded) {
+            // есть загруженный временный файл
+            $value = basename($rec['value']);
+        } else {
+            $value = basename($rec['value_old']);
+        }
         echo '<input type="file" id = "' . $fieldName . '"  name = "' . $fieldName . '" />';
         echo "<script>
     let inputElement_" . $fieldName . " = document.querySelector('#" . $fieldName . "');
     const pond_" . $fieldName . " = FilePond.create(inputElement_" . $fieldName . ", {
     allowImageTransform: false,
-    acceptedFileTypes: [" . $s . "],
-    server: {
-        process: '" . asset('/nesttab/upload_image') . "?file=" . $fieldName . "',
+    acceptedFileTypes: [" . $s . "],";
+    if ($isUploaded) {
+    } else {
+        if ($rec['value_old'] <> '') {
+            // if there was a picture in db
+            echo "files: [{"
+            . "source: '|" . $rec['value_old'] . "', 
+                options: { type: 'local', }
+                }],";
+        };
+    }
+    echo "server: {
+        process: '" . asset('/nesttab/upload_image') . "?file=" . $fieldName . "&tbl=" . $table_id . "&rec=" . $rec_id . "',
         revert: '" . asset('/nesttab/upload_image/revert') . "?file=" . $fieldName . "',
+        load: '" . asset('/nesttab/upload_image/load') . "?file=" . $fieldName . "',
         headers: {
             'X-CSRF-TOKEN': '" . Session::token() . "',
         }}

@@ -26,7 +26,7 @@ class EditController extends BasicController {
 
         switch ($tbl['table_type']) {
             case 'O': //one record
-                return $this->editOneRecTable($tbl, $r);
+                return $this->editOneRecTable($tbl, $r, $id);
                 break;
             default:
                 \yy::gotoErrorPage('Table type is not specified');
@@ -39,11 +39,13 @@ class EditController extends BasicController {
      * Редактирование таблицы типа One Record - точка входа
      * @param array $tbl - данные таблицы
      * @param array $r - Request в виде массива
+     * @param int $id - the id of the table in yy_tables
      */
-    public function editOneRecTable(array $tbl, array $r) {
+    public function editOneRecTable(array $tbl, array $r, int $id) {
         // получаем строку с id=1 для one rec table (это единственная строка там)
         $columns = \Alxnv\Nesttab\Models\ColumnsModel::getTableColumnsWithNames($tbl['id']);
         $requires = [];
+        $rec_id = 1; // record 'id' field value
         $recs = \Alxnv\Nesttab\Models\TableRecsModel::getRecAddObjects($columns, $tbl['name'], 1, $requires);
         $lnk2 = \yy::getEditSession();
         if (Session::has($lnk2)) {
@@ -59,7 +61,7 @@ class EditController extends BasicController {
         }
         //dd($r);
         return view('nesttab::edit-table.one_rec', ['tbl' => $tbl, 'recs' => $recs,
-                'r' => $r, 'requires' => $requires]);
+                'r' => $r, 'requires' => $requires, 'table_id' => $id, 'rec_id' => $rec_id]);
         
     }
     

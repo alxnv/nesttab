@@ -69,8 +69,10 @@ class BasicModel {
      * Заглушка, вызываемая для вывода поля таблицы для редактирования
      * @param array $rec - массив с данными поля
      * @param array $errors - массив ошибок
+     * @param int $table_id - id of the table
+     * @param int $rec_id - 'id' of the record in the table
      */
-    public function editField(array $rec, array $errors) {
+    public function editField(array $rec, array $errors, int $table_id, int $rec_id) {
         echo '<input type="hidden" name="' .$rec['name'] . '" value="1" />'; 
         echo \yy::qs($rec['descr']);
         echo '<br />';

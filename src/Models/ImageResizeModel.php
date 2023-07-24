@@ -23,9 +23,32 @@ class ImageResizeModel {
     public function resizeImage(string $fn, string $fnto, int $w, int $h, string $type) {
         $b = $this->readFileTestExt($fn);
         if (!$b) return false;
-        $this->resize($w, $h, $type, $fn, $fnto);
+        $this->resizeIt($w, $h, $type, $fn, $fnto);
         return true;
     }
+
+    /**
+     * !!! not tested !!!
+     * resize image for cms 
+     * @param string $fn - uploaded file address in form '<num>\filename'
+     * @param array $irpm - array of image convertion parameters from database
+     *  (in the form [[w:xxx, h:xxx, t:<contain|cover>], ...])
+     * @param int $num - number of secondary image (1 for thumbnail)
+     *   $num-1 is an index in $irpm
+     */
+    public function resize(string $fn, array $irpm, int $num) {
+       global $yy;
+       $arr = \Alxnv\Nesttab\core\StringHelper::splitByFirst('\\', \yy::pathDefend($fn));
+       $dirname = $arr[0];
+       $filename = $arr[1];
+       $path1 = public_path() . '\upload\\' . $dirname . '\\' . $num;
+       @mkdir($path1);
+       $this->resizeImage(public_path(). '\upload\\' . $fn, 
+               $path1 . '\\' . $filename, $irpm[$num - 1]['w'],
+               $irpm[$num - 1]['h'], 
+               $irpm[$num - 1]['t']); 
+    }
+    
     /**
      * Reads file contents and check if this is a valid file of this type
      * @param string $fn - filename
@@ -65,7 +88,7 @@ class ImageResizeModel {
      *   changed, returns false
      *   true, if the file was resized
      */
-    public function resize(int $w, int $h, string $type, string $fn, string $fnto) {
+    public function resizeIt(int $w, int $h, string $type, string $fn, string $fnto) {
         $width = imagesx($this->img);
         $height = imagesy($this->img);
         if (($w == 0) || ($h == 0) || ($width == 0) || ($height == 0) 

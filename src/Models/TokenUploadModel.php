@@ -81,6 +81,35 @@ class TokenUploadModel {
             return false;
         }
     }
+ 
+    /**
+     * 
+     * @param type $token
+     *   the token dir is already exists
+     * @param string $from
+     * @param string $name
+     * @param array $irpmN - array of type ['w':xxx, 'h':xxxx, 't':<contain|cover>]
+     * @return boolean
+     */
+    public function moveAndCreateThumbnail($token, string $from, string $name, object $irpmN) {
+        $p = pathinfo($name);
+        $name2 = $p['filename']; // file name without ext
+        if ($name2 == 'thumbnail') $name2 .= '_';
+        if ($p['extension'] == '') {
+            $name3 = $name2;
+            $th = 'thumbnail';
+        } else {
+            $name3 = $name2 . '.' . $p['extension'];
+            $th = 'thumbnail.' . $p['extension'];
+        }
+        // name3 is a resulting filename
+        $to = public_path() . '/upload/temp/' . $token . '/' . $name3;
+        if (!is_uploaded_file($from)) return false;
+        move_uploaded_file($from, $to);
+        $obj = new \Alxnv\Nesttab\Models\ImageResizeModel();
+        $obj->resizeImage($to, public_path() . '\upload\temp\\' . $token .'\\' . $th , $irpmN->w, $irpmN->h, $irpmN->t);
+        return true;
+    }
     
     /**
      * Получить имя файла, загруженного в каталог токена

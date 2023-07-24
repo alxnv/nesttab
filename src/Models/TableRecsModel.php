@@ -187,8 +187,8 @@ class TableRecsModel {
      */
     public static function setValues(array $recs, array $r) {
         for ($i = 0; $i < count($recs); $i++) {
-            $recs[$i]['value_old'] = (isset($recs[$i]['value']) 
-                        ? $recs[$i]['value'] : '');
+            /*$recs[$i]['value_old'] = (isset($recs[$i]['value']) 
+                        ? $recs[$i]['value'] : '');*/
             if ($recs[$i]['name_field'] == 'bool') {
                 $recs[$i]['value'] = (isset($r[$recs[$i]['name']]) ? 1 : 0);
             } else {
@@ -224,7 +224,11 @@ class TableRecsModel {
             }
             $columns[$i]['obj'] = \Alxnv\Nesttab\Models\Factory::createFieldModel($columns[$i]['field_type'], $columns[$i]['name_field']);
             if (isset($rec[$columns[$i]['name']])) {
-                $columns[$i]['value'] = $rec[$columns[$i]['name']];
+                if (in_array($columns[$i]['name_field'], ['image', 'file'])) {
+                    $columns[$i]['value_old'] = $rec[$columns[$i]['name']];
+                } else {
+                    $columns[$i]['value'] = $rec[$columns[$i]['name']];
+                }
             } else {
                 $columns[$i]['value'] = null;
             }
