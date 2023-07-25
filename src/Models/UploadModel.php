@@ -86,6 +86,7 @@ class UploadModel {
     /**
      * Копирует файл в подпапку папки upload, если нужно 
      *  создает подпапки с новыми номерами
+     *   копирует также thumbnail если это изображение
      * @param string $token - токен загруженного файла
      * @return string | boolean - подадрес в папке upload, в который был скопирован файл
      *   либо false, если произошла ошибка
@@ -99,7 +100,7 @@ class UploadModel {
 
         if ($filename === false) return false;
         
-        if (in_array($filename, ['1', '2', '3', '4'])) $filename .= '_';
+        if (in_array($filename[0], ['1', '2', '3', '4'])) $filename[0] .= '_';
         $n = intval(static::getCounterFile());
         if ($n == 0) {
             $this->uploadToNewDir($filename, $token, $dst_name, $tm);
@@ -112,7 +113,7 @@ class UploadModel {
                 if (isset($ids[$k])) continue; // в эту директорию уже пытались записать
                 $ids[$k] = 1; // попробовали записать в эту директорию
                 $s = public_path() . '/upload/' .
-                    $k . '/' . $filename;
+                    $k . '/' . $filename[0];
                 if (!\Alxnv\Nesttab\core\FileHelper::numberOfFilesInDirLessThen(public_path() .
                         '/upload/' . $k, $n + 2)) {
                     // если в директории больше файлов чем число в upload/counter.txt,
@@ -120,8 +121,9 @@ class UploadModel {
                     $tries++;
                     continue;
                 }
-                $b = $this->moveTokenToFile($s, $filename, $token, $tm);
-                $dst_name = $k . '/' . $filename;
+                $b = $this->moveTokenToFile(public_path() . '/upload/' .
+                    $k, $filename, $token, $tm);
+                $dst_name = $k . '/' . $filename[0];
                 $tries++;
             } while (!$b && ($tries < 3) && (count($ids) < $n));
             if (!$b) $this->uploadToNewDir($filename, $token, $dst_name, $tm); // если так и не удалось
@@ -135,17 +137,28 @@ class UploadModel {
     }       
 
     /**
-     * 
-     * @param string $file - имя файла с путем в который пытаемся переместить файл из токена
-     * @param string $fn - имя файла в который пытаемся переместить файл из токена
+     * Переместить файл (и thumbnal, если он есть) в директорию $upload_dir
+     *   из директории, на которую указывает $token
+     * @param string $upload_dir - директория вида public_path() . '/upload/<N>',
+     *  в которую будем перемещать файл
+     * @param array $fn - [<имя файла в который пытаемся переместить файл из токена>|
+     *   <имя thumbnail(если есть)>]
      * @param string $token - токен (TokenUploadModel)
      * @param object $tm - TokenUploadModel
      * @return type
      */
-    public function moveTokenToFile(string $file, string $fn, string $token, object $tm) {
+    public function moveTokenToFile(string $upload_dir, array $fn, string $token, object $tm) {
         
-        $fn2 = public_path() . '/upload/temp/' . $token . '/' . $fn;
+        $fn2 = public_path() . '/upload/temp/' . $token . '/' . $fn[0];
+        $th2 = public_path() . '/upload/temp/' . $token . '/' . $fn[1];
+        $file = $upload_dir . '/' . $fn[0];
         $b = \Alxnv\Nesttab\core\FileHelper::copyFile($file, $fn2);
+        if ($fn[1] <> '') {
+            // if thumbnail exists
+            @mkdir($upload_dir . '/1');
+            \Alxnv\Nesttab\core\FileHelper::copyFile(
+                    $upload_dir . '/1/' . $fn[0], $th2);
+        }
         if ($b) $tm->deleteTokenDir($token);
         return $b;
     }
@@ -154,18 +167,19 @@ class UploadModel {
      * создавая новую директорию,
      *  пока не запишем,
      *  либо пока не увеличим 10 раз, тогдк выдается ошибка
-     * @param string $filename - исходное имя загруженного временного файла
+     * @param array $filename - [<исходное имя загруженного временного файла
+     *  в директории $token>, <имя thumbnail в директории $token(если есть)>]
      * @param string $file - содержимое файла, который будем копировать
      * @param mixed $dst_name - сюда записывается подадрес загруженного файла
      *   в папке upload (например, "1/file.ext")
      */
-    public function uploadToNewDir(string $filename, string $token, &$dst_name, object $tm) {
+    public function uploadToNewDir(array $filename, string $token, &$dst_name, object $tm) {
         $i=0;
-        $fn2 = public_path() . '/upload/temp/' . $token . '/' . $filename;
+        $fn2 = public_path() . '/upload/temp/' . $token . '/' . $filename[0];
         do {
             $n = $this->increaseCounter();
             $s = public_path() . '/upload/' .
-                    $n . '/' . $filename;
+                    $n . '/' . $filename[0];
             $b = file_exists($s);
             try {
                 @mkdir(public_path() . '/upload/' . $n);
@@ -174,6 +188,13 @@ class UploadModel {
             }
             if (!$b) {
                 $b = !(\Alxnv\Nesttab\core\FileHelper::copyFile($s, $fn2));
+                if ($filename[1] <> '') {
+                    @mkdir(public_path() . '/upload/' . $n . '/1'); // make dir for thumbnail
+                    \Alxnv\Nesttab\core\FileHelper::copyFile(public_path() . '/upload/' .
+                        $n . '/1/' . $filename[0],
+                        public_path() . '/upload/temp/' . $token . '/' . $filename[1]);
+                }
+
                 if (!$b) $tm->deleteTokenDir($token);
             }
             $i++;
@@ -181,7 +202,7 @@ class UploadModel {
         if ($i >= 10) {
             \yy::gotoErrorPage('Cannot upload file to new dir');
         }
-        $dst_name = '' . $n . '/'.  $filename;
+        $dst_name = '' . $n . '/'.  $filename[0];
     }
 
 

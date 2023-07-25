@@ -67,6 +67,15 @@ class TokenUploadModel {
         $this->deleteTokensFromDB();
     }
  
+
+    /**
+     * is a valid token
+     * @param string $token
+     * @return bool
+     */
+    public static function isValidToken(string $token) {
+        return (preg_match('/^[0-9a-f]{8}$/', $token));
+    }
     /**
      * Удаляет директорию с токеном (токен проверяется на валидность)
      * @param string $token
@@ -115,7 +124,8 @@ class TokenUploadModel {
      * Получить имя файла, загруженного в каталог токена
      *  (в каталоге еще может быть файл вида thumbnail.{ext})
      * @param string $token
-     * @return mixed string | boolean (имя файла, либо false если произошла ошибка)
+     * @return mixed array | boolean ([имя файла, (<имя thumbnail>|'')],
+     *  либо false если произошла ошибка (основной файл не наден)
      */
     public function getFileName(string $token) {
         $dir = public_path() . '/upload/temp/' . $token;
@@ -124,15 +134,25 @@ class TokenUploadModel {
         } catch (\Exception $ex) {
             return false;
         }
+        $fn1 = ''; // filename
+        $th1 = ''; // thumbnail
         if ($files === false) return false;
         foreach ($files as $file) {
             if (($file <> '.') && ($file <> '..')) {
                 $pn = pathinfo($file);
-                if ($pn['filename'] == 'thumbnail') continue;
-                return $file;
+                if ($pn['filename'] == 'thumbnail') {
+                    $th1 = $pn['basename'];
+                } else {
+                    $fn1 = $pn['basename'];
+                }
             }
         }
-        return false;        
+        if ($fn1 == '') {
+            return false;        
+        } else {
+            return [$fn1, $th1];
+        }
+        
     }
     
     /**

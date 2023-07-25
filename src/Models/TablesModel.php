@@ -50,4 +50,15 @@ class TablesModel {
         if (is_null($tbl)) \yy::gotoErrorPage('Table not found');
         return $tbl;
     }
+    /**
+     * получить содержимое таблицы
+     *  при вызове из ajax запроса
+     * @param int $id - идентификатор таблицы
+     */
+    public static function getOneAjax(int $id) {
+        global $db;
+        $tbl = $db->q("select * from yy_tables where id=$1", [$id]);
+        if (is_null($tbl)) \App::abort(404);
+        return $tbl;
+    }
 }

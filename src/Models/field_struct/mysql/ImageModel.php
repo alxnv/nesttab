@@ -24,6 +24,10 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
      *   текущего поля
      */
     public function validate($value, object $table_recs, string $index, array $columns, int $i, array &$r) {
+        if (isset($columns[$i]['parameters']['req']) && ($value == '')) {
+            $table_recs->setErr($index, __('The file must be downloaded'));
+        }
+        return $value;
         /*$v2 = $value;
         if (isset($r[$index])) {
             // загружен новый файл
@@ -51,7 +55,6 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
         if (isset($columns[$i]['parameters']['req']) && (trim($v2) == '')) {
             $table_recs->setErr($index, __('The file must exist'));
         }*/
-        return $value;
     }
     
     /**
@@ -79,12 +82,9 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
      */
     public function postProcess(object $table_recs, array &$columns, int $i, array $r) {
         $index = $columns[$i]['name'];
-        if (isset($r[$index])) {
+        if (isset($r[$index]) && \Alxnv\Nesttab\Models\TokenUploadModel::isValidToken($r[$index])) {
             // загружен новый файл
             $token = $r[$index];
-            if (!preg_match('/^[0-9a-f]{8}$/', $token)) {
-                return false;
-            }
             $um = new \Alxnv\Nesttab\Models\UploadModel();
             $value = $um->moveFilesToUpload($token);
             if ($value !== false) {
@@ -127,10 +127,11 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
      * @param array $errors - массив ошибок
      * @param int $table_id - id of the table
      * @param int $rec_id - 'id' of the record in the table
+     * @param array $r - request data of redirected request
      */
-    public function editField(array $rec, array $errors, int $table_id, int $rec_id) {
+    public function editField(array $rec, array $errors, int $table_id, int $rec_id, $r) {
         $params = json_decode($rec['parameters']);
-        //var_dump($rec);
+        //var_dump($r);
         $accepted = $this->getAcceptedFileTypes($params->allowed);
         $arr = \Alxnv\Nesttab\core\ArrayHelper::forArray($accepted, 
                 function($s) {
@@ -154,28 +155,38 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
     allowImageTransform: false,
     acceptedFileTypes: [" . $s . "],";
     if ($isUploaded) {
+        if ($rec['value'] <> '') {
+            echo "files: [{"
+            . "source: '" . $rec['value'] . "', 
+                options: { type: 'limbo' }
+                }],";
+        }
     } else {
         if ($rec['value_old'] <> '') {
             // if there was a picture in db
             echo "files: [{"
-            . "source: '|" . $rec['value_old'] . "', 
-                options: { type: 'local', }
+            . "source: '" . $rec['value_old'] . "', 
+                options: { type: 'local' }
                 }],";
         };
     }
     echo "server: {
+          remove: (source, load, error) => { 
+        document.getElementById(" . '"' .  $fieldName . '_srv_"' . ").checked = true; load(); },
         process: '" . asset('/nesttab/upload_image') . "?file=" . $fieldName . "&tbl=" . $table_id . "&rec=" . $rec_id . "',
         revert: '" . asset('/nesttab/upload_image/revert') . "?file=" . $fieldName . "',
-        load: '" . asset('/nesttab/upload_image/load') . "?file=" . $fieldName . "',
+        restore: '" . asset('/nesttab/upload_image/restore') . "?token=',
+        load: '" . asset('/nesttab/upload_image/load') . "?tbl=" . $table_id . "&rec=" . $rec_id . "&file=" . $fieldName . "|',
         headers: {
             'X-CSRF-TOKEN': '" . Session::token() . "',
         }}
     });
     </script>";
         if (isset($value) && $value <> '') {
-            echo __('File') . ': ' . \yy::qs($value) . '<br />';
+            //echo __('File') . ': ' . \yy::qs($value) . '<br />';
             echo '<input type="checkbox" '
-            . 'name="' . $fieldName .'_srv_" id="' . $fieldName .'_srv_" /> ';
+            . 'name="' . $fieldName .'_srv_" id="' . $fieldName .'_srv_" '
+                    .  (isset($r[$fieldName. '_srv_']) ? 'checked' : '') . '  /> ';
             echo '<label for="' . $fieldName .'_srv_">' . __('Delete') . '</label><br />';
         }
         

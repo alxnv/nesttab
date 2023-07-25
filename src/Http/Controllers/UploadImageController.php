@@ -9,10 +9,58 @@ use Illuminate\Support\Facades\Log;
  */
 
 class UploadImageController extends BasicController {
-    public function load(Request $request) {
-        $r = \Alxnv\Nesttab\core\StringHelper::splitByFirst('|', $request->input('file'));
+    /**
+     * upload temporary file image
+     * @param Request $request
+     */
+    public function restore(Request $request) {
+        $token = $request->input('token');
+        if (!\Alxnv\Nesttab\Models\TokenUploadModel::isValidToken($token))  \App::abort(404);
+        $obj = new \Alxnv\Nesttab\Models\TokenUploadModel();
+        $fn = $obj->getFileName($token);
+        if ($fn === false)  \App::abort(404);
+        if ($fn[1] == '')  \App::abort(404);
+        $dir = public_path() . '/upload/temp/' . $token;
+        $s2 = $dir . '/' . $fn[1]; // thumbnail
+        if (!is_file($s2)) \App::abort(404);
+        $contentType = mime_content_type($s2);
+        if (!in_array($contentType, ['image/jpeg', 'image/png', 'image/gif'])) \App::abort(404);
 
-        Log::debug('load ' . print_r($r, true));
+        $c1 = file_get_contents($s2);
+        header("Content-Type: " . $contentType);
+        header('Content-Disposition: inline; filename="' . $fn[0] . '"');
+        echo $c1;
+        /*$r = $request->all();
+        Log::debug('restore ' . print_r($r, true));*/
+        
+    }
+    public function load(Request $request) {
+        global $db, $yy;
+        if (!$request->has('file')) \App::abort(404);
+        $r = \Alxnv\Nesttab\core\StringHelper::splitByFirst('|', $request->input('file'));
+        /*if (!$request->has('tbl')) \App::abort(404);
+        $tbl_id = intval($request->input('tbl'));
+        if (!$request->has('rec')) \App::abort(404);
+        $rec_id = intval($request->input('rec'));
+        $tbl = \Alxnv\Nesttab\Models\TablesModel::getOneAjax($tbl_id);
+        $rec = $db->q("select $1 from $2 where id = $3", [$r[0], $tbl['name'], $rec_id]);
+        if (is_null($rec)) \App::abort(404);*/
+        $s = \yy::pathDefend($r[1]);
+        $f = \Alxnv\Nesttab\core\StringHelper::splitByFirst('/', $s);
+        if ($f[0] == '') \App::abort(404);
+        $s2 = public_path() . '/upload/' . $f[0] . '/1/' . $f[1]; // thumbnail
+        if (!is_file($s2)) \App::abort(404);
+        $contentType = mime_content_type($s2);
+        if (!in_array($contentType, ['image/jpeg', 'image/png', 'image/gif'])) \App::abort(404);
+
+        $c1 = file_get_contents($s2);
+        header("Content-Type: " . $contentType);
+        header('Content-Disposition: inline; filename="' . $f[1] . '"');
+        echo $c1;
+        /*$r2 = $request->all();
+        Log::debug('load, file= ' . print_r($r, true));
+        Log::debug('load, req= ' . print_r($r2, true));
+         */
         
     }
     /**
@@ -55,6 +103,8 @@ class UploadImageController extends BasicController {
         //Log::debug('444 ' . print_r($request->all(), true));
         $body  = file_get_contents('php://input'); // get id of download (token)
         //Log::debug('555 ' . print_r($body, true));
+        if (!\Alxnv\Nesttab\Models\TokenUploadModel::isValidToken($body))  \App::abort(404);
+        
         $obj = new \Alxnv\Nesttab\Models\TokenUploadModel();
         $obj->deleteTokenDir($body);
         

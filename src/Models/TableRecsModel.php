@@ -130,7 +130,8 @@ class TableRecsModel {
         for ($i = 0; $i < count($columns); $i++) {
             // $columns[$i]['name_field'] - тип поля
             if (isset($columns[$i]['value']) 
-                    && in_array($columns[$i]['name_field'], ['image', 'file'])) {
+                    && in_array($columns[$i]['name_field'], ['image', 'file']) &&
+                    \Alxnv\Nesttab\Models\TokenUploadModel::isValidToken($columns[$i]['value'])) {
                 $arr[$columns[$i]['name']] = $columns[$i]['value'];
                 $arind[$columns[$i]['name']] = $i;
             }

@@ -51,8 +51,6 @@ class EditController extends BasicController {
         if (Session::has($lnk2)) {
             $lnk = \yy::getErrorEditSession();
             $er2 = session($lnk);
-            $lnk = \yy::getErrorEditSession();
-            $er2 = session($lnk);
             //dd($er2);
             $r_edited = session($lnk2);
             $r = $r_edited; //\yy::addKeys($r, $r_edited);
