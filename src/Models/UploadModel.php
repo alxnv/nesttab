@@ -147,7 +147,8 @@ class UploadModel {
      * @param object $tm - TokenUploadModel
      * @return type
      */
-    public function moveTokenToFile(string $upload_dir, array $fn, string $token, object $tm) {
+    public function moveTokenToFile(string $upload_dir, array $fn, string $token,
+            object $tm) {
         
         $fn2 = public_path() . '/upload/temp/' . $token . '/' . $fn[0];
         $th2 = public_path() . '/upload/temp/' . $token . '/' . $fn[1];
@@ -155,6 +156,7 @@ class UploadModel {
         $b = \Alxnv\Nesttab\core\FileHelper::copyFile($file, $fn2);
         if ($fn[1] <> '') {
             // if thumbnail exists
+            @unlink($upload_dir . '/1/' . $fn[0]);
             @mkdir($upload_dir . '/1');
             \Alxnv\Nesttab\core\FileHelper::copyFile(
                     $upload_dir . '/1/' . $fn[0], $th2);
@@ -189,6 +191,8 @@ class UploadModel {
             if (!$b) {
                 $b = !(\Alxnv\Nesttab\core\FileHelper::copyFile($s, $fn2));
                 if ($filename[1] <> '') {
+                    @unlink(public_path() . '/upload/' .
+                        $n . '/1/' . $filename[0]);
                     @mkdir(public_path() . '/upload/' . $n . '/1'); // make dir for thumbnail
                     \Alxnv\Nesttab\core\FileHelper::copyFile(public_path() . '/upload/' .
                         $n . '/1/' . $filename[0],

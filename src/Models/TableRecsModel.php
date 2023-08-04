@@ -38,6 +38,33 @@ class TableRecsModel {
         return $this->err->hasErr();
     }
 
+
+    /**
+     * get old values for image and file field types
+     * @param array $columns
+     * @param array $tbl - table data
+     * @param int $id - id of the table record
+     */
+    public function getImageFileValues(array &$columns, array $tbl, int $id) {
+        global $db;
+        $arr = [];
+        $ar2 = [];
+        for ($i = 0; $i < count($columns); $i++)  {
+            if (in_array($columns[$i]['name_field'], ['image', 'file'])) {
+                $arr[] = $i;
+                $ar2[] = $columns[$i]['name'];
+            }
+        }
+        if (count($arr) > 0) {
+            // if there are image of file type fields
+            $ar3 = $db->massNameEscape($ar2);
+            $s = join(', ', $ar3);
+            $rec = $db->q("select " . $s . " from " . $tbl['name'] . " where id = $1", [$id]);
+            for ($i = 0; $i < count($ar2); $i++) {
+                $columns[$i]['value_old'] = $rec[$ar2[$i]];
+            }
+        }
+    }
     /**
      * Сохраняем данные редактирования в БД, либо устанваливаем сообщения об ошибках
      * @param array $tbl - массив данных о таблице
@@ -47,6 +74,8 @@ class TableRecsModel {
     public function save(array $tbl, int $id, array &$r) {
         //$this->setErr('', 'fdsafd');
         $columns = \Alxnv\Nesttab\Models\ColumnsModel::getTableColumnsWithNames($tbl['id']);
+        // get old values for image and file field types
+        $this->getImageFileValues($columns, $tbl, $id);
         for ($i = 0; $i < count($columns); $i++)  {
             //$s2 = '\\Alxnv\\Nesttab\\Models\\field_struct\\' . config('nesttab.db_driver') . '\\'
             //        . ucfirst($columns[$i]['name_field']) .'Model';
@@ -130,15 +159,14 @@ class TableRecsModel {
         for ($i = 0; $i < count($columns); $i++) {
             // $columns[$i]['name_field'] - тип поля
             if (isset($columns[$i]['value']) 
-                    && in_array($columns[$i]['name_field'], ['image', 'file']) &&
-                    \Alxnv\Nesttab\Models\TokenUploadModel::isValidToken($columns[$i]['value'])) {
+                    && in_array($columns[$i]['name_field'], ['image', 'file'])) {
                 $arr[$columns[$i]['name']] = $columns[$i]['value'];
                 $arind[$columns[$i]['name']] = $i;
             }
         }
         
-        // удаляем файлы, которые были ранее указаны в БД
-        $this->deletePrevious($columns, $tbl['name'], $arr, $arind, $id);
+        //--- удаляем файлы, которые были ранее указаны в БД
+        //$this->deletePrevious($columns, $tbl['name'], $arr, $arind, $id);
         // записываем значения
         if (count($arr) > 0) {
             $db->update($tbl['name'], $arr, "where id=" . $id);
@@ -148,7 +176,7 @@ class TableRecsModel {
     }
 
     /**
-     * Удалить предыдущие версии файлов image, file
+     * !!! not used Удалить предыдущие версии файлов image, file
      * @global type $db
      * @param array $columns - $columns array
      * @param string $tbl - имя таблицы
@@ -156,6 +184,7 @@ class TableRecsModel {
      * @param array $arind - массив индексов в $columns имен полей из $arr
      * @param int $id - id в таблице
      */
+    /**
     public function deletePrevious(array $columns, string $tbl, array $arr, array $arind, int $id) {
         global $db;
         if (count($arr) == 0) return;
@@ -171,12 +200,12 @@ class TableRecsModel {
         for ($i = 0; $i < count($ar2); $i++) {
             $value = $ar4['v' . $i];
             if ($value <> '') {
-                // удаляем предыдущие файлы
-                $columns[$arind[$ar2[$i]]]['obj']->deleteFiles($value);
+                //--- удаляем предыдущие файлы
+                //$columns[$arind[$ar2[$i]]]['obj']->deleteFiles($value);
             }
         }
         
-    }
+    }*/
     
     /**
      * Проставить в $recs[$i]['value'] соответствующие данные из $r 

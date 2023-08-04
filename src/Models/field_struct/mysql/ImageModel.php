@@ -24,7 +24,9 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
      *   текущего поля
      */
     public function validate($value, object $table_recs, string $index, array $columns, int $i, array &$r) {
-        if (isset($columns[$i]['parameters']['req']) && ($value == '')) {
+        if (isset($columns[$i]['parameters']['req']) 
+                && ((!isset($columns[$i]['value_old']) || 
+                        ($columns[$i]['value_old'] == '')) && ($value == ''))) {
             $table_recs->setErr($index, __('The file must be downloaded'));
         }
         return $value;
@@ -88,6 +90,11 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
             $um = new \Alxnv\Nesttab\Models\UploadModel();
             $value = $um->moveFilesToUpload($token);
             if ($value !== false) {
+                if (isset($columns[$i]['value_old']) &&
+                        ($columns[$i]['value_old'] <> '')) {
+                    // if there was a file before in this field
+                    $this->deleteFiles($columns[$i]['value_old']);
+                }
                 $columns[$i]['value'] = $value; // если не было ошибки
             } else {
                 return false;
@@ -142,6 +149,8 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
         echo '<br />';
         $fieldName = $rec['name'];
         $isUploaded = (isset($rec['value']));
+        $isOld = (isset($rec['value_old']));
+        $isReq = (isset($params->req) && ($params->req == 1));
         if ($isUploaded) {
             // есть загруженный временный файл
             $value = basename($rec['value']);
@@ -170,10 +179,12 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
                 }],";
         };
     }
-    echo "server: {
-          remove: (source, load, error) => { 
-        document.getElementById(" . '"' .  $fieldName . '_srv_"' . ").checked = true; load(); },
-        process: '" . asset('/nesttab/upload_image') . "?file=" . $fieldName . "&tbl=" . $table_id . "&rec=" . $rec_id . "',
+    echo "server: {";
+    if (!$isReq) {
+        echo "      remove: (source, load, error) => { 
+        document.getElementById(" . '"' .  $fieldName . '_srv_"' . ").checked = true; load(); },";
+    };
+    echo "    process: '" . asset('/nesttab/upload_image') . "?file=" . $fieldName . "&tbl=" . $table_id . "&rec=" . $rec_id . "',
         revert: '" . asset('/nesttab/upload_image/revert') . "?file=" . $fieldName . "',
         restore: '" . asset('/nesttab/upload_image/restore') . "?token=',
         load: '" . asset('/nesttab/upload_image/load') . "?tbl=" . $table_id . "&rec=" . $rec_id . "&file=" . $fieldName . "|',
@@ -182,7 +193,7 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
         }}
     });
     </script>";
-        if (isset($value) && $value <> '') {
+        if (!$isReq && isset($value) && $value <> '') {
             //echo __('File') . ': ' . \yy::qs($value) . '<br />';
             echo '<input type="checkbox" '
             . 'name="' . $fieldName .'_srv_" id="' . $fieldName .'_srv_" '

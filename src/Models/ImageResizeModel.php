@@ -38,6 +38,7 @@ class ImageResizeModel {
      */
     public function resize(string $fn, array $irpm, int $num) {
        global $yy;
+	   if ($num < 1 || $num > count($irpm)) throw new \Exception('Index out of range');
        $arr = \Alxnv\Nesttab\core\StringHelper::splitByFirst('\\', \yy::pathDefend($fn));
        $dirname = $arr[0];
        $filename = $arr[1];

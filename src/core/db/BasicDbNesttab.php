@@ -156,6 +156,21 @@ class BasicDbNesttab {
         return ($f ? $f : null);
     }
 
+    /**
+     * mass nameEscape of an array
+     * @param array $fields
+     * @return array
+     */
+    function massNameEscape(array $fields) {
+        $arr = \Alxnv\Nesttab\core\ArrayHelper::forArray($fields, 
+                function($value) {
+                    global $db;
+                    return $db->nameEscape($value);
+                });
+        return $arr;
+    }
+            
+    
     function q($s, $params = []) {
 		/**
 			выполняет запрос и возвращает одну строчку с полученным массивом
