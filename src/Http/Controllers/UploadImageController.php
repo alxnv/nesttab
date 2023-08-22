@@ -26,7 +26,10 @@ class UploadImageController extends BasicController {
         $contentType = mime_content_type($s2);
         if (!in_array($contentType, ['image/jpeg', 'image/png', 'image/gif'])) \App::abort(404);
 
-        $c1 = file_get_contents($s2);
+        $img = file_get_contents($s2);
+        return response($img)->header('Content-type',$contentType)->
+                header('Content-Disposition', 'inline; filename="' . $fn[0] . '"');
+        /*$c1 = file_get_contents($s2);
         header("Content-Type: " . $contentType);
         header('Content-Disposition: inline; filename="' . $fn[0] . '"');
         echo $c1;
@@ -34,12 +37,29 @@ class UploadImageController extends BasicController {
         Log::debug('restore ' . print_r($r, true));*/
         
     }
+    public function loadEx(Request $request) {
+        //echo 'rrrrr';exit;
+        /*$s2 = public_path() . '/abrak.jpg';
+        $img = file_get_contents($s2);
+return response($img)->header('Content-type','image/jpeg');
+        //$c1 = file_get_contents($s2);
+        header("Content-Type: image/jpeg");
+        //header('Content-Length: ' . strlen($c1));
+        header('Content-Disposition: inline; filename="abrak.jpg"');
+        $tg = new \Alxnv\Nesttab\Models\ThumbnailGenerator;
+        $tg->generate($s2, 100, 100);
+//header('Content-Length: ' . filesize($s2));
+//readfile($s2);
+//exit;*/
+        //echo $c1;
+    }
     public function load(Request $request) {
         global $db, $yy;
         if (!$request->has('file')) \App::abort(404);
         $r = \Alxnv\Nesttab\core\StringHelper::splitByFirst('|', $request->input('file'));
         /*if (!$request->has('tbl')) \App::abort(404);
-        $tbl_id = intval($request->input('tbl'));
+http://localhost/nesttab/public/nesttab/upload_image/load?tbl=73&rec=1&file=image1s|1/abrak.jpg
+         *         $tbl_id = intval($request->input('tbl'));
         if (!$request->has('rec')) \App::abort(404);
         $rec_id = intval($request->input('rec'));
         $tbl = \Alxnv\Nesttab\Models\TablesModel::getOneAjax($tbl_id);
@@ -52,9 +72,12 @@ class UploadImageController extends BasicController {
         if (!is_file($s2)) \App::abort(404);
         $contentType = mime_content_type($s2);
         if (!in_array($contentType, ['image/jpeg', 'image/png', 'image/gif'])) \App::abort(404);
+        $img = file_get_contents($s2);
+        return response($img)->header('Content-type',$contentType);
 
-        $c1 = file_get_contents($s2);
+        /*$c1 = file_get_contents($s2);
         header("Content-Type: " . $contentType);
+        //header('Content-Length: ' . strlen($c1));
         header('Content-Disposition: inline; filename="' . $f[1] . '"');
         echo $c1;
         /*$r2 = $request->all();

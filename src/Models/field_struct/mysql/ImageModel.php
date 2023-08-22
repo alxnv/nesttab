@@ -29,6 +29,16 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
                         ($columns[$i]['value_old'] == '')) && ($value == ''))) {
             $table_recs->setErr($index, __('The file must be downloaded'));
         }
+        if (isset($r[$columns[$i]['name']]) && 
+                !\Alxnv\Nesttab\Models\TokenUploadModel::isValidToken($r[$columns[$i]['name']])) {
+            // в $r значение вида '3/image.gif'
+            unset($r[$columns[$i]['name']]);
+        }
+        /*if (isset($columns[$i]['value']) && isset($columns[$i]['value_old']) &&
+                ($columns[$i]['value'] === $columns[$i]['value_old'])) {
+            
+            $columns[$i]['value'] = '';
+        }*/
         return $value;
         /*$v2 = $value;
         if (isset($r[$index])) {
@@ -87,14 +97,14 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
         if (isset($r[$index]) && \Alxnv\Nesttab\Models\TokenUploadModel::isValidToken($r[$index])) {
             // загружен новый файл
             $token = $r[$index];
+            if (isset($columns[$i]['value_old']) &&
+                    ($columns[$i]['value_old'] <> '')) {
+                // if there was a file before in this field
+                $this->deleteFiles($columns[$i]['value_old']);
+            }
             $um = new \Alxnv\Nesttab\Models\UploadModel();
             $value = $um->moveFilesToUpload($token);
             if ($value !== false) {
-                if (isset($columns[$i]['value_old']) &&
-                        ($columns[$i]['value_old'] <> '')) {
-                    // if there was a file before in this field
-                    $this->deleteFiles($columns[$i]['value_old']);
-                }
                 $columns[$i]['value'] = $value; // если не было ошибки
             } else {
                 return false;
@@ -148,8 +158,8 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
         echo \yy::qs($rec['descr']);
         echo '<br />';
         $fieldName = $rec['name'];
-        $isUploaded = (isset($rec['value']));
-        $isOld = (isset($rec['value_old']));
+        $isOld = (isset($rec['value_old']) && ($rec['value_old'] <>''));
+        $isUploaded = (isset($rec['value']) && ($rec['value'] <>''));
         $isReq = (isset($params->req) && ($params->req == 1));
         if ($isUploaded) {
             // есть загруженный временный файл

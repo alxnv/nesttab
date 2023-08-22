@@ -64,6 +64,7 @@ Route::prefix(config('nesttab.nurl'))->group(function () {
     /**
      * руты для уровня пользователя "администратор"
      */
+    //Route::get('/upl', CP9 . 'UploadImageController@loadEx');
     Route::get('/tests', CP9 . 'TestsController@index');
     Route::get('/tests/ajax_infinite_sql', CP9 . 'TestsAjaxController@infiniteSql');
     Route::get('/tests/ajax_infinite_run_sql', CP9 . 'TestsAjaxController@infiniteSqlRun');

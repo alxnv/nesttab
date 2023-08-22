@@ -55,13 +55,14 @@ class TableRecsModel {
                 $ar2[] = $columns[$i]['name'];
             }
         }
+        
         if (count($arr) > 0) {
             // if there are image of file type fields
             $ar3 = $db->massNameEscape($ar2);
             $s = join(', ', $ar3);
             $rec = $db->q("select " . $s . " from " . $tbl['name'] . " where id = $1", [$id]);
             for ($i = 0; $i < count($ar2); $i++) {
-                $columns[$i]['value_old'] = $rec[$ar2[$i]];
+                $columns[$arr[$i]]['value_old'] = $rec[$i];
             }
         }
     }

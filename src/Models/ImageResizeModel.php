@@ -101,6 +101,8 @@ class ImageResizeModel {
         $imgAsp = $width / $height;
         $reqAsp = $w / $h;
         
+        //$white = imagecolorallocate($this->img, 255, 255, 255);
+        //imagefilledrectangle($this->img, 0, 0, $width - 1, $height - 1, $white);
         switch ($type) {
             case 'cover':
                 // изображение может быть обрезано
@@ -138,8 +140,8 @@ class ImageResizeModel {
                         $srcx = (($width - $srcw) >> 1);
                     }
                 }
-                $thumb = imagecreatetruecolor($dstw, $dsth);
-                imagecopyresized($thumb, $this->img, 0, 0, $srcx, $srcy,
+                $thumb = imagecreatetruecolor(floor($dstw), floor($dsth));
+                imagecopyresampled($thumb, $this->img, 0, 0, $srcx, $srcy,
                         $dstw, $dsth, $srcw,
                         $srch);
                 $this->saveTo($fnto, $thumb);
@@ -154,8 +156,8 @@ class ImageResizeModel {
                     $dstw = $w;
                     $dsth = $height * $w / $width;
                 }
-                $thumb = imagecreatetruecolor($dstw, $dsth);
-                imagecopyresized($thumb, $this->img, 0, 0, 0, 0, $dstw, $dsth, $width,
+                $thumb = imagecreatetruecolor(floor($dstw), floor($dsth));
+                imagecopyresampled($thumb, $this->img, 0, 0, 0, 0, $dstw, $dsth, $width,
                         $height);
                 $this->saveTo($fnto, $thumb);
                 break;

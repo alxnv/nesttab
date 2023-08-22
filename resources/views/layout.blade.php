@@ -11,8 +11,8 @@
     <link rel="stylesheet" href="<?=asset('/nsttab/css/jquery-confirm.min.css')?>">
     <?php 
     if (isset($requires) && isset($requires['need_filepond'])) {
-        echo '<link rel="stylesheet" href="' . asset('/nsttab/filepond/filepond.min.css') . '">';
         echo '<link rel="stylesheet" href="' . asset('/nsttab/filepond/filepond-plugin-image-preview.css') . '">';
+        echo '<link rel="stylesheet" href="' . asset('/nsttab/filepond/filepond.min.css') . '">';
     }
     ?>
     <script type="text/javascript" src="<?=asset('/nsttab/js/jquery-3.6.0.min.js')?>"></script>
@@ -30,15 +30,15 @@
 
       <?php
       if (isset($requires) && isset($requires['need_filepond'])) {
-          echo '<script src="' . asset('/nsttab/filepond/filepond-plugin-image-preview.js') . '"></script>';
           echo '<script src="' . asset('/nsttab/filepond/filepond.min.js') . '"></script>';
-          echo '<script src="' . asset('/nsttab/filepond/filepond-plugin-image-resize.js') . '"></script>';
-          echo '<script src="' . asset('/nsttab/filepond/filepond-plugin-image-transform.js') . '"></script>';
+          echo '<script src="' . asset('/nsttab/filepond/filepond-plugin-image-preview.js') . '"></script>';
+          //echo '<script src="' . asset('/nsttab/filepond/filepond-plugin-image-resize.js') . '"></script>';
+          //echo '<script src="' . asset('/nsttab/filepond/filepond-plugin-image-transform.js') . '"></script>';
           echo '<script src="' . asset('/nsttab/filepond/filepond-plugin-file-validate-type.js') . '"></script>';
           echo '<script>
             FilePond.registerPlugin(FilePondPluginImagePreview);
-            FilePond.registerPlugin(FilePondPluginImageResize);
-            FilePond.registerPlugin(FilePondPluginImageTransform);
+            //FilePond.registerPlugin(FilePondPluginImageResize);
+            //FilePond.registerPlugin(FilePondPluginImageTransform);
             FilePond.registerPlugin(FilePondPluginFileValidateType);
           </script>';
       }
