@@ -27,7 +27,7 @@ for ($i = 0; $i < count($list); $i++) {
         echo '<br /><h2>' . \yy::qs($s2). '</h2>';
     }
     
-    echo '<a href="' . $yy->baseurl . 'nesttab/struct-change-table/edit/' .
+    echo '<a href="' . $yy->baseurl . config('nesttab.nurl') . '/struct-change-table/edit/' .
             $list[$i]['id'] . '/">' .
             \yy::qs(trim($list[$i]['descr']) == '' ? '------' : $list[$i]['descr']) .
             ' (' . \yy::qs($list[$i]['name']) . ')</a><br />';

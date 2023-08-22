@@ -31,7 +31,7 @@ foreach ($yy->settings2['table_names'] as $s2) {
 <script type="text/javascript">
     var table_names =[<?=join(', ', $arr8)?>];
 </script>
-<form method="get" action="<?=$yy->baseurl?>nesttab/struct-add-table/step22">
+<form method="get" action="<?=$yy->nurl?>struct-add-table/step22">
 <h2 class="center"><?=__('Add table')?></h2>
 <br />
 <p class="center">

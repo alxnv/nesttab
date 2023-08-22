@@ -15,7 +15,7 @@ if (isset($r['id'])) { // если не новая запись
     <table-elt></table-elt>
 </div>
 <script type="text/javascript">
-    var baseUrl = '<?=asset('/nesttab')?>';
+    var baseUrl = '<?=asset('/' . config('nesttab.nurl'))?>';
 
 
 

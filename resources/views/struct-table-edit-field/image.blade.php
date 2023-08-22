@@ -27,7 +27,7 @@ if (isset($r['iprm'])) {
         (object)['w' => 200, 'h' => 150, 't' => 'contain']];
 }
 
-echo '<a href="' . $yy->baseurl . 'nesttab/struct-change-table/edit/' . $tbl['id'] . '/0">'
+echo '<a href="' . $yy->baseurl . config('nesttab.nurl') . '/struct-change-table/edit/' . $tbl['id'] . '/0">'
         .__('Back') . '</a><br /><br />';
 
 echo '<h1 class="center">' . __('Edit table') . ' "' . \yy::qs($tbl['descr']) . '" (' .
@@ -65,7 +65,7 @@ if (isset($r['opt_fields'])) {
        // имени поля, то открываем div с именем поля
 }
 
-echo '<form method="post" action="' . $yy->baseurl . 'nesttab/struct-table-edit-field/save/' . $tbl_id .
+echo '<form method="post" action="' . $yy->baseurl . config('nesttab.nurl') . '/struct-table-edit-field/save/' . $tbl_id .
         '"><div class="align-left">';
 //$controller->render_partial(['r' => $r], 'all', 'all-fields');
 ?>

@@ -134,7 +134,7 @@ dd($s);*/
 
         if (!$field_model->hasErr()) {
             Session::save();
-            \yy::redirectNow($yy->baseurl . 'nesttab/struct-change-table/edit/' . $table_id . '/0');
+            \yy::redirectNow($yy->nurl . 'struct-change-table/edit/' . $table_id . '/0');
             exit;
         } else {
             //\yy::gotoErrorPage($s);
@@ -146,7 +146,7 @@ dd($s);*/
             //session([$lnk2 => $r]);
             Session::save();
             $ids = (isset($r['id']) ? 'id=' . intval($r['id']) . '&' : '');
-            \yy::redirectNow($yy->baseurl . 'nesttab/struct-table-edit-field/step2/' . $table_id .
+            \yy::redirectNow($yy->nurl . 'struct-table-edit-field/step2/' . $table_id .
                     '/0?' . $ids . 'is_error=1&field_type_id=' . intval($r['field_type_id']));
             exit;
         }

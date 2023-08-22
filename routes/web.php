@@ -30,7 +30,15 @@ Route::get('/dashboard', function () {
     });
 */
 
-Route::prefix('nesttab')->group(function () {
+// Route for not secret pages
+//  todo: go to not secret place to enter login password if not logged in
+//  todo: make not secret message and error page (if needed) - all links on that pages
+//    must be not secret
+Route::prefix(config('nesttab.uurl'))->group(function () {
+});
+
+// Route for admin system. Maybe secret
+Route::prefix(config('nesttab.nurl'))->group(function () {
     /*Route::get('/', function () {
             return 'Hello';
     });*/
@@ -41,14 +49,14 @@ Route::prefix('nesttab')->group(function () {
     /**
      * руты для уровня пользователя "модератор"
      */
+    Route::get('/error', CP9 . 'ErrorController');
+    Route::get('/message', CP9 . 'MessageController');
     Route::delete('/upload_image/revert', CP9 . 'UploadImageController@revert');
     Route::get('/upload_image/load', CP9 . 'UploadImageController@load');
     Route::get('/upload_image/restore', CP9 . 'UploadImageController@restore');
     Route::post('/upload_image', CP9 . 'UploadImageController');
     Route::post('/edit/save_one/{id}', CP9 . 'EditController@saveOne');
     Route::get('/edit/{id}', CP9 . 'EditController@index');
-    Route::get('/error', CP9 . 'ErrorController');
-    Route::get('/message', CP9 . 'MessageController');
     Route::get('/', CP9 . 'IndexController@index');
     
     

@@ -184,10 +184,10 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
         echo "      remove: (source, load, error) => { 
         document.getElementById(" . '"' .  $fieldName . '_srv_"' . ").checked = true; load(); },";
     };
-    echo "    process: '" . asset('/nesttab/upload_image') . "?file=" . $fieldName . "&tbl=" . $table_id . "&rec=" . $rec_id . "',
-        revert: '" . asset('/nesttab/upload_image/revert') . "?file=" . $fieldName . "',
-        restore: '" . asset('/nesttab/upload_image/restore') . "?token=',
-        load: '" . asset('/nesttab/upload_image/load') . "?tbl=" . $table_id . "&rec=" . $rec_id . "&file=" . $fieldName . "|',
+    echo "    process: '" . asset('/' . config('nesttab.nurl') .'/upload_image') . "?file=" . $fieldName . "&tbl=" . $table_id . "&rec=" . $rec_id . "',
+        revert: '" . asset('/' . config('nesttab.nurl') . '/upload_image/revert') . "?file=" . $fieldName . "',
+        restore: '" . asset('/' . config('nesttab.nurl') . '/upload_image/restore') . "?token=',
+        load: '" . asset('/' . config('nesttab.nurl') . '/upload_image/load') . "?tbl=" . $table_id . "&rec=" . $rec_id . "&file=" . $fieldName . "|',
         headers: {
             'X-CSRF-TOKEN': '" . Session::token() . "',
         }}

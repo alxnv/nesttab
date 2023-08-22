@@ -45,7 +45,7 @@
       ?>
 
       <div id="body-wrapper">
-          <div id="header"><a href="<?=asset('/nesttab')?>">Nesttab</a></div>
+          <div id="header"><a href="<?=asset('/' . config('nesttab.nurl'))?>">Nesttab</a></div>
         <div id="page_content">
 	<div id="admin_left">
 	@include('nesttab::menu_left')

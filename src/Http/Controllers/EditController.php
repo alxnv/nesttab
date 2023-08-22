@@ -77,7 +77,7 @@ class EditController extends BasicController {
         if (!$recs->hasErr()) {
             $request ->session()->flash('saved_successfully', 1);
             Session::save();
-            \yy::redirectNow($yy->baseurl . 'nesttab/edit/' . $table_id);
+            \yy::redirectNow($yy->nurl . 'edit/' . $table_id);
             exit;
         } else {
             //\yy::gotoErrorPage($s);
@@ -89,7 +89,7 @@ class EditController extends BasicController {
             //session([$lnk2 => $r]);
             $request->session()->flash($lnk2, $r);
             Session::save();
-            \yy::redirectNow($yy->baseurl . 'nesttab/edit/' . $table_id);
+            \yy::redirectNow($yy->nurl . 'edit/' . $table_id);
             exit;
         }
         

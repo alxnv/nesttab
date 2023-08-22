@@ -42,7 +42,7 @@ class StructChangeTableController extends BasicController {
         $tbl = \Alxnv\Nesttab\Models\TablesModel::getOne($n);
 
         \Alxnv\Nesttab\Models\ColumnsModel::move(intval($r['id']), intval($r['moveto']));
-        \yy::redirectNow($yy->baseurl . 'nesttab/struct-change-table/edit/' . $n . '/0');
+        \yy::redirectNow($yy->nurl . 'struct-change-table/edit/' . $n . '/0');
         exit;
     }
     

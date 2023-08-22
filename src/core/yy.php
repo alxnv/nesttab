@@ -12,6 +12,8 @@ class yy {
     public $built_in_settings;
     public $settings2;
     public $baseurl=null;
+    public $nurl; // url of nesttab with trailing slash
+    public $uurl; // url of not secret pages
     public $basepath=null;
     public $locale_loaded = false;
     private $locale;
@@ -26,6 +28,8 @@ class yy {
         $this->Engine_Path = base_path() . '/vendor/alxnv/nesttab';
         $this->baseurl=dirname($_SERVER['SCRIPT_NAME']).'/';
         if ($this->baseurl=='//') $this->baseurl='/';
+        $this->nurl = $this->baseurl . config('nesttab.nurl') . '/';
+        $this->uurl = $this->baseurl . config('nesttab.uurl') . '/';
         $this->basepath = dirname($_SERVER["SCRIPT_FILENAME"]).'/'; //dirname(__DIR__);  
 		//$this->settings = require($this->Engine_Path . '/settings/settings.php');
 		//$this->built_in_settings = require('built_in_settings.php');
@@ -72,7 +76,7 @@ class yy {
         $lnk = \yy::getErrorSession();
         session([$lnk => $s]);
         Session::save();
-        static::redirectNow($yy->baseurl . 'nesttab/error?wl=' . $yy->whithout_layout);
+        static::redirectNow($yy->nurl . 'error?wl=' . $yy->whithout_layout);
         //exit;
     }
 
@@ -81,7 +85,7 @@ class yy {
         $lnk = \yy::getMessageSession();
         session([$lnk => $s]);
         Session::save();
-        static::redirectNow($yy->baseurl . 'nesttab/message');
+        static::redirectNow($yy->nurl . 'message');
         //header('Location: ' . $yy->baseurl . 'nesttab/message');
         //exit;
     }

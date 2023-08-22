@@ -34,7 +34,7 @@ echo $e->getErr('');
 
 
 
-echo '<form enctype="multipart/form-data" method="post" action="' . $yy->baseurl . 'nesttab/edit/save_one/' . $tbl['id'] . '" >';
+echo '<form enctype="multipart/form-data" method="post" action="' . $yy->baseurl . config('nesttab.nurl') . '/edit/save_one/' . $tbl['id'] . '" >';
 ?>
 @csrf
 <?php

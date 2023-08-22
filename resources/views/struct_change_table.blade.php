@@ -4,7 +4,7 @@ global $yy;
 @extends(config('nesttab.layout'))
 @section('content')
 <script type="text/javascript">
-    var baseUrl = '<?=asset('/nesttab')?>';
+    var baseUrl = '<?=asset('/' . config('nesttab.nurl'))?>';
 </script>
 <?php
 
@@ -17,7 +17,7 @@ $s = \Alxnv\Nesttab\core\Helper::table_types($tt);
 echo __('Table type') . ': ' . \yy::qs($s) . '</h1>';
 
 
-echo '<br /><p class="center"><a class="addfield" href="' . $yy->baseurl . 'nesttab/struct-table-edit-field/index/' . $tbl_id . '/' . $prev_link . '">' . __('Add field') . '</a>'
+echo '<br /><p class="center"><a class="addfield" href="' . $yy->nurl . 'struct-table-edit-field/index/' . $tbl_id . '/' . $prev_link . '">' . __('Add field') . '</a>'
         . '</p>';
 
 

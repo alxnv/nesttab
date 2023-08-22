@@ -26,7 +26,7 @@ global $yy;
 Выполнилось 20 раз по 110 секунд (при max execution time 120) затем выдало ошибку
  "max execution time exceeded"
 <script>
-    var baseUrl = '<?=asset('/nesttab')?>';
+    var baseUrl = '<?=asset('/' . config('nesttab.nurl'))?>';
     var toStop = 0;
     var objRef;
 

@@ -30,7 +30,7 @@ global $yy;
 </div>
 Выполнялось почти полчаса, пока не остановил
 <script>
-    var baseUrl = '<?=asset('/nesttab')?>';
+    var baseUrl = '<?=asset('/' . config('nesttab.nurl'))?>';
     var toStop = 0;
     var objRef;
 
