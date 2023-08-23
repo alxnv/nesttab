@@ -195,6 +195,16 @@ class yy {
         $s = str_replace("'", '', $s);
         return $s;
     }
+    /**
+     * Защита пути от использования '\..\'
+     * @param string $path
+     * @return string
+     */
+    
+    public static function pathDefend2(string $path) {
+        $s = str_replace('..', '', $path);
+        return $s;
+    }
     /*
 
     public function translateAliases($path) {

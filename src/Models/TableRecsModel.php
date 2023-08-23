@@ -159,9 +159,11 @@ class TableRecsModel {
         // определяем, какие данные записывать (поля типа image и file)
         for ($i = 0; $i < count($columns); $i++) {
             // $columns[$i]['name_field'] - тип поля
-            if (isset($columns[$i]['value']) 
+            $value = $columns[$i]['value'];
+            if (isset($value) && ($value <>'')
                     && in_array($columns[$i]['name_field'], ['image', 'file'])) {
-                $arr[$columns[$i]['name']] = $columns[$i]['value'];
+                if ($value == '$') $value = ''; // "delete" checkbox was checked
+                $arr[$columns[$i]['name']] = $value;
                 $arind[$columns[$i]['name']] = $i;
             }
         }

@@ -34,39 +34,7 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
             // в $r значение вида '3/image.gif'
             unset($r[$columns[$i]['name']]);
         }
-        /*if (isset($columns[$i]['value']) && isset($columns[$i]['value_old']) &&
-                ($columns[$i]['value'] === $columns[$i]['value_old'])) {
-            
-            $columns[$i]['value'] = '';
-        }*/
         return $value;
-        /*$v2 = $value;
-        if (isset($r[$index])) {
-            // загружен новый файл
-            $file = json_decode($r[$index]);
-            $ext = pathinfo($file->name, PATHINFO_EXTENSION);
-            if (!\Alxnv\Nesttab\core\FormatHelper::validExt($ext))
-                $table_recs->setErr($index, __('Wrong file type'));
-            $allowed = $columns[$i]['parameters']['allowed'];
-            if (count($allowed) > 0) {
-                if (!\Alxnv\Nesttab\core\FormatHelper::inListCaseInsensitive($ext,
-                    $allowed)) {
-                    $arr = \Alxnv\Nesttab\core\ArrayHelper::forArray($allowed,
-                            function($value) {
-                                return '"' . $value . '"';
-                            });
-                    $table_recs->setErr($index, __('Allowed extensions') . ': '
-                            . join(', ', $arr));
-                }
-            }
-            $r[$index . '_srv_2'] = $r[$index];
-            $v2 = '1';
-        };
-        $value = '';
-        $r[$index] = '';
-        if (isset($columns[$i]['parameters']['req']) && (trim($v2) == '')) {
-            $table_recs->setErr($index, __('The file must exist'));
-        }*/
     }
     
     /**
@@ -94,24 +62,42 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
      */
     public function postProcess(object $table_recs, array &$columns, int $i, array $r) {
         $index = $columns[$i]['name'];
-        if (isset($r[$index]) && \Alxnv\Nesttab\Models\TokenUploadModel::isValidToken($r[$index])) {
-            // загружен новый файл
-            $token = $r[$index];
+        if (isset($r[$index . '_srv_'])) {
+            // если выбран чекбокс "удалить"
+            if (isset($r[$index]) && \Alxnv\Nesttab\Models\TokenUploadModel::isValidToken($r[$index])) {
+                // загружен временный файл, удаляем его
+                $tum = new \Alxnv\Nesttab\Models\TokenUploadModel();
+                $tum->deleteTokenDir($r[$index]);
+                unset($r[$index]);
+                $columns[$i]['value'] = '';
+            }
             if (isset($columns[$i]['value_old']) &&
                     ($columns[$i]['value_old'] <> '')) {
                 // if there was a file before in this field
                 $this->deleteFiles($columns[$i]['value_old']);
+                $columns[$i]['value'] = '$';
             }
-            $um = new \Alxnv\Nesttab\Models\UploadModel();
-            $value = $um->moveFilesToUpload($token);
-            if ($value !== false) {
-                $columns[$i]['value'] = $value; // если не было ошибки
-            } else {
-                return false;
-            }
+            
         } else {
-            // файл остается прежним, ничего не делаем
-        };
+            if (isset($r[$index]) && \Alxnv\Nesttab\Models\TokenUploadModel::isValidToken($r[$index])) {
+                // загружен новый файл
+                $token = $r[$index];
+                if (isset($columns[$i]['value_old']) &&
+                        ($columns[$i]['value_old'] <> '')) {
+                    // if there was a file before in this field
+                    $this->deleteFiles($columns[$i]['value_old']);
+                }
+                $um = new \Alxnv\Nesttab\Models\UploadModel();
+                $value = $um->moveFilesToUpload($token);
+                if ($value !== false) {
+                    $columns[$i]['value'] = $value; // если не было ошибки
+                } else {
+                    return false;
+                }
+            } else {
+                // файл остается прежним, ничего не делаем
+            };
+        }
         return true;
     }
     
@@ -173,20 +159,24 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
     const pond_" . $fieldName . " = FilePond.create(inputElement_" . $fieldName . ", {
     allowImageTransform: false,
     acceptedFileTypes: [" . $s . "],";
+    if (!$isReq) {
+        echo "      onprocessfilestart: (file) => {  
+        document.getElementById(" . '"' .  $fieldName . '_srv_"' . ").checked = false; },";
+    };
     if ($isUploaded) {
         if ($rec['value'] <> '') {
             echo "files: [{"
-            . "source: '" . $rec['value'] . "', 
-                options: { type: 'limbo' }
-                }],";
+            . 'source: "' . \yy::jsmstr($rec['value']) . '", 
+                options: { type: "limbo" }
+                }],';
         }
     } else {
         if ($rec['value_old'] <> '') {
             // if there was a picture in db
             echo "files: [{"
-            . "source: '" . $rec['value_old'] . "', 
-                options: { type: 'local' }
-                }],";
+            . 'source: "' . \yy::jsmstr($rec['value_old']) . '", 
+                options: { type: "local" }
+                }],';
         };
     }
     echo "server: {";
@@ -194,10 +184,10 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
         echo "      remove: (source, load, error) => { 
         document.getElementById(" . '"' .  $fieldName . '_srv_"' . ").checked = true; load(); },";
     };
-    echo "    process: '" . asset('/' . config('nesttab.nurl') .'/upload_image') . "?file=" . $fieldName . "&tbl=" . $table_id . "&rec=" . $rec_id . "',
-        revert: '" . asset('/' . config('nesttab.nurl') . '/upload_image/revert') . "?file=" . $fieldName . "',
+    echo "    process: '" . asset('/' . config('nesttab.nurl') .'/upload_image') . "?file928357=" . $fieldName . "&tbl=" . $table_id . "&rec=" . $rec_id . "',
+        revert: '" . asset('/' . config('nesttab.nurl') . '/upload_image/revert') . "?file928357=" . $fieldName . "',
         restore: '" . asset('/' . config('nesttab.nurl') . '/upload_image/restore') . "?token=',
-        load: '" . asset('/' . config('nesttab.nurl') . '/upload_image/load') . "?tbl=" . $table_id . "&rec=" . $rec_id . "&file=" . $fieldName . "|',
+        load: '" . asset('/' . config('nesttab.nurl') . '/upload_image/load') . "?tbl=" . $table_id . "&rec=" . $rec_id . "&file928357=" . $fieldName . "|',
         headers: {
             'X-CSRF-TOKEN': '" . Session::token() . "',
         }}

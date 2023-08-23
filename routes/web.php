@@ -55,6 +55,10 @@ Route::prefix(config('nesttab.nurl'))->group(function () {
     Route::get('/upload_image/load', CP9 . 'UploadImageController@load');
     Route::get('/upload_image/restore', CP9 . 'UploadImageController@restore');
     Route::post('/upload_image', CP9 . 'UploadImageController');
+    Route::delete('/upload_file/revert', CP9 . 'UploadFileController@revert');
+    Route::get('/upload_file/load', CP9 . 'UploadFileController@load');
+    Route::get('/upload_file/restore', CP9 . 'UploadFileController@restore');
+    Route::post('/upload_file', CP9 . 'UploadFileController');
     Route::post('/edit/save_one/{id}', CP9 . 'EditController@saveOne');
     Route::get('/edit/{id}', CP9 . 'EditController@index');
     Route::get('/', CP9 . 'IndexController@index');

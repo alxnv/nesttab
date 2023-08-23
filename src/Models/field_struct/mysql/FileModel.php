@@ -7,6 +7,8 @@
 
 namespace Alxnv\Nesttab\Models\field_struct\mysql;
 
+use Illuminate\Support\Facades\Session;
+
 class FileModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
 
     /**
@@ -22,32 +24,15 @@ class FileModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
      *   текущего поля
      */
     public function validate($value, object $table_recs, string $index, array $columns, int $i, array &$r) {
-        $v2 = $value;
-        if (isset($r[$index])) {
-            // загружен новый файл
-            $file = json_decode($r[$index]);
-            $ext = pathinfo($file->name, PATHINFO_EXTENSION);
-            if (!\Alxnv\Nesttab\core\FormatHelper::validExt($ext))
-                $table_recs->setErr($index, __('Wrong file type'));
-            $allowed = $columns[$i]['parameters']['allowed'];
-            if (count($allowed) > 0) {
-                if (!\Alxnv\Nesttab\core\FormatHelper::inListCaseInsensitive($ext,
-                    $allowed)) {
-                    $arr = \Alxnv\Nesttab\core\ArrayHelper::forArray($allowed,
-                            function($value) {
-                                return '"' . $value . '"';
-                            });
-                    $table_recs->setErr($index, __('Allowed extensions') . ': '
-                            . join(', ', $arr));
-                }
-            }
-            $r[$index . '_srv_2'] = $r[$index];
-            $v2 = '1';
-        };
-        $value = '';
-        $r[$index] = '';
-        if (isset($columns[$i]['parameters']['req']) && (trim($v2) == '')) {
-            $table_recs->setErr($index, __('The file must exist'));
+        if (isset($columns[$i]['parameters']['req']) 
+                && ((!isset($columns[$i]['value_old']) || 
+                        ($columns[$i]['value_old'] == '')) && ($value == ''))) {
+            $table_recs->setErr($index, __('The file must be downloaded'));
+        }
+        if (isset($r[$columns[$i]['name']]) && 
+                !\Alxnv\Nesttab\Models\TokenUploadModel::isValidToken($r[$columns[$i]['name']])) {
+            // в $r значение вида '3/image.gif'
+            unset($r[$columns[$i]['name']]);
         }
         return $value;
     }
@@ -69,52 +54,65 @@ class FileModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
      * @param array $r - (array)Request
      */
     public function postProcess(object $table_recs, array &$columns, int $i, array $r) {
-        /*$index = $columns[$i]['name'];
-        if (isset($r[$index . '_srv_2'])) {
-            // загружен новый файл
-            $file = json_decode($r[$index . '_srv_2']);
-            $fname = basename($file->name); // validate input values
-            
-            $um = new \Alxnv\Nesttab\Models\UploadModel();
-            $value = $um->copyFileToUpload($fname, base64_decode($file->data));
-            $columns[$i]['value'] = $value;
-        };
-        */
-    }
-    
-    
-    /**
-     * Вывести поле загрузки файла
-     * @param string $fieldName - имя поля (латиница)
-     * @param string $value - имя загруженного ранее файла
-     */
-    public static function fileLoad(string $fieldName, string $value) {
-        echo '<input type="file" id = "' . $fieldName . '"  name = "' . $fieldName . '" />';
-        echo "<script>
-    let inputElement_" . $fieldName . " = document.querySelector('#" . $fieldName . "');
-    const pond_" . $fieldName . " = FilePond.create(inputElement_" . $fieldName . ");
-    // Request encoded data
-    pond_" . $fieldName . ".onaddfile = (err, item) => {
-
-            if (err) {
-                console.warn(err);
-                return;
+        $index = $columns[$i]['name'];
+        if (isset($r[$index . '_srv_'])) {
+            // если выбран чекбокс "удалить"
+            if (isset($r[$index]) && \Alxnv\Nesttab\Models\TokenUploadModel::isValidToken($r[$index])) {
+                // загружен временный файл, удаляем его
+                $tum = new \Alxnv\Nesttab\Models\TokenUploadModel();
+                $tum->deleteTokenDir($r[$index]);
+                unset($r[$index]);
+                $columns[$i]['value'] = '';
+            }
+            if (isset($columns[$i]['value_old']) &&
+                    ($columns[$i]['value_old'] <> '')) {
+                // if there was a file before in this field
+                $this->deleteFiles($columns[$i]['value_old']);
+                $columns[$i]['value'] = '$';
             }
             
-            let dataURL = item.getFileEncodeDataURL();
-
-            let base64String = item.getFileEncodeBase64String();
-            //alert(base64String);
+        } else {
+            if (isset($r[$index]) && \Alxnv\Nesttab\Models\TokenUploadModel::isValidToken($r[$index])) {
+                // загружен новый файл
+                $token = $r[$index];
+                if (isset($columns[$i]['value_old']) &&
+                        ($columns[$i]['value_old'] <> '')) {
+                    // if there was a file before in this field
+                    $this->deleteFiles($columns[$i]['value_old']);
+                }
+                $um = new \Alxnv\Nesttab\Models\UploadModel();
+                $value = $um->moveFilesToUpload($token);
+                if ($value !== false) {
+                    $columns[$i]['value'] = $value; // если не было ошибки
+                } else {
+                    return false;
+                }
+            } else {
+                // файл остается прежним, ничего не делаем
+            };
         }
-    </script>";
-        if (isset($value) && $value <> '') {
-            echo __('File') . ': ' . \yy::qs($value) . '<br />';
-            echo '<input type="checkbox" '
-            . 'name="' . $fieldName .'_srv_" id="' . $fieldName .'_srv_" /> ';
-            echo '<label for="' . $fieldName .'_srv_">' . __('Delete') . '</label><br />';
-        }
+        return true;
     }
     
+    /**
+     * Get file size from upload dir
+     * @param type $fn - filename
+     * @return boolean | int - file size in bytes or false if error has happened
+     */
+    public static function getFileSize($fn) {
+        try {
+            $n = filesize(public_path() . '/upload/' . $fn);
+        } catch (\Exception $ex) {
+            return false;
+        }
+        if ($n === false) return false;
+        return $n;
+    }
+    
+    public static function getNameFromPathName(string $fn) {
+        $arr = \Alxnv\Nesttab\core\StringHelper::splitByFirst('/', $fn);
+        return $arr[1];
+    }
     
     /**
      * Вывод поля таблицы для редактирования
@@ -125,12 +123,93 @@ class FileModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
      * @param array $r - request data of redirected request
      */
     public function editField(array $rec, array $errors, int $table_id, int $rec_id, $r) {
+        $params = json_decode($rec['parameters']);
+        //var_dump($r);
         echo \yy::qs($rec['descr']);
         echo '<br />';
-        static::fileLoad($rec['name'], basename($rec['value']));
+        $fieldName = $rec['name'];
+        $isOld = (isset($rec['value_old']) && ($rec['value_old'] <>''));
+        $isUploaded = (isset($rec['value']) && ($rec['value'] <>''));
+        $isReq = (isset($params->req) && ($params->req == 1));
+        if ($isUploaded) {
+            // есть загруженный временный файл
+            $value = basename($rec['value']);
+        } else {
+            $value = basename($rec['value_old']);
+        }
+        echo '<input type="file" id = "' . $fieldName . '"  name = "' . $fieldName . '" />';
+        echo "<script>
+    let inputElement_" . $fieldName . " = document.querySelector('#" . $fieldName . "');
+    const pond_" . $fieldName . " = FilePond.create(inputElement_" . $fieldName . ", {
+    allowImageTransform: false,";
+    if (!$isReq) {
+        echo "      onprocessfilestart: (file) => {  
+        document.getElementById(" . '"' .  $fieldName . '_srv_"' . ").checked = false; },";
+    };
+    if ($isUploaded) {
+        if ($rec['value'] <> '') {
+            $f = \Alxnv\Nesttab\Models\TokenUploadModel::getFileNameAndSize($rec['value']);
+            if ($f === false) {
+                echo "files: [{"
+                . 'source: "' . \yy::jsmstr($rec['value']) . '", 
+                    options: { type: "limbo" }
+                    }],';
+            } else {
+                echo "files: [{"
+                . 'source: "' . \yy::jsmstr($rec['value']) . '", 
+                    options: { type: "limbo",
+                    file: {
+                        name: "' . \yy::jsmstr($f[0]) . '", 
+                        size: ' .  $f[1] .     '
+                    }}
+                    }],';
+            }
+        }
+    } else {
+        if ($rec['value_old'] <> '') {
+            // if there was a picture in db
+            $f = self::getFileSize($rec['value_old']);
+            if ($f === false) {
+                echo "files: [{"
+                . 'source: "' . \yy::jsmstr($rec['value_old']) . '", 
+                    options: { type: "local" }
+                    }],';
+            } else {
+                echo "files: [{"
+                . 'source: "' . \yy::jsmstr($rec['value_old']) . '", 
+                    options: { type: "local",
+                    file: {
+                        name: "' . self::getNameFromPathName(\yy::jsmstr($rec['value_old'])) . '", 
+                        size: ' .  $f .     '
+                    }}
+                    }],';
+            }
+        };
+    }
+    echo "server: {";
+    if (!$isReq) {
+        echo "      remove: (source, load, error) => { 
+        document.getElementById(" . '"' .  $fieldName . '_srv_"' . ").checked = true; load(); },";
+    };
+    echo "    process: '" . asset('/' . config('nesttab.nurl') .'/upload_file') . "?file928357=" . $fieldName . "&tbl=" . $table_id . "&rec=" . $rec_id . "',
+        revert: '" . asset('/' . config('nesttab.nurl') . '/upload_file/revert') . "?file928357=" . $fieldName . "',
+        headers: {
+            'X-CSRF-TOKEN': '" . Session::token() . "',
+        }}
+    });
+    </script>";
+        if (!$isReq && isset($value) && $value <> '') {
+            //echo __('File') . ': ' . \yy::qs($value) . '<br />';
+            echo '<input type="checkbox" '
+            . 'name="' . $fieldName .'_srv_" id="' . $fieldName .'_srv_" '
+                    .  (isset($r[$fieldName. '_srv_']) ? 'checked' : '') . '  /> ';
+            echo '<label for="' . $fieldName .'_srv_">' . __('Delete') . '</label><br />';
+        }
+        
         echo '<br />';
         //echo '<br />';
     }
+
     /**
      * пытается сохранить(изменить)  в таблице поле
      * @param array $tbl

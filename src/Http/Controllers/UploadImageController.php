@@ -55,8 +55,8 @@ return response($img)->header('Content-type','image/jpeg');
     }
     public function load(Request $request) {
         global $db, $yy;
-        if (!$request->has('file')) \App::abort(404);
-        $r = \Alxnv\Nesttab\core\StringHelper::splitByFirst('|', $request->input('file'));
+        if (!$request->has('file928357')) \App::abort(404);
+        $r = \Alxnv\Nesttab\core\StringHelper::splitByFirst('|', $request->input('file928357'));
         /*if (!$request->has('tbl')) \App::abort(404);
 http://localhost/nesttab/public/nesttab/upload_image/load?tbl=73&rec=1&file=image1s|1/abrak.jpg
          *         $tbl_id = intval($request->input('tbl'));
@@ -65,7 +65,7 @@ http://localhost/nesttab/public/nesttab/upload_image/load?tbl=73&rec=1&file=imag
         $tbl = \Alxnv\Nesttab\Models\TablesModel::getOneAjax($tbl_id);
         $rec = $db->q("select $1 from $2 where id = $3", [$r[0], $tbl['name'], $rec_id]);
         if (is_null($rec)) \App::abort(404);*/
-        $s = \yy::pathDefend($r[1]);
+        $s = \yy::pathDefend2($r[1]);
         $f = \Alxnv\Nesttab\core\StringHelper::splitByFirst('/', $s);
         if ($f[0] == '') \App::abort(404);
         $s2 = public_path() . '/upload/' . $f[0] . '/1/' . $f[1]; // thumbnail
@@ -92,8 +92,8 @@ http://localhost/nesttab/public/nesttab/upload_image/load?tbl=73&rec=1&file=imag
      */
     public function __invoke(Request $request) {
         global $yy, $db;
-        if (!$request->has('file')) \App::abort(404);
-        $index = $request->input('file');
+        if (!$request->has('file928357')) \App::abort(404);
+        $index = $request->input('file928357');
         if (!$request->has('tbl')) \App::abort(404);
         $tbl_id = $request->input('tbl');
         if (!$request->has('rec')) \App::abort(404);

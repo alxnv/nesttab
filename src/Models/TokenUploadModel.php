@@ -121,6 +121,73 @@ class TokenUploadModel {
     }
     
     /**
+     * 
+     * @param type $token
+     *   the token dir is already exists
+     * @param string $from
+     * @param string $name
+     * @param array $irpmN - array of type ['w':xxx, 'h':xxxx, 't':<contain|cover>]
+     * @return boolean
+     */
+    public function moveFile($token, string $from, string $name) {
+        $p = pathinfo($name);
+        $name2 = $p['filename']; // file name without ext
+        if ($p['extension'] == '') {
+            $name3 = $name2;
+        } else {
+            $name3 = $name2 . '.' . $p['extension'];
+        }
+        // name3 is a resulting filename
+        $to = public_path() . '/upload/temp/' . $token . '/' . $name3;
+        if (!is_uploaded_file($from)) return false;
+        move_uploaded_file($from, $to);
+        return true;
+    }
+
+    /**
+     * Return file name and size of the file from token in bytes
+     * @param string $token - token
+     * @return boolean | int - false if coutd not return file size, or file size in bytes
+     */
+    public static function getFileNameAndSize(string $token) {
+        $fn = self::getFileNameFirst($token);
+        if ($fn === false) return false;
+        try {
+            $n = filesize(public_path() . '/upload/temp/' . $token . '/' . $fn);
+        } catch (\Exception $ex) {
+            return false;
+        }
+        if ($n === false) return false;
+        return [$fn, $n];
+    }
+    
+    
+    /**
+     * Получить имя файла, загруженного в каталог токена
+     *  (берется первый файл из каталога)
+     * @param string $token
+     * @return mixed string | boolean | (имя файла)],
+     *  либо false если произошла ошибка (основной файл не наден)
+     */
+    public static function getFileNameFirst(string $token) {
+        if (!self::isValidToken($token)) return false;
+        $dir = public_path() . '/upload/temp/' . $token;
+        try {
+            $files = scandir($dir, SCANDIR_SORT_NONE);
+        } catch (\Exception $ex) {
+            return false;
+        }
+        $fn1 = ''; // filename
+        if ($files === false) return false;
+        foreach ($files as $file) {
+            if (($file <> '.') && ($file <> '..')) {
+                return $file;
+            }
+        }
+        return false;        
+        
+    }
+    /**
      * Получить имя файла, загруженного в каталог токена
      *  (в каталоге еще может быть файл вида thumbnail.{ext})
      * @param string $token
@@ -128,6 +195,7 @@ class TokenUploadModel {
      *  либо false если произошла ошибка (основной файл не наден)
      */
     public function getFileName(string $token) {
+        if (!self::isValidToken($token)) return false;
         $dir = public_path() . '/upload/temp/' . $token;
         try {
             $files = scandir($dir, SCANDIR_SORT_NONE);
