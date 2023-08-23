@@ -14,7 +14,7 @@ class UploadImageController extends BasicController {
      * @param Request $request
      */
     public function restore(Request $request) {
-        $token = $request->input('token');
+        $token = $_GET['token'];
         if (!\Alxnv\Nesttab\Models\TokenUploadModel::isValidToken($token))  \App::abort(404);
         $obj = new \Alxnv\Nesttab\Models\TokenUploadModel();
         $fn = $obj->getFileName($token);
@@ -55,8 +55,8 @@ return response($img)->header('Content-type','image/jpeg');
     }
     public function load(Request $request) {
         global $db, $yy;
-        if (!$request->has('file928357')) \App::abort(404);
-        $r = \Alxnv\Nesttab\core\StringHelper::splitByFirst('|', $request->input('file928357'));
+        if (!isset($_GET['file928357'])) \App::abort(404);
+        $r = \Alxnv\Nesttab\core\StringHelper::splitByFirst('|', $_GET['file928357']);
         /*if (!$request->has('tbl')) \App::abort(404);
 http://localhost/nesttab/public/nesttab/upload_image/load?tbl=73&rec=1&file=image1s|1/abrak.jpg
          *         $tbl_id = intval($request->input('tbl'));
@@ -92,12 +92,12 @@ http://localhost/nesttab/public/nesttab/upload_image/load?tbl=73&rec=1&file=imag
      */
     public function __invoke(Request $request) {
         global $yy, $db;
-        if (!$request->has('file928357')) \App::abort(404);
-        $index = $request->input('file928357');
-        if (!$request->has('tbl')) \App::abort(404);
-        $tbl_id = $request->input('tbl');
-        if (!$request->has('rec')) \App::abort(404);
-        $rec_id = $request->input('rec');
+        if (!isset($_GET['file928357'])) \App::abort(404);
+        $index = $_GET['file928357'];
+        if (!isset($_GET['tbl'])) \App::abort(404);
+        $tbl_id = $_GET['tbl'];
+        if (!isset($_GET['rec'])) \App::abort(404);
+        $rec_id = $_GET['rec'];
         $columns = $db->q("select parameters from yy_columns "
                 . "where table_id = $1 and name = $2", [$tbl_id, $index]);
         if (is_null($columns)) \App::abort(404);

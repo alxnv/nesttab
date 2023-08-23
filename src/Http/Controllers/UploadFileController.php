@@ -15,12 +15,14 @@ class UploadFileController extends BasicController {
      */
     public function __invoke(Request $request) {
         global $yy, $db;
-        if (!$request->has('file928357')) \App::abort(404);
-        $index = $request->input('file928357');
-        if (!$request->has('tbl')) \App::abort(404);
-        $tbl_id = $request->input('tbl');
-        if (!$request->has('rec')) \App::abort(404);
-        $rec_id = $request->input('rec');
+//        $r = $_GET;
+//        $r2 = $_POST;
+        if (!isset($_GET['file928357'])) \App::abort(404);
+        $index = $_GET['file928357'];
+        if (!isset($_GET['tbl'])) \App::abort(404);
+        $tbl_id = $_GET['tbl'];
+        if (!isset($_GET['rec'])) \App::abort(404);
+        $rec_id = $_GET['rec'];
         $columns = $db->q("select parameters from yy_columns "
                 . "where table_id = $1 and name = $2", [$tbl_id, $index]);
         if (is_null($columns)) \App::abort(404);
