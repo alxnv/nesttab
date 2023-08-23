@@ -115,7 +115,7 @@ img {
 #footer {
 	border: 3px solid #008000;
 	margin: 3px;
-	padding: 15px;
+	padding: 10px;
         background-color: green;
         color:white;
         font-size: 12px;
@@ -254,4 +254,9 @@ hr {
 .minus_button input, .plus_button input {
 	width: 30px;
 	height: 30px;
+}
+
+#footer a, #footer a:visited, #footer a:hover {
+	color: white;
+    text-decoration:underline;
 }

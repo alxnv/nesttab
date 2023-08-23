@@ -71,7 +71,11 @@ if ($user['can_modify_structure']) {
 	@yield('content')
 	</div>
         </div>    
-        <div id="footer">&copy; 2022-2023 by Alexander Vorobyov</div>
+        <div id="footer">&copy; 2022-2023 by Alexander Vorobyov
+		<br />
+		Powered by <a href="https://laravel.com">Laravel</a>, <a href="https://vuejs.org">Vue</a>,
+		<a href="https://jquery.com">JQuery</a> and <a href="https://pqina.nl">PQina</a>
+		</div>
       </div>
     <script type="text/javascript">
         $(function() {
