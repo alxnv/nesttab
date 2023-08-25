@@ -74,61 +74,111 @@ class TableRecsModel {
      */
     public function save(array $tbl, int $id, array &$r) {
         //$this->setErr('', 'fdsafd');
+        global $yy;
         $columns = \Alxnv\Nesttab\Models\ColumnsModel::getTableColumnsWithNames($tbl['id']);
+        $yy->loadPhpScript(app_path() . '/Models/nesttab/tables/' 
+            . ucfirst($tbl['name']) . '.php');
         // get old values for image and file field types
         $this->getImageFileValues($columns, $tbl, $id);
         for ($i = 0; $i < count($columns); $i++)  {
-            //$s2 = '\\Alxnv\\Nesttab\\Models\\field_struct\\' . config('nesttab.db_driver') . '\\'
-            //        . ucfirst($columns[$i]['name_field']) .'Model';
             $columns[$i]['obj'] = \Alxnv\Nesttab\Models\Factory::createFieldModel($columns[$i]['field_type'], $columns[$i]['name_field']);
             $columns[$i]['parameters'] = (array)json_decode($columns[$i]['parameters']);
             // значение для поля типа bool не будет в post массиве если он unchecked
             if ($columns[$i]['name_field'] == 'bool') {
-                $columns[$i]['value'] = $columns[$i]['obj']
-                        ->validate(isset($r[$columns[$i]['name']]) ? 1 : 0, $this, $columns[$i]['name'], $columns, $i, $r);
+                $value = (isset($r[$columns[$i]['name']]) ? 1 : 0);
             } else {
-                //if (isset($r[$columns[$i]['name']])) {
-                    // устанавливает сообщения об ошибках для $this
-                $columns[$i]['value'] = $columns[$i]['obj']
-                        ->validate(isset($r[$columns[$i]['name']]) ?
-                                $r[$columns[$i]['name']] : '', $this,
-                                $columns[$i]['name'], $columns, $i, $r);
-                
+                $value = isset($r[$columns[$i]['name']]) ?
+                                $r[$columns[$i]['name']] : '';
             }
+                // устанавливает сообщения об ошибках для $this
+            $toContinue = true;
+            $isNewRec = false; // todo: change it to appropriate value
+            if (function_exists('\callbacks\onValidate'))
+                \callbacks\onValidate($value, $columns, $i, $r, $this, $columns[$i]['name'], $isNewRec, $toContinue);
+
+            $columns[$i]['value'] = $value;
+            
+            if ($toContinue) {
+                $columns[$i]['value'] = $columns[$i]['obj']
+                    ->validate($value, $this,
+                            $columns[$i]['name'], $columns, $i, $r);
+            }
+                
         }
 
         if (!$this->hasErr()) {
             // ошибок нет. записываем данные в БД
+            $this->postProcess1($columns, $r); // постпроцессинг для всех типов данных
+               // кроме image, file
             $b = $this->saveToDB($tbl, $columns, $id);
             if ($b) {
                 // если основные поля сохранены без ошибок
                 $this->postProcess($columns, $r); // записываем загруженные документы и изображения
                 // ошибок нет. записываем данные в БД
-                $b = $this->saveToDBFiles($tbl, $columns, $id);
+                $this->saveToDBFiles($tbl, $columns, $id);
             } else {
                 // todo - в случае если было нарушение (дублирование) ключа, здесь обрабатываем
                 //  и возвращаем ошибку
             }
+            $this->afterDataSaved($b, $columns); // вызываем коллбэк после сохранения
+              // данных или ошибки сохранения
         }
     }
     
     /**
      * Записываем и обрабатываем загруженные документы и изображения
      * @param array $columns - массив колонок
-     * @param $r - (array)Request
+     * @param array $r - (array)Request
      */
-    public function postProcess(array &$columns, $r) {
+    public function postProcess1(array &$columns, array &$r) {
+        $isNewRec = false; // todo: change it to appropriate value
         for ($i = 0; $i < count($columns); $i++) {
-            $columns[$i]['obj']->postProcess($this, $columns, $i, $r);
+            // не обрабатываем поля типа image, file
+            if (in_array($columns[$i]['name_field'], ['image', 'file'])) continue;
+            $toContinue = true;
+            if (function_exists('\callbacks\onPostProcess'))
+                \callbacks\onPostProcess($this, $columns, $i, $r, $columns[$i]['name'], $isNewRec, $toContinue);
+
+            if ($toContinue) $columns[$i]['obj']->postProcess($this, $columns, $i, $r);
+        }
+    }
+
+    /**
+     * Записываем и обрабатываем загруженные документы и изображения
+     * @param array $columns - массив колонок
+     * @param array $r - (array)Request
+     */
+    public function postProcess(array &$columns, array &$r) {
+        $isNewRec = false; // todo: change it to appropriate value
+        for ($i = 0; $i < count($columns); $i++) {
+            // обрабатываем только поля типа image, file
+            if (!in_array($columns[$i]['name_field'], ['image', 'file'])) continue;
+            $toContinue = true;
+            if (function_exists('\callbacks\onPostProcess'))
+                \callbacks\onPostProcess($this, $columns, $i, $r, $columns[$i]['name'], $isNewRec, $toContinue);
+
+            if ($toContinue) $columns[$i]['obj']->postProcess($this, $columns, $i, $r);
         }
     }
     
+
+    /**
+     * 
+     * @param bool $wasSaved - was the record saved or not
+     * @param array $columns
+     */
+    public function afterDataSaved(bool $wasSaved, array &$columns) {
+        $isNewRec = false; // todo: change it to appropriate value
+        if (function_exists('\callbacks\onAfterDataSaved'))
+            \callbacks\onAfterDataSaved($wasSaved, $isNewRec, $columns);
+        
+    }
     /**
      * Записываем данные в БД
      * @param array $tbl - массив с данными о таблице
      * @param array $columns - массив с данными полей таблицы и их значениями
      */
-    public function saveToDB(array $tbl, array $columns, int $id) {
+    public function saveToDB(array $tbl, array $columns, int &$id) {
         global $db;
         $arr = [];
         // определяем, какие данные записывать (кроме полей типа image и file

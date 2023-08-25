@@ -20,6 +20,7 @@ class yy {
     public $user_data;
     public $Engine_Path;
     public $db_settings;
+    public $phpScripts; // names of loaded php scripts
     public $whithout_layout = 0; // отображать сообщения об ошибках без включения layout
     public $locksToReleaseBeforeExit = []; // lock-и, которые нужно освободить перед
        // выходом из скрипта
@@ -316,6 +317,16 @@ class yy {
 		return ($num == 1 ? '' : $num);
 	}
 
+    public function loadPhpScript($scriptName) {
+        if (isset($this->phpScripts[$scriptName])) return true;
+        try {
+            include($scriptName);
+        } catch (\Exception $exception) {
+            return false;
+        }
+        return true;
+
+    }
     /**
      * возвращает транслитерацию строки с русского на английский
      * @param <type> $s
