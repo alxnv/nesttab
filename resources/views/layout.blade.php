@@ -9,6 +9,7 @@
     <title><?=__("Administrator's module")?></title>
     <link rel="stylesheet" href="<?=asset('/nsttab/css/styles.css')?>">
     <link rel="stylesheet" href="<?=asset('/nsttab/css/jquery-confirm.min.css')?>">
+    <link rel="stylesheet" href="<?=asset('/nsttab/css/custom-jqm.css')?>"> <!-- css for jtsage-datebox  -->
     <?php 
     if (isset($requires) && isset($requires['need_filepond'])) {
         echo '<link rel="stylesheet" href="' . asset('/nsttab/filepond/filepond-plugin-image-preview.css') . '">';
