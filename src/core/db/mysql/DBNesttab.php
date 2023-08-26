@@ -1,5 +1,15 @@
 <?php
 // функции для работы с БД mysql
+
+// !!! не нужно полагаться на текст сообщений об ошибках, он может меняться
+//   нужно пользоваться кодами ошибок mysql
+/*
+ * при попытке удалить поле которое является частью UNIQUE ключа, 
+ *  alter table <table> drop column <column>
+ *  если не удалось удалить
+ * [42000][1072] Key column 'A' doesn't exist in table
+ *  если это INDEX ключ (не уникальный), то поле нормально удаляется
+ */
 namespace Alxnv\Nesttab\core\db\mysql;
 
 use Illuminate\Support\Facades\DB;
