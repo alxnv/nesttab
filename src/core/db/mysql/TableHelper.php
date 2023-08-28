@@ -23,6 +23,8 @@ class TableHelper extends \Alxnv\Nesttab\core\db\BasicTableHelper {
                 return 'mediumtext';
             case $db::STR_TYPE :
                 return 'varchar(255)';
+            case $db::DATETIME_TYPE :    
+                return 'datetime';
             case $db::INT_TYPE :
                 return 'int';
             case $db::FILE_TYPE :

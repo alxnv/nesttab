@@ -27,7 +27,7 @@ $err3 = $e->getErr('');
 if (function_exists('\callbacks\onShow')) \callbacks\onShow($recs, -2, '', false, $err3);
 echo $err3;
 
-
+//dd($recs);
 
 echo '<form enctype="multipart/form-data" method="post" action="' . $yy->baseurl . config('nesttab.nurl') . '/edit/save_one/' . $tbl['id'] . '" >';
 ?>

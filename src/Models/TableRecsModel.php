@@ -186,7 +186,13 @@ class TableRecsModel {
             // $columns[$i]['name_field'] - тип поля
             if (isset($columns[$i]['value']) 
                     && !in_array($columns[$i]['name_field'], ['image', 'file'])) {
+                // if set $columns[$i]['value_for_db'], save it, or value
                 $arr[$columns[$i]['name']] = $columns[$i]['value'];
+            }
+            if (isset($columns[$i]['value_for_db']) 
+                    && !in_array($columns[$i]['name_field'], ['image', 'file'])) {
+                // if set $columns[$i]['value_for_db'], save it, or value
+                $arr[$columns[$i]['name']] = $columns[$i]['value_for_db'];
             }
         }
         
@@ -302,6 +308,9 @@ class TableRecsModel {
             if ($columns[$i]['name_field'] == 'html') {
                 $requires['need_html_editor'] = 1;
             }
+            if ($columns[$i]['name_field'] == 'datetime') {
+                $requires['need_datetimepicker'] = 1;
+            }
             if (in_array($columns[$i]['name_field'], ['image', 'file'])) {
                 $requires['need_filepond'] = 1;
             }
@@ -315,6 +324,8 @@ class TableRecsModel {
             } else {
                 $columns[$i]['value'] = null;
             }
+            $columns[$i]['obj']->convertDataForInput($columns, $i); // если нужно, то
+               // преобразовываем данные из БД в данном поле
         }
         return $columns;
     }

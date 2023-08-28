@@ -7,9 +7,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title><?=__("Administrator's module")?></title>
-    <link rel="stylesheet" href="<?=asset('/nsttab/css/styles.css')?>">
     <link rel="stylesheet" href="<?=asset('/nsttab/css/jquery-confirm.min.css')?>">
-    <link rel="stylesheet" href="<?=asset('/nsttab/css/custom-jqm.css')?>"> <!-- css for jtsage-datebox  -->
+    <link rel="stylesheet" href="<?=asset('/nsttab/css/styles.css')?>">
     <?php 
     if (isset($requires) && isset($requires['need_filepond'])) {
         echo '<link rel="stylesheet" href="' . asset('/nsttab/filepond/filepond-plugin-image-preview.css') . '">';
@@ -24,6 +23,17 @@
     <?php 
     if (isset($requires) && isset($requires['need_html_editor'])) {
         echo '<script src="' . asset('/nsttab/js/ckeditor4/ckeditor.js') . '"></script>';
+    }
+    ?>
+    <?php 
+    if (isset($requires) && isset($requires['need_datetimepicker'])) {
+        echo '<script src="' . asset('/nsttab/js/jtsage-datebox/jtsage-datebox.min.js') . '"></script>'
+                . "\n";
+        if (config('app.locale') <> 'en') {
+            echo '<script src="' . asset('/nsttab/js/jtsage-datebox/jtsage-datebox.locale.'
+                    . config('app.locale') . '.min.js') . '"></script>' . "\n";
+        }
+        echo '<link rel="stylesheet" href="' . asset('/nsttab/filepond/filepond.min.css') . '">';
     }
     ?>
   </head>

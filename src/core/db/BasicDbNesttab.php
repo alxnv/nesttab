@@ -14,6 +14,7 @@ class BasicDbNesttab {
     const STR_TYPE = 3;
     const TEXT_TYPE = 4; 
     const HTML_TYPE = 5;
+    const DATETIME_TYPE = 6;
     const FILE_TYPE = 7;
     const IMAGE_TYPE = 8;
     const FLOAT_TYPE = 9;

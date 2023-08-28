@@ -23,7 +23,6 @@ class ColTypesModel {
         
         $arr2 = [];
         foreach ($arr as $arr3) {
-            if ($arr3['id'] == 6) continue; // пропускаем тип "вложенная таблица" 
             if (!isset($arr2[$arr3['id_category']])) {
                 $arr2[$arr3['id_category']] = [];
             }

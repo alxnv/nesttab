@@ -15,8 +15,10 @@ class yy {
     public $nurl; // url of nesttab with trailing slash
     public $uurl; // url of not secret pages
     public $basepath=null;
-    public $locale_loaded = false;
-    private $locale;
+    //public $locale_loaded = false;
+    //private $locale;
+    public $localeObj; // object for current locale from Models\locales
+    public $format; // current locale's datetime format
     public $user_data;
     public $Engine_Path;
     public $db_settings;
@@ -38,6 +40,10 @@ class yy {
                 config('nesttab.db_driver') . '/settings.php');	
         include $this->Engine_Path . "/settings/callbacks/user_data.php";
 	$this->user_data = new user_data();
+        // load locale info (datetime format)
+        $s = '\\Alxnv\\Nesttab\\Models\locales\\' . config('app.locale');
+        $this->localeObj = new $s();
+        $this->format = $this->localeObj->format;
     }
 
     function init() {

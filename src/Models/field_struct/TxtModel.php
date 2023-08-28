@@ -44,7 +44,7 @@ class TxtModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
      * @return mixed - возвращает валидированное (и, возможно, обработанное) значение
      *   текущего поля
      */
-    public function validate($value, object $table_recs, string $index, array $columns, int $i, array &$r) {
+    public function validate($value, object $table_recs, string $index, array &$columns, int $i, array &$r) {
         if (isset($columns[$i]['parameters']['req']) && (trim($value) == '')) {
             $table_recs->setErr($index, __('This string must not be empty'));
         }

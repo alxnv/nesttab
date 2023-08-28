@@ -9,6 +9,7 @@
 	"Enter the text from the picture" : "Введите текст с изображения",
 	"Enter" : "Ввод",
     "File" : "Файл",
+    "Not valid value" : "Неверное значение",
     "There are zero values" : "Есть нулевые значения",
     "Width, pixels" : "Ширина в пикселях",
     "Height, pixels" : "Высота в пикселях",

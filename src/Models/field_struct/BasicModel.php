@@ -73,9 +73,19 @@ class BasicModel {
      * @return mixed - возвращает валидированное (и, возможно, обработанное) значение
      *   текущего поля
      */
-    public function validate($value, object $table_recs, string $index, array $columns, int $i, array &$r) {
+    public function validate($value, object $table_recs, string $index, array &$columns, int $i, array &$r) {
         $table_recs->setErr($index, 'Field processor is not defined');
         return $value;
+    }
+
+    /**
+     * Здесь заглушка
+     * Преобразовать если нужно данные из БД перед редактированием в форме
+     * @param array $columns
+     * @param int $index - индекс текущего элемента в $columns
+     */
+    public function convertDataForInput(array &$columns, int $index) {
+        
     }
     /**
      * Заглушка, вызываемая для вывода поля таблицы для редактирования
@@ -128,8 +138,12 @@ class BasicModel {
      * @param array $fld
      * @param array $r
      * @param array $params - дополнительные параметры поля, если не пустые
+     * @param array $saveParams - дополнительные параметры сохранения
+     *     $saveParams['isNull'] == 1, то создать в таблице данных поле типа null
+     *        (не в yy_columns)
      */
-    public function saveStep2(array $tbl, array $fld, array $r, array $old_values, $default, array $params = []) {
+    public function saveStep2(array $tbl, array $fld, array $r, array $old_values, $default, array $params = [],
+            array $saveParams = []) {
         global $yy, $db;
                     //\yy::gotoErrorPage('Unable to lock process555555');
 
@@ -181,7 +195,7 @@ class BasicModel {
         
         //$params = [];
         if ($required) $params['req'] = 1;
-        if ($default) $params['default'] = $default;
+        if (!is_null($default)) $params['default'] = $default;
         
         // field specific
         // ...
@@ -210,7 +224,8 @@ class BasicModel {
                     
                 }
                 if (!$this->hasErr() && !$this->addField($tblname_2, $name_2, $tbl['id'], 
-                        $tbl['table_type'], $default, $fld_type_id, $definition)) {
+                        $tbl['table_type'], $default, $fld_type_id, $definition,
+                        $saveParams)) {
                     return;
                 }
             } else {
@@ -219,8 +234,12 @@ class BasicModel {
                 $old_col_name_2 = $db->nameEscape($old_col_name);
                 $old_params = $this->prepareOldParams($old_values);
                 if ($old_col_name <> $name || $this->colDefChanged($params, $old_params)) {
-                    if (!$db->qdirectNoErrorMessage("alter table $tblname_2 change"
-                            . " $old_col_name_2 $name_2 $definition not null")) {
+                    $s5 = "alter table $tblname_2 change"
+                            . " $old_col_name_2 $name_2 $definition";
+                    if (!isset($saveParams['isNull'])) {
+                        $s5 .=  " not null";
+                    }
+                    if (!$db->qdirectNoErrorMessage($s5)) {
                         // !!! it does not result in error if the table does not exist
                         //   don't now why 
                         $this->setErr('', __('Error modifying table: ' . 
@@ -280,13 +299,20 @@ class BasicModel {
      * @param string $table_name - имя таблицы
      * @param string $field_name - имя поля
      * @param type $table_id - id таблицы
+     * @param array $saveParams - дополнительные параметры сохранения
+     *     $saveParams['isNull'] == 1, то создать в таблице данных поле типа null
+     *        (не в yy_columns)
      */
-    protected function addField(string $table_name, string $field_name, int $table_id, string $table_type, $default_value, int $fld_type_id, string $def) {
+    protected function addField(string $table_name, string $field_name, int $table_id, string $table_type, $default_value, int $fld_type_id, string $def,
+            array $saveParams) {
         global $db;
         $df2 = $db->escape($default_value);
         //$def = $th->getFieldDef($fld_type_id); // вернуть определение поля типа для create table
-        if (!$db->qdirectNoErrorMessage("alter table $table_name add $field_name $def not null"
-                        . " default $df2")) {
+        $s = "alter table $table_name "
+                . "add $field_name $def ";
+        if (isset($saveParams['isNull'])) $s .= ' null';
+            else $s .= " not null";
+        if (!$db->qdirectNoErrorMessage($s)) { // removed default value seting
             $message = __('Error') . ' ' . 
                     $db->errorMessage;
             $this->setErr('', $message);

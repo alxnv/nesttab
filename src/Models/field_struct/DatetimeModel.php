@@ -2,12 +2,14 @@
 
 /* 
  * Класс работы со структурой таблицы
- * полями типа str
+ * полями типа txt
  */
 
 namespace Alxnv\Nesttab\Models\field_struct;
 
-class StrModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
+use Carbon\Carbon;
+
+class DatetimeModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
 
     
     /**
@@ -23,12 +25,39 @@ class StrModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
      *   текущего поля
      */
     public function validate($value, object $table_recs, string $index, array &$columns, int $i, array &$r) {
-        if (isset($columns[$i]['parameters']['req']) && (trim($value) == '')) {
-            $table_recs->setErr($index, __('This string must not be empty'));
+        global $yy;
+        
+        $value = trim($value);
+        if ($value == '') {
+            $value = Carbon::now()->format($yy->format); // current datetime
+        } else {
+            if (!$yy->localeObj->isValidValue($value)) {
+                $table_recs->setErr($index, __('Not valid value'));
+            } else {
+                // get string in format 'YYYY-MM-DD HH:ii:ss' and tell to save $vdb 
+                //  value to database, not $value
+                $vdb = Carbon::createFromFormat($yy->format, $value)->toDateTimeString();
+
+                $columns[$i]['value_for_db'] = $vdb;
+                
+            }
         }
+        
         return $value;
     }
-
+    /**
+     * Преобразовать если нужно данные из БД перед редактированием в форме
+     * @param array $columns
+     * @param int $index - индекс текущего элемента в $columns
+     */
+    public function convertDataForInput(array &$columns, int $index) {
+        global $yy;
+        if (isset($columns[$index]['value'])) {
+            $s = (new Carbon($columns[$index]['value']))->format($yy->format);
+            $columns[$index]['value'] = $s;
+        }
+    }
+    
     /**
      * Вывод поля таблицы для редактирования
      * @param array $rec - массив с данными поля
@@ -41,12 +70,12 @@ class StrModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
         //echo $e->getErr('default');
         echo \yy::qs($rec['descr']);
         echo '<br />';
-        echo '<input type="text" size="50" '
+        echo '<input type="text" size="20" '
+        . '  data-role="datebox" data-options=' . "'" . '{"mode":"datetimebox"}' . "'"
             . ' name="' . $rec['name'] . '" value="' . (!is_null($rec['value']) ? \yy::qs($rec['value']) : '') . '" />'
             . '<br />';
         echo '<br />';
     }
-
     /**
      * пытается сохранить(изменить)  в таблице поле
      * @param array $tbl
@@ -55,13 +84,20 @@ class StrModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
      */
     public function save(array $tbl, array $fld, array &$r, array $old_values) {
         global $yy, $db;
-        if (isset($r['default'])) {
-            $r['default'] = mb_substr($r['default'], 0, 255);
+        if (isset($r['default']) && (trim($r['default']) <> '')) {
+            $r['default'] = mb_substr(trim($r['default']), 0, 255);
             $default = $r['default'];
+            if (!$yy->localeObj->isValidValue($default)) {
+                $this->setErr('default', __('Not valid value'));
+            } else {
+                $default = Carbon::createFromFormat($yy->format, $default)
+                        ->toDateTimeString();
+            }
         } else {
             $default = '';
         }
-        return $this->saveStep2($tbl, $fld, $r, $old_values, $default);
+        return $this->saveStep2($tbl, $fld, $r, $old_values, $default,
+                [], ['isNull' => 1]);
 
     }
     
