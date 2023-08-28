@@ -2,12 +2,12 @@
 
 /* 
  * Класс работы со структурой таблицы
- * полями типа txt
+ * полями типа html
  */
 
-namespace Alxnv\Nesttab\Models\field_struct\mysql;
+namespace Alxnv\Nesttab\Models\field_struct;
 
-class NumModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
+class HtmlModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
 
     
     /**
@@ -23,17 +23,6 @@ class NumModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
      *   текущего поля
      */
     public function validate($value, object $table_recs, string $index, array $columns, int $i, array &$r) {
-        $s = '\\Alxnv\\Nesttab\\core\\db\\' . config('nesttab.db_driver') . '\\FormatHelper';
-        $fh = new $s();
-
-        //$fh = new \Alxnv\Nesttab\core\FormatHelper();
-        if (false === $fh::IntConv($value)) {
-            $table_recs->setErr($index, '"' . $value . '" ' . __('is not valid') . ' ' . __('int value'));
-        }
-        $value = intval($value);
-        if (isset($columns[$i]['parameters']['req']) && ($value == 0)) {
-            $table_recs->setErr($index, __('This value must not be equal to') . ' 0');
-        }
         return $value;
     }
     /**
@@ -47,12 +36,10 @@ class NumModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
     public function editField(array $rec, array $errors, int $table_id, int $rec_id, $r) {
         //echo $e->getErr('default');
         echo \yy::qs($rec['descr']);
-        echo '<br />';
-        echo '<input type="number" size="20" '
-            . ' name="' . $rec['name'] . '" value="' . (!is_null($rec['value']) ? \yy::qs($rec['value']) : '') . '" />'
-            . '<br />';
+        \yy::htmlEditor($rec['name'], (!is_null($rec['value']) ? $rec['value'] : ''));
         echo '<br />';
     }
+
     /**
      * пытается сохранить(изменить)  в таблице поле
      * @param array $tbl
@@ -62,19 +49,13 @@ class NumModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
     public function save(array $tbl, array $fld, array &$r, array $old_values) {
         global $yy, $db;
         if (isset($r['default'])) {
-            $r['default'] = mb_substr(trim($r['default']), 0, 255);
+            //$r['default'] = $r['mce_0'];
+            //unset($r['mce_0']);
+            $r['default'] = substr($r['default'], 0, $yy->settings2['max_html_size']);
             $default = $r['default'];
-            $s = '\\Alxnv\\Nesttab\\core\\db\\' . config('nesttab.db_driver') . '\\FormatHelper';
-            $fh = new $s();
-
-            //$fh = new \Alxnv\Nesttab\core\FormatHelper();
-            if (false === $fh::IntConv($default)) {
-                $this->setErr('default', '"' . $default . '" ' . __('is not valid') . ' ' . __('int value'));
-            }
-            $default = intval($default);
         } else {
             $default = '';
-            $this->setErr('default', '"" ' . __('is not valid') . ' ' . __('int value'));
+            $r['default'] = '';
         }
         return $this->saveStep2($tbl, $fld, $r, $old_values, $default);
 

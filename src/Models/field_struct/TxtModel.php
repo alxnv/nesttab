@@ -5,9 +5,9 @@
  * полями типа txt
  */
 
-namespace Alxnv\Nesttab\Models\field_struct\mysql;
+namespace Alxnv\Nesttab\Models\field_struct;
 
-class TxtModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
+class TxtModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
 
     
     //public function data_type() {

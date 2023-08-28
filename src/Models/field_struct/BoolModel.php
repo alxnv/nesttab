@@ -2,17 +2,17 @@
 
 /* 
  * Класс работы со структурой таблицы
- * полями типа html
+ * полями типа boolean
  */
 
-namespace Alxnv\Nesttab\Models\field_struct\mysql;
+namespace Alxnv\Nesttab\Models\field_struct;
 
-class HtmlModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
+class BoolModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
 
-    
     /**
      * Проверяем на валидность значение $value, и в случае ошибки записываем ее в
      *   $table_recs->err
+     * !!! никогда не выдает ошибку, так как это checkbox
      * @param type $value
      * @param object $table_recs (TableRecsModel)
      * @param string $index - индекс в массиве ошибок для записи сообщения об ошибке
@@ -25,6 +25,7 @@ class HtmlModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
     public function validate($value, object $table_recs, string $index, array $columns, int $i, array &$r) {
         return $value;
     }
+    
     /**
      * Вывод поля таблицы для редактирования
      * @param array $rec - массив с данными поля
@@ -35,10 +36,15 @@ class HtmlModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
      */
     public function editField(array $rec, array $errors, int $table_id, int $rec_id, $r) {
         //echo $e->getErr('default');
-        echo \yy::qs($rec['descr']);
-        \yy::htmlEditor($rec['name'], (!is_null($rec['value']) ? $rec['value'] : ''));
+        echo '<input type="checkbox" id="' . $rec['name'] . '"'
+                . ' name="' . $rec['name'] . '" ' .($rec['value'] ? 'checked="checked"' : '') . ' />'
+                . ' <label for="' . $rec['name'] . '">' . \yy::qs($rec['descr']) .'</label><br />';
         echo '<br />';
     }
+    
+    //public function data_type() {
+    //    return 'tinyint(4)';
+    //}
 
     /**
      * пытается сохранить(изменить)  в таблице поле
@@ -46,17 +52,9 @@ class HtmlModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
      * @param array $fld
      * @param array $r
      */
-    public function save(array $tbl, array $fld, array &$r, array $old_values) {
+    public function save(array $tbl, array $fld, array $r, array $old_values) {
         global $yy, $db;
-        if (isset($r['default'])) {
-            //$r['default'] = $r['mce_0'];
-            //unset($r['mce_0']);
-            $r['default'] = substr($r['default'], 0, $yy->settings2['max_html_size']);
-            $default = $r['default'];
-        } else {
-            $default = '';
-            $r['default'] = '';
-        }
+        $default = (isset($r['default']) ? 1 : 0);
         return $this->saveStep2($tbl, $fld, $r, $old_values, $default);
 
     }

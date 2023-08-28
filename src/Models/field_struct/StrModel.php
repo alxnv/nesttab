@@ -2,17 +2,17 @@
 
 /* 
  * Класс работы со структурой таблицы
- * полями типа boolean
+ * полями типа str
  */
 
-namespace Alxnv\Nesttab\Models\field_struct\mysql;
+namespace Alxnv\Nesttab\Models\field_struct;
 
-class BoolModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
+class StrModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
 
+    
     /**
      * Проверяем на валидность значение $value, и в случае ошибки записываем ее в
      *   $table_recs->err
-     * !!! никогда не выдает ошибку, так как это checkbox
      * @param type $value
      * @param object $table_recs (TableRecsModel)
      * @param string $index - индекс в массиве ошибок для записи сообщения об ошибке
@@ -23,9 +23,12 @@ class BoolModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
      *   текущего поля
      */
     public function validate($value, object $table_recs, string $index, array $columns, int $i, array &$r) {
+        if (isset($columns[$i]['parameters']['req']) && (trim($value) == '')) {
+            $table_recs->setErr($index, __('This string must not be empty'));
+        }
         return $value;
     }
-    
+
     /**
      * Вывод поля таблицы для редактирования
      * @param array $rec - массив с данными поля
@@ -36,15 +39,13 @@ class BoolModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
      */
     public function editField(array $rec, array $errors, int $table_id, int $rec_id, $r) {
         //echo $e->getErr('default');
-        echo '<input type="checkbox" id="' . $rec['name'] . '"'
-                . ' name="' . $rec['name'] . '" ' .($rec['value'] ? 'checked="checked"' : '') . ' />'
-                . ' <label for="' . $rec['name'] . '">' . \yy::qs($rec['descr']) .'</label><br />';
+        echo \yy::qs($rec['descr']);
+        echo '<br />';
+        echo '<input type="text" size="50" '
+            . ' name="' . $rec['name'] . '" value="' . (!is_null($rec['value']) ? \yy::qs($rec['value']) : '') . '" />'
+            . '<br />';
         echo '<br />';
     }
-    
-    //public function data_type() {
-    //    return 'tinyint(4)';
-    //}
 
     /**
      * пытается сохранить(изменить)  в таблице поле
@@ -52,9 +53,14 @@ class BoolModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
      * @param array $fld
      * @param array $r
      */
-    public function save(array $tbl, array $fld, array $r, array $old_values) {
+    public function save(array $tbl, array $fld, array &$r, array $old_values) {
         global $yy, $db;
-        $default = (isset($r['default']) ? 1 : 0);
+        if (isset($r['default'])) {
+            $r['default'] = mb_substr($r['default'], 0, 255);
+            $default = $r['default'];
+        } else {
+            $default = '';
+        }
         return $this->saveStep2($tbl, $fld, $r, $old_values, $default);
 
     }

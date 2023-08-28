@@ -2,14 +2,14 @@
 
 /* 
  * Класс работы со структурой таблицы
- * полями типа image
+ * полями типа file
  */
 
-namespace Alxnv\Nesttab\Models\field_struct\mysql;
+namespace Alxnv\Nesttab\Models\field_struct;
 
 use Illuminate\Support\Facades\Session;
 
-class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
+class FileModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
 
     /**
      * Проверяем на валидность значение $value, и в случае ошибки записываем ее в
@@ -38,19 +38,12 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
     }
     
     /**
-     * Удаляем файлы в upload соответствующие $fn (нужно еще удалить файлы в подкаталогах
-     *   1. 2. 3. 4)
+     * Удаляем файлы в upload соответствующие $fn
      * @param type $fn - имя файла для удаления
      */
     public function deleteFiles($fn) {
         @unlink(public_path() . '/upload/' . $fn);
-        $pn = pathinfo($fn);
-        for ($i = 1; $i < 5; $i++) {
-            $s = public_path() . '/upload/' . $pn['dirname'] . '/' . $i . '/' . $pn['basename'];
-            @unlink($s);
-        }
     }
-    
     
     /**
      * Постобработка данных в случае если не было ошибок валидации
@@ -102,26 +95,23 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
     }
     
     /**
-     * get array of accepted file types in mime form
-     * @param array $allowed - array of types
-     * @return array - array of mime type strings 
+     * Get file size from upload dir
+     * @param type $fn - filename
+     * @return boolean | int - file size in bytes or false if error has happened
      */
-    public function getAcceptedFileTypes(array $allowed) {
-        if (count($allowed) == 0) {
-            return ['image/*'];
-        };
-        $arr = [];
-        $arr2 = [];
-        foreach ($allowed as $a) {
-            if ($a == 'gif') $arr['gif'] = 1;
-            if ($a == 'jpg') $arr['jpg'] = 1;
-            if ($a == 'jpeg') $arr['jpg'] = 1;
-            if ($a == 'png') $arr['png'] = 1;
+    public static function getFileSize($fn) {
+        try {
+            $n = filesize(public_path() . '/upload/' . $fn);
+        } catch (\Exception $ex) {
+            return false;
         }
-        if (isset($arr['jpg'])) $arr2[] = 'image/jpeg';
-        if (isset($arr['gif'])) $arr2[] = 'image/gif';
-        if (isset($arr['png'])) $arr2[] = 'image/png';
-        return $arr2;
+        if ($n === false) return false;
+        return $n;
+    }
+    
+    public static function getNameFromPathName(string $fn) {
+        $arr = \Alxnv\Nesttab\core\StringHelper::splitByFirst('/', $fn);
+        return $arr[1];
     }
     
     /**
@@ -135,12 +125,6 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
     public function editField(array $rec, array $errors, int $table_id, int $rec_id, $r) {
         $params = json_decode($rec['parameters']);
         //var_dump($r);
-        $accepted = $this->getAcceptedFileTypes($params->allowed);
-        $arr = \Alxnv\Nesttab\core\ArrayHelper::forArray($accepted, 
-                function($s) {
-                    return "'" . $s . "'";
-                });
-        $s = join(', ', $arr);
         echo \yy::qs($rec['descr']);
         echo '<br />';
         $fieldName = $rec['name'];
@@ -157,26 +141,49 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
         echo "<script>
     let inputElement_" . $fieldName . " = document.querySelector('#" . $fieldName . "');
     const pond_" . $fieldName . " = FilePond.create(inputElement_" . $fieldName . ", {
-    allowImageTransform: false,
-    acceptedFileTypes: [" . $s . "],";
+    allowImageTransform: false,";
     if (!$isReq) {
         echo "      onprocessfilestart: (file) => {  
         document.getElementById(" . '"' .  $fieldName . '_srv_"' . ").checked = false; },";
     };
     if ($isUploaded) {
         if ($rec['value'] <> '') {
-            echo "files: [{"
-            . 'source: "' . \yy::jsmstr($rec['value']) . '", 
-                options: { type: "limbo" }
-                }],';
+            $f = \Alxnv\Nesttab\Models\TokenUploadModel::getFileNameAndSize($rec['value']);
+            if ($f === false) {
+                echo "files: [{"
+                . 'source: "' . \yy::jsmstr($rec['value']) . '", 
+                    options: { type: "limbo" }
+                    }],';
+            } else {
+                echo "files: [{"
+                . 'source: "' . \yy::jsmstr($rec['value']) . '", 
+                    options: { type: "limbo",
+                    file: {
+                        name: "' . \yy::jsmstr($f[0]) . '", 
+                        size: ' .  $f[1] .     '
+                    }}
+                    }],';
+            }
         }
     } else {
         if ($rec['value_old'] <> '') {
             // if there was a picture in db
-            echo "files: [{"
-            . 'source: "' . \yy::jsmstr($rec['value_old']) . '", 
-                options: { type: "local" }
-                }],';
+            $f = self::getFileSize($rec['value_old']);
+            if ($f === false) {
+                echo "files: [{"
+                . 'source: "' . \yy::jsmstr($rec['value_old']) . '", 
+                    options: { type: "local" }
+                    }],';
+            } else {
+                echo "files: [{"
+                . 'source: "' . \yy::jsmstr($rec['value_old']) . '", 
+                    options: { type: "local",
+                    file: {
+                        name: "' . self::getNameFromPathName(\yy::jsmstr($rec['value_old'])) . '", 
+                        size: ' .  $f .     '
+                    }}
+                    }],';
+            }
         };
     }
     echo "server: {";
@@ -184,10 +191,8 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
         echo "      remove: (source, load, error) => { 
         document.getElementById(" . '"' .  $fieldName . '_srv_"' . ").checked = true; load(); },";
     };
-    echo "    process: '" . asset('/' . config('nesttab.nurl') .'/upload_image') . "?file928357=" . $fieldName . "&tbl=" . $table_id . "&rec=" . $rec_id . "',
-        revert: '" . asset('/' . config('nesttab.nurl') . '/upload_image/revert') . "?file928357=" . $fieldName . "',
-        restore: '" . asset('/' . config('nesttab.nurl') . '/upload_image/restore') . "?token=',
-        load: '" . asset('/' . config('nesttab.nurl') . '/upload_image/load') . "?tbl=" . $table_id . "&rec=" . $rec_id . "&file928357=" . $fieldName . "|',
+    echo "    process: '" . asset('/' . config('nesttab.nurl') .'/upload_file') . "?file928357=" . $fieldName . "&tbl=" . $table_id . "&rec=" . $rec_id . "',
+        revert: '" . asset('/' . config('nesttab.nurl') . '/upload_file/revert') . "?file928357=" . $fieldName . "',
         headers: {
             'X-CSRF-TOKEN': '" . Session::token() . "',
         }}
@@ -204,6 +209,7 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
         echo '<br />';
         //echo '<br />';
     }
+
     /**
      * пытается сохранить(изменить)  в таблице поле
      * @param array $tbl
@@ -212,7 +218,6 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
      */
     public function save(array $tbl, array $fld, array &$r, array $old_values) {
         global $yy, $db;
-        //dd($r);
         $s = '\\Alxnv\\Nesttab\\core\\db\\' . config('nesttab.db_driver') . '\\FormatHelper';
         $fh = new $s();
         
@@ -226,53 +231,12 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
         /*if (count($allowed) == 0) {
             $this->setErr('allowed', __('You must specify files extensions'));
         }*/
-        $this->imageArrayTestValid($allowed); // проверить, нет ли в 
+        $this->extensionsArrayTestValid($allowed); // проверить, нет ли в 
          // массиве элементов вида 'php*', 'py'
-        $arr = [];
-        for ($i = 0; $i < count($r['i_type']); $i++) {
-            $w = intval($r['i_width'][$i]);
-            $h = intval($r['i_height'][$i]);
-            $arr[] = (object)['w' => $w,
-                'h' => $h,
-                't' => $r['i_type'][$i]];
-            if ($i == 0) {
-                if ((($w == 0) && ($h <> 0)) || (($w <> 0) && ($h == 0))) {
-                    $this->setErr('iprm' . $i, __('There are zero values'));
-                }
-            } else {
-                if (($w == 0) || ($h == 0)) {
-                    $this->setErr('iprm' . $i, __('There are zero values'));
-                }
-            }
-            if (($w < 0) || ($h < 0)) {
-                $this->setErr('iprm' . $i, __('Negative number'));
-            }
-            if (($w > 1000000) || ($h > 1000000)) {
-                $this->setErr('iprm' . $i, __('Too big number'));
-            }
-        }
-        $r['iprm'] = $arr;
-        
-        $params = ['allowed' => $allowed, 'iprm' => $arr];
+        $params = ['allowed' => $allowed];
         return $this->saveStep2($tbl, $fld, $r, $old_values, $default, $params);
 
     }
     
-    /**
-     * Проверяет, что значения из массива разрешены (gif, jpeg, jpg или png)
-     * @param array $allowed
-     */
-    public function imageArrayTestValid(array $allowed) {
-        $arr = [];
-        foreach ($allowed as $a) {
-            if (!in_array($a, ['gif', 'jpeg', 'jpg', 'png']))
-                $arr[] = ('"' . $a . '"');
-        }
-        if (count($arr) > 0) {
-            $this->setErr('allowed', __('Forbidden extensions') 
-                    . ': ' . join(', ', $arr));
-        }
-    }
-
     
 }

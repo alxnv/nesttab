@@ -5,7 +5,7 @@
  *  в этом каталоге
  */
 
-namespace Alxnv\Nesttab\Models\field_struct\mysql;
+namespace Alxnv\Nesttab\Models\field_struct;
 
 class BasicModel {
     
@@ -16,8 +16,20 @@ class BasicModel {
      */
     public $err; 
 
-    public function __construct() {
+    /* $fa - Models\<db_driver>\FieldAdapterModel - адаптер 
+     *   для бд для объектов полей Nesttab
+      *  передается в объект этого класса при создании объекта
+      */
+    protected $fa;
+    /**
+     * Конструктор
+     * @param object $fa - Models\<db_driver>\FieldAdapterModel - адаптер 
+     *   для бд для объектов полей Nesttab
+     */
+    public function __construct(object $fa) {
         $this->err = new \Alxnv\Nesttab\Models\ErrorModel();
+        $this->fa = $fa;
+        $fa->init($this);
     }
    
     /**

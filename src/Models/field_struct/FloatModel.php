@@ -5,9 +5,9 @@
  * полями типа double
  */
 
-namespace Alxnv\Nesttab\Models\field_struct\mysql;
+namespace Alxnv\Nesttab\Models\field_struct;
 
-class FloatModel extends \Alxnv\Nesttab\Models\field_struct\mysql\BasicModel {
+class FloatModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
 
     
     /**

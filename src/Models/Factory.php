@@ -19,9 +19,11 @@ class Factory {
      * @return object - created object
      */
     public static function createFieldModel(int $id, string $name) {
-        $s2 = '\\Alxnv\\Nesttab\\Models\\field_struct\\' . config('nesttab.db_driver') . '\\'
+        $s1 = '\\Alxnv\\Nesttab\\Models\\' . config('nesttab.db_driver') . '\\FieldAdapterModel';
+        $fa = new $s1();
+        $s2 = '\\Alxnv\\Nesttab\\Models\\field_struct\\' 
                     . ucfirst($name) .'Model';
-        return new $s2();
+        return new $s2($fa);
     }
     
 }
