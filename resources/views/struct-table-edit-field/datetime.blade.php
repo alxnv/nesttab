@@ -9,7 +9,10 @@
 use Carbon\Carbon;
 global $yy, $db;
 
+
 $requires = ['need_datetimepicker' => 1];
+$requires['need_confirm'] = 1;
+
 if (!isset($r['default'])) {
     $r['default'] = ''; //Carbon::now()->format($yy->format); // current datetime
 } else {

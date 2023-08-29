@@ -7,7 +7,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title><?=__("Administrator's module")?></title>
+    <?php
+    if (isset($requires) && isset($requires['need_confirm'])) {
+    ?>
     <link rel="stylesheet" href="<?=asset('/nsttab/css/jquery-confirm.min.css')?>">
+    <?php
+    }
+    ?>
     <link rel="stylesheet" href="<?=asset('/nsttab/css/styles.css')?>">
     <?php 
     if (isset($requires) && isset($requires['need_filepond'])) {
@@ -16,7 +22,13 @@
     }
     ?>
     <script type="text/javascript" src="<?=asset('/nsttab/js/jquery-3.6.0.min.js')?>"></script>
+    <?php
+    if (isset($requires) && isset($requires['need_confirm'])) {
+    ?>
     <script type="text/javascript" src="<?=asset('/nsttab/js/jquery-confirm.min.js')?>"></script>
+    <?php
+    }
+    ?>
     <script type="text/javascript" src="<?=asset('/nsttab/' . \yy::getJsLangFile())?>"></script>
     <script type="text/javascript" src="<?=asset('/nsttab/js/vue/vue.global.js')?>"></script>
     <script type="text/javascript" src="<?=asset('/nsttab/js/functions.js')?>"></script>

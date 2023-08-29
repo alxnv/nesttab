@@ -13,6 +13,7 @@
  */
 global $yy, $db;
 
+$requires['need_confirm'] = 1;
 if (isset($r['allowed'])) {
     $r['allowed'] = join(', ', $r['allowed']);
 } else {

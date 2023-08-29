@@ -8,6 +8,7 @@
  */
 global $yy, $db;
 
+$requires['need_confirm'] = 1;
 echo '<a href="' . $yy->nurl . 'struct-change-table/edit/' . $tbl['id'] . '/0">'
         .__('Back') . '</a><br /><br />';
 

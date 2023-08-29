@@ -8,6 +8,7 @@
  */
 global $yy, $db;
 
+$requires['need_confirm'] = 1;
 if (!isset($r['default'])) {
     $r['default'] = '0.00';
 }

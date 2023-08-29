@@ -3,7 +3,10 @@
 /* 
  * Класс работы со структурой таблицы
  * полями типа txt
- */
+
+ * 
+ * MySQL извлекает и выводит величины DATETIME в формате 'YYYY-MM-DD HH:MM:SS'
+ *  */
 
 namespace Alxnv\Nesttab\Models\field_struct;
 
@@ -28,8 +31,10 @@ class DatetimeModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
         global $yy;
         
         $value = trim($value);
-        if ($value == '') {
+        if (($value == '') || is_null($value)) {
             $value = Carbon::now()->format($yy->format); // current datetime
+            $vdb = Carbon::createFromFormat($yy->format, $value)->toDateTimeString();
+            $columns[$i]['value_for_db'] = $vdb;
         } else {
             if (!$yy->localeObj->isValidValue($value)) {
                 $table_recs->setErr($index, __('Not valid value'));
@@ -72,8 +77,7 @@ class DatetimeModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
         echo '<br />';
         echo '<input type="text" size="20" '
         . '  data-role="datebox" data-options=' . "'" . '{"mode":"datetimebox"}' . "'"
-            . ' name="' . $rec['name'] . '" value="' . (!is_null($rec['value']) ? \yy::qs($rec['value']) : '') . '" />'
-            . '<br />';
+            . ' name="' . $rec['name'] . '" value="' . (!is_null($rec['value']) ? \yy::qs($rec['value']) : '') . '" />';
         echo '<br />';
     }
     /**

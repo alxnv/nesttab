@@ -144,6 +144,11 @@ class BasicModel {
      */
     public function saveStep2(array $tbl, array $fld, array $r, array $old_values, $default, array $params = [],
             array $saveParams = []) {
+        /*
+         * todo: если возникает ошибка при добавлении в физическую таблицу,
+         *  то не возвращается к предыдущему состоянию (не удаляется)
+         *   значение в yy_columns - исправить
+         */
         global $yy, $db;
                     //\yy::gotoErrorPage('Unable to lock process555555');
 
@@ -309,7 +314,7 @@ class BasicModel {
         $df2 = $db->escape($default_value);
         //$def = $th->getFieldDef($fld_type_id); // вернуть определение поля типа для create table
         $s = "alter table $table_name "
-                . "add $field_name $def ";
+                . "add $field_name $def default $df2 ";
         if (isset($saveParams['isNull'])) $s .= ' null';
             else $s .= " not null";
         if (!$db->qdirectNoErrorMessage($s)) { // removed default value seting
