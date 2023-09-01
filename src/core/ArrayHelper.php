@@ -23,4 +23,17 @@ class ArrayHelper {
         return $arr2;
     }
     
+    /**
+     * Make array with keys = value of $arr[$i][$fld], values = $i (index in $arr)
+     * @param array $arr - input array
+     * @return array 
+     */
+    public static function getArrayIndexes(array $arr, $fld) {
+        $ar2 = [];
+        for ($i = 0; $i < count($arr); $i++) {
+            $ar2[$arr[$i][$fld]] = $i;
+        }
+        return $ar2;
+    }
+    
 }

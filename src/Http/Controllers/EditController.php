@@ -72,8 +72,11 @@ class EditController extends BasicController {
             \yy::gotoErrorPage('Zero id');
         }
         $tbl = \Alxnv\Nesttab\Models\TablesModel::getOne($table_id);
+        $columns = \Alxnv\Nesttab\Models\ColumnsModel::getTableColumnsWithNames($tbl['id']);
+        $requires_stub = [];
         $recs = new \Alxnv\Nesttab\Models\TableRecsModel();
-        $recs->save($tbl, 1, $r); // сохраняем запись с id=1
+        \Alxnv\Nesttab\Models\TableRecsModel::getRecAddObjects($columns, $tbl['name'], 1, $requires_stub);
+        $recs->save($columns, $tbl, 1, $r); // сохраняем запись с id=1
         if (!$recs->hasErr()) {
             $request ->session()->flash('saved_successfully', 1);
             Session::save();

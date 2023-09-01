@@ -67,21 +67,38 @@ class TableRecsModel {
         }
     }
     /**
+     *  установить поле value_old для всех полей
+     *   кроме image, file
+     * @param array &$columns - array of fields with values
+     */
+    public function setOldValues(array &$columns) {
+        for ($i = 0; $i < count($columns); $i++) {
+            if (!in_array($columns[$i]['name_field'], ['image, file'])
+                    && isset($columns[$i]['value'])) {
+                $columns[$i]['value_old'] = $columns[$i]['value'];
+            }
+        }
+    }
+    
+    /**
      * Сохраняем данные редактирования в БД, либо устанваливаем сообщения об ошибках
+     * @param array &$columns 
      * @param array $tbl - массив данных о таблице
      * @param int $id - идентификатор записи
      * @param array $r - (array)Request
      */
-    public function save(array $tbl, int $id, array &$r) {
+    public function save(array &$columns, array $tbl, int $id, array &$r) {
         //$this->setErr('', 'fdsafd');
         global $yy;
-        $columns = \Alxnv\Nesttab\Models\ColumnsModel::getTableColumnsWithNames($tbl['id']);
         $yy->loadPhpScript(app_path() . '/Models/nesttab/tables/' 
             . ucfirst($tbl['name']) . '.php');
         // get old values for image and file field types
         $this->getImageFileValues($columns, $tbl, $id);
+        $this->setOldValues($columns); // установить поле value_old для всех полей
+        // кроме image, file
+        $arFI = \Alxnv\Nesttab\core\ArrayHelper::getArrayIndexes($columns, 'name');
         for ($i = 0; $i < count($columns); $i++)  {
-            $columns[$i]['obj'] = \Alxnv\Nesttab\Models\Factory::createFieldModel($columns[$i]['field_type'], $columns[$i]['name_field']);
+            //$columns[$i]['obj'] = \Alxnv\Nesttab\Models\Factory::createFieldModel($columns[$i]['field_type'], $columns[$i]['name_field']);
             $columns[$i]['parameters'] = (array)json_decode($columns[$i]['parameters']);
             // значение для поля типа bool не будет в post массиве если он unchecked
             if ($columns[$i]['name_field'] == 'bool') {
@@ -93,8 +110,10 @@ class TableRecsModel {
                 // устанавливает сообщения об ошибках для $this
             $toContinue = true;
             $isNewRec = false; // todo: change it to appropriate value
+            $value_old = (isset($columns[$i]['value_old']) ? $columns[$i]['value_old'] 
+                    : null);
             if (function_exists('\callbacks\onValidate'))
-                \callbacks\onValidate($value, $columns, $i, $r, $this, $columns[$i]['name'], $isNewRec, $toContinue);
+                \callbacks\onValidate($value, $value_old, $columns, $i, $r, $this, $columns[$i]['name'], $isNewRec, $toContinue, $arFI);
 
             $columns[$i]['value'] = $value;
             
@@ -300,7 +319,7 @@ class TableRecsModel {
      * @param array $requires - сюда заносятся ключи 'need_html_editor', 'need_filepond'
      *   этой функцией, если они нужны
      */
-    public static function getRecAddObjects(array $columns, string $table, int $id, array &$requires = []) {
+    public static function getRecAddObjects(array &$columns, string $table, int $id, array &$requires = []) {
         global $db;
         $rec = $db->q("select * from $table where id=$1", [$id]);
         if (is_null($rec)) \yy::gotoErrorPage('Record not found');
@@ -320,6 +339,7 @@ class TableRecsModel {
                     $columns[$i]['value_old'] = $rec[$columns[$i]['name']];
                 } else {
                     $columns[$i]['value'] = $rec[$columns[$i]['name']];
+                    $columns[$i]['value_old'] = $rec[$columns[$i]['name']];
                 }
             } else {
                 $columns[$i]['value'] = null;
