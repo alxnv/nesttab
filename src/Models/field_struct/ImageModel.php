@@ -15,7 +15,7 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
      * Проверяем на валидность значение $value, и в случае ошибки записываем ее в
      *   $table_recs->err
      * @param type $value
-     * @param object $table_recs (TableRecsModel)
+     * @param object $table_recs (Models/table/BasicTableModel)
      * @param string $index - индекс в массиве ошибок для записи сообщения об ошибке
      * @param array $columns - массив всех колонок таблицы
      * @param int $i - индекс текущего элемента в $columns
@@ -55,7 +55,7 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
     /**
      * Постобработка данных в случае если не было ошибок валидации
      *  (в основном для документов и изображений - загрузка их в каталог upload)
-     * @param object $table_recs - TableRecsModel
+     * @param object $table_recs - Models/table/BasicTableModel
      * @param array $columns - массив столбцов
      * @param int $i - индекс в массиве столбцов
      * @param array $r - (array)Request
@@ -151,7 +151,7 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
             // есть загруженный временный файл
             $value = basename($rec['value']);
         } else {
-            $value = basename($rec['value_old']);
+            $value = (isset($rec['value_old']) ? basename($rec['value_old']) : '');
         }
         echo '<input type="file" id = "' . $fieldName . '"  name = "' . $fieldName . '" />';
         echo "<script>
@@ -171,7 +171,7 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
                 }],';
         }
     } else {
-        if ($rec['value_old'] <> '') {
+        if (isset($rec['value_old']) && ($rec['value_old'] <> '')) {
             // if there was a picture in db
             echo "files: [{"
             . 'source: "' . \yy::jsmstr($rec['value_old']) . '", 

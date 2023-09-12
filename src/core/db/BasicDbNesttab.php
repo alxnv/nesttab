@@ -191,6 +191,25 @@ class BasicDbNesttab {
     }
     
     /**
+     * Выполнить команду sql insert для таблицы $tbl
+     * @param string $tbl - имя таблицы
+     * @param array $arr - массив вида 'поле' => 'значение'
+     * @return mixed sth | null (null если была ошибка)
+     */
+    function insert(string $tbl, array $arr) {
+        $arr2 = [];
+        $arr3 = [];
+        foreach ($arr as $key => $value) {
+            $arr2[] = $this->nameEscape($key);
+            $arr3[] = $this->escape($value);
+        }
+        $s2 = join(', ', $arr2);
+        $s3 = join(', ', $arr3);
+        $s = "insert into $tbl ($s2) values ($s3)";
+        $res = $this->qdirectNoErrorMessage($s);
+        return $res;
+    }
+    /**
      * Выполнить команду sql update для таблицы $tbl
      * @param string $tbl - имя таблицы
      * @param array $arr - массив вида 'поле' => 'значение'

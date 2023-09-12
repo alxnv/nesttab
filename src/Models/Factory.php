@@ -23,7 +23,9 @@ class Factory {
         $fa = new $s1();
         $s2 = '\\Alxnv\\Nesttab\\Models\\field_struct\\' 
                     . ucfirst($name) .'Model';
-        return new $s2($fa);
+        $obj = new $s2($fa);
+        $fa->init($obj);
+        return $obj;
     }
     
     public static function createTableModel(string $type) {
@@ -37,6 +39,7 @@ class Factory {
                 $adapter = new $s2();
                 $s2 = '\\Alxnv\\Nesttab\\Models\\table\\' . $s . 'TableModel';
                 $obj = new $s2($adapter);
+                $adapter->init($obj);
                 return $obj;
                 break;
             default: 

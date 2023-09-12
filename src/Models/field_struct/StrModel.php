@@ -14,7 +14,7 @@ class StrModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
      * Проверяем на валидность значение $value, и в случае ошибки записываем ее в
      *   $table_recs->err
      * @param type $value
-     * @param object $table_recs (TableRecsModel)
+     * @param object $table_recs (Models/table/BasicTableModel)
      * @param string $index - индекс в массиве ошибок для записи сообщения об ошибке
      * @param array $columns - массив всех колонок таблицы
      * @param int $i - индекс текущего элемента в $columns

@@ -53,6 +53,8 @@ class RouteServiceProvider extends ServiceProvider
         $this->loadJsonTranslationsFrom(__DIR__.'/../../resources/lang');
 
         Route::pattern('id', '[0-9]+');
+        Route::pattern('id2', '[0-9]+');
+        Route::pattern('id3', '[0-9]+');
     }
 	/**
      * Register the package routes.

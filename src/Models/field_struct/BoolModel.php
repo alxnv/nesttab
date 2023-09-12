@@ -14,7 +14,7 @@ class BoolModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
      *   $table_recs->err
      * !!! никогда не выдает ошибку, так как это checkbox
      * @param type $value
-     * @param object $table_recs (TableRecsModel)
+     * @param object $table_recs (Models/table/BasicTableModel)
      * @param string $index - индекс в массиве ошибок для записи сообщения об ошибке
      * @param array $columns - массив всех колонок таблицы
      * @param int $i - индекс текущего элемента в $columns

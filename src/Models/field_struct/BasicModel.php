@@ -52,7 +52,7 @@ class BasicModel {
      * Заглушка
      * Постобработка данных в случае если не было ошибок валидации
      *  (в основном для документов и изображений - загрузка их в каталог upload)
-     * @param object $table_recs - TableRecsModel
+     * @param object $table_recs - Models/table/BasicTableModel
      * @param array $columns - массив столбцов
      * @param int $i - индекс в массиве столбцов
      * @param array $r - (array)Request
@@ -65,7 +65,7 @@ class BasicModel {
      *   $table_recs->err
      * !!! выдает ошибку, так как обработчик для данного типа не определен
      * @param type $value
-     * @param object $table_recs (TableRecsModel)
+     * @param object $table_recs (Models/table/BasicTableModel)
      * @param string $index - индекс в массиве ошибок для записи сообщения об ошибке
      * @param array $columns - массив всех колонок таблицы
      * @param int $i - индекс текущего элемента в $columns

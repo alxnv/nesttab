@@ -60,7 +60,9 @@ Route::prefix(config('nesttab.nurl'))->group(function () {
     Route::get('/upload_file/restore', CP9 . 'UploadFileController@restore');
     Route::post('/upload_file', CP9 . 'UploadFileController');
     Route::post('/edit/save_one/{id}', CP9 . 'EditController@saveOne');
-    Route::get('/edit/{id}', CP9 . 'EditController@index');
+    Route::get('/edit/{id}/{id2}', CP9 . 'EditController@index');
+    Route::get('/editrec/{id}/{id2}/{id3}', CP9 . 'EditController@editRec');
+    Route::post('/editrec/save/{id}/{id2}/{id3}', CP9 . 'EditController@save');
     Route::get('/', CP9 . 'IndexController@index');
     
     

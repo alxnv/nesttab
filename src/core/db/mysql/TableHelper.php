@@ -63,7 +63,7 @@ class TableHelper extends \Alxnv\Nesttab\core\db\BasicTableHelper {
             case 'L': // list table
                 return ["create table $table_name (id int NOT NULL AUTO_INCREMENT,"
                         . " ordr int not null,"
-                        . " name varchar(255) not null,"
+                        . " name varchar(255) not null default '',"
                         . " primary key (id))",
                     "alter table $table_name add key(ordr)",
                     "alter table $table_name add key(name(40))",
@@ -72,7 +72,7 @@ class TableHelper extends \Alxnv\Nesttab\core\db\BasicTableHelper {
                 return ["create table $table_name (id int NOT NULL AUTO_INCREMENT,"
                         . " parent_leaf int not null,"
                         . " ordr int not null,"
-                        . " name varchar(255) not null,"
+                        . " name varchar(255) not null default '',"
                         . " primary key (id))",
                     "alter table $table_name add key(parent_leaf, ordr)",
                     "alter table $table_name add key(parent_leaf, name(40))",

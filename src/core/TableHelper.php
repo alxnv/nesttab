@@ -7,6 +7,9 @@
  * 
  * @author Alexandr
  */
+
+namespace Alxnv\Nesttab\core;
+
 class TableHelper {
     /**
      * returns long table type name by short table type name
@@ -17,7 +20,7 @@ class TableHelper {
      */
     public static function getTableTypeByOneChar(string $char):string {
         global $yy;
-        if (($key = array_search($yy->settings2['table_names_short'])) === false) {
+        if (($key = array_search($char, $yy->settings2['table_names_short'])) === false) {
                 throw new \Exception('Bad table type');
         }
         return $yy->settings2['table_names'][$key];
