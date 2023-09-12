@@ -77,7 +77,7 @@ class TableHelper extends \Alxnv\Nesttab\core\db\BasicTableHelper {
                     "alter table $table_name add key(parent_leaf, ordr)",
                     "alter table $table_name add key(parent_leaf, name(40))",
                     ];
-            case 'V': // ord table
+            case 'D': // ord table
                 return ["create table $table_name (`id` int NOT NULL AUTO_INCREMENT, " 
                     . " PRIMARY KEY (`id`))"
                        ];

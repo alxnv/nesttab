@@ -26,4 +26,21 @@ class Factory {
         return new $s2($fa);
     }
     
+    public static function createTableModel(string $type) {
+        switch ($type) {
+            case 'one' : 
+            case 'list' :
+            case 'ord' :
+            case 'tree' :
+                $s = ucfirst($type);
+                $s2 = '\\Alxnv\\Nesttab\\Models\\mysql\\table\\' . $s . 'TableAdapterModel';
+                $adapter = new $s2();
+                $s2 = '\\Alxnv\\Nesttab\\Models\\table\\' . $s . 'TableModel';
+                $obj = new $s2($adapter);
+                return $obj;
+                break;
+            default: 
+                throw new \Exception('Bad table type');
+        }
+    }
 }

@@ -1,12 +1,25 @@
 <?php
+/**
+ * basic class for table models (one, ord, tree, list)
+ */
 
-namespace Alxnv\Nesttab\Models;
+namespace Alxnv\Nesttab\Models\table;
 
-class StructAddTableModel {
+class BasicTableModel {
+    
+    protected $adapter;
+    
+    /**
+     * object constructor
+     * @param object $adapter - adapter object for database
+     */
+    public function __construct(object $adapter) {
+        $this->adapter = $adapter;
+    }
 
     // create table structure, step 2, write to the tables
     // пытаемся создать таблицу указанного типа и с указанным именем
-    public function execute(array $r, &$message) {
+    public function createTable(array $r, &$message) {
 
         global $yy, $db;
 
@@ -15,7 +28,8 @@ class StructAddTableModel {
 	if (!isset($r['tbl_type']) || !isset($r['tbl_name']) || !isset($r['tbl_descr']))  die('Required parameter is not passed');
 	$tbl_idx = intval($r['tbl_type']);
 	if ($tbl_idx < 0 || $tbl_idx >= count($arr2)) die('Wrong index of table');
-	$tbl_name = substr($r['tbl_name'], 0, $yy->db_settings['max_table_name_size']);
+        if (!isset($arr_table_names_short[$tbl_idx])) die('Not valid table type');
+        $tbl_name = substr($r['tbl_name'], 0, $yy->db_settings['max_table_name_size']);
 	$tbl_descr = trim(substr($r['tbl_descr'], 0, 200));
         $err = '';
 	if (($s72 = $db->valid_table_name($tbl_name)) <>'') {
