@@ -7,6 +7,7 @@ namespace Alxnv\Nesttab\Models\table;
 
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 
 class BasicTableModel {
     
@@ -26,6 +27,46 @@ class BasicTableModel {
     public function __construct(object $adapter) {
         $this->adapter = $adapter;
         $this->err = new \Alxnv\Nesttab\Models\ErrorModel();
+    }
+
+    /**
+     * save table data for all table types (now for 'one' type)
+     *   it is called from saving main table data page
+     * @global \Alxnv\Nesttab\Http\Controllers\type $db
+     * @global \Alxnv\Nesttab\Http\Controllers\type $yy
+     * @param array $tbl - table data
+     * @param int $id - id of the record of the parent table (0 for main level table)
+     * @param int $id2 -  the id of the table in yy_tables
+     * @param int $id3 - id of the record (0 for new record)
+     * @param Request $request - request data
+     */
+    public function saveTableRec(array $tbl, int $id, int $id2, int $id3, object $request) {
+        global $yy;
+        $r = $request->all();
+        $columns = \Alxnv\Nesttab\Models\ColumnsModel::getTableColumnsWithNames($tbl['id']);
+        $requires_stub = [];
+        $this->getRecAddObjects($columns, $tbl['name'], $id3, $requires_stub);
+        $this->save($columns, $tbl, $id3, $r); // сохраняем запись
+        if (!$this->hasErr()) {
+            $request ->session()->flash('saved_successfully', 1);
+            Session::save();
+            \yy::redirectNow($yy->nurl . 'edit/' . $id . '/' . $tbl['id']);
+            exit;
+        } else {
+            //\yy::gotoErrorPage($s);
+            $lnk = \yy::getErrorEditSession();
+            //session([$lnk => $recs->err->err]);
+            $request->session()->flash($lnk, $this->err->err);
+            //dd($recs->err->err);
+            $lnk2 = \yy::getEditSession();
+            //session([$lnk2 => $r]);
+            $request->session()->flash($lnk2, $r);
+            Session::save();
+            \yy::redirectNow($yy->nurl . 'editrec/' . $id . '/' . $tbl['id'] . '/' . $id3);
+            exit;
+        }
+        
+        
     }
 
     // create table structure, step 2, write to the tables

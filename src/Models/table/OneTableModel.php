@@ -5,8 +5,38 @@
  */
 
 namespace Alxnv\Nesttab\Models\table;
+use Illuminate\Support\Facades\Session;
 
 class OneTableModel extends BasicTableModel {
+    /**
+     * Редактирование таблицы типа One Record - точка входа
+     * @param array $tbl - данные таблицы
+     * @param array $r - Request в виде массива
+     * @param int $id - id of the record of the parent table (0 for main level table)
+     * @param int $id2 -  the id of the table in yy_tables
+     */
+    public function editTable(array $tbl, array $r, int $id, int $id2) {
+        // получаем строку с id=1 для one rec table (это единственная строка там)
+        if ($id <> 0) die('This table must be on the top level');
+        $columns = \Alxnv\Nesttab\Models\ColumnsModel::getTableColumnsWithNames($tbl['id']);
+        $requires = [];
+        $rec_id = 1; // record 'id' field value
+        $recs = $this->getRecAddObjects($columns, $tbl['name'], 1, $requires);
+        $lnk2 = \yy::getEditSession();
+        if (Session::has($lnk2)) {
+            $lnk = \yy::getErrorEditSession();
+            $er2 = session($lnk);
+            //dd($er2);
+            $r_edited = session($lnk2);
+            $r = $r_edited; //\yy::addKeys($r, $r_edited);
+            // проставить значения полей из сессии (бывший post) в $recs
+            $recs = $tableModel->setValues($recs, $r);
+        }
+        //dd($r);
+        return view('nesttab::edit-table.one_rec', ['tbl' => $tbl, 'recs' => $recs,
+                'r' => $r, 'requires' => $requires, 'table_id' => $id2, 'rec_id' => $rec_id]);
+        
+    }
     /**
      * Сохраняем данные редактирования в БД, либо устанваливаем сообщения об ошибках
      * @param array &$columns 
@@ -100,4 +130,38 @@ class OneTableModel extends BasicTableModel {
         return true;
     }
 
+    /**
+     * Save table data
+     * @param array $tbl - table data
+     * @param int $id - id of the table
+     * @param Request $request
+     */
+    
+    public function saveTable(array $tbl, int $id, object $request) {
+        global $yy;
+        $r = $request->all();
+        $columns = \Alxnv\Nesttab\Models\ColumnsModel::getTableColumnsWithNames($tbl['id']);
+        $requires_stub = [];
+        $this->getRecAddObjects($columns, $tbl['name'], 1, $requires_stub);
+        $this->save($columns, $tbl, 1, $r); // сохраняем запись с id=1
+        if (!$this->hasErr()) {
+            $request ->session()->flash('saved_successfully', 1);
+            Session::save();
+            \yy::redirectNow($yy->nurl . 'edit/0/' . $tbl['id']);
+            exit;
+        } else {
+            //\yy::gotoErrorPage($s);
+            $lnk = \yy::getErrorEditSession();
+            //session([$lnk => $recs->err->err]);
+            $request->session()->flash($lnk, $this->err->err);
+            //dd($recs->err->err);
+            $lnk2 = \yy::getEditSession();
+            //session([$lnk2 => $r]);
+            $request->session()->flash($lnk2, $r);
+            Session::save();
+            \yy::redirectNow($yy->nurl . 'edit/0/' . $tbl['id']);
+            exit;
+        }
+        
+    }
 }

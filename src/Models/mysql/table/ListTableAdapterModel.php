@@ -32,7 +32,7 @@ class ListTableAdapterModel  extends BasicTableAdapterModel {
      *    its a top level table)
      * @return boolean
      */
-    public function insert(string $tbl_name, array $arrValues, array $parentTableRec) {
+    public function insert(string $tbl_name, array $arrValues, array $parentTableRec, &$id) {
 
         global $db;
         $where = '';
@@ -52,6 +52,7 @@ class ListTableAdapterModel  extends BasicTableAdapterModel {
             $db->qdirect("unlock tables");
             return false;
         }
+        $id = $db->handle->lastInsertId();
         $db->qdirect("unlock tables");
         return true;
     }

@@ -5,8 +5,91 @@
  */
 
 namespace Alxnv\Nesttab\Models\table;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\DB;
 
 class ListTableModel extends BasicTableModel {
+    /**
+     * Редактирование одной записи таблицы типа List
+     * @param array $tbl - данные таблицы
+     * @param array $r - Request в виде массива
+     * @param int $id - id of the record of the parent table (0 for main level table)
+     * @param int $id2 -  the id of the table in yy_tables
+     * @param int $id3 - id of the record (0 for new record)
+     */
+    public function editTableRec(array $tbl, array $r, int $id, int $id2, int $id3) {
+        // получаем строку с id=1 для one rec table (это единственная строка там)
+        global $yy;
+        $columns = \Alxnv\Nesttab\Models\ColumnsModel::getTableColumnsWithNames($tbl['id']);
+        $requires = [];
+        $parent_table_id = $tbl['parent_tbl_id'];
+        if ($parent_table_id == 0) {
+            // top level table
+            $parent_table_rec = [];
+        } else {
+            // nested table
+        }
+        //$tbl = \Alxnv\Nesttab\Models\TablesModel::getOne($id2);
+        $rec_id = $id3; // record 'id' field value !!! todo: replace
+        //$recs = \Alxnv\Nesttab\Models\TableRecsModel::getRecAddObjects($columns, $tbl['name'], 1, $requires);
+        $recs = $this->getRecAddObjects($columns, $tbl['name'], $id3, $requires);
+        $lnk2 = \yy::getEditSession();
+        if (Session::has($lnk2)) {
+            $lnk = \yy::getErrorEditSession();
+            $er2 = session($lnk);
+            //dd($er2);
+            $r_edited = session($lnk2);
+            $r = $r_edited; //\yy::addKeys($r, $r_edited);
+            // проставить значения полей из сессии (бывший post) в $recs
+            //$recs = \Alxnv\Nesttab\Models\TableRecsModel::setValues($recs, $r);
+        }
+        //dd($r);
+        return view('nesttab::edit-table.list_rec', ['tbl' => $tbl, 'recs' => $recs,
+                'r' => $r, 'requires' => $requires, 'table_id' => $id2, 'rec_id' => $rec_id,
+                'parent_id' => $id,
+                'parent_table_id' => $parent_table_id, 'parent_table_rec' => $parent_table_rec]);
+        
+    }
+    /**
+     * Редактирование таблицы типа List - точка входа
+     * @param array $tbl - данные таблицы
+     * @param array $r - Request в виде массива
+     * @param int $id - id of the record of the parent table (0 for main level table)
+     * @param int $id2 -  the id of the table in yy_tables
+     */
+    public function editTable(array $tbl, array $r, int $id, int $id2) {
+        // получаем строку с id=1 для one rec table (это единственная строка там)
+        global $yy;
+        //$columns = \Alxnv\Nesttab\Models\ColumnsModel::getTableColumnsWithNames($tbl['id']);
+        $requires = [];
+        $parent_table_id = $tbl['parent_tbl_id'];
+        if ($parent_table_id == 0) {
+            // top level table
+            $parent_table_rec = [];
+            $recs = DB::table($tbl['name'])->paginate($yy->settings2['recs_per_page']);
+        } else {
+            // nested table
+        }
+        //$tbl = \Alxnv\Nesttab\Models\TablesModel::getOne($id2);
+        $rec_id = 1; // record 'id' field value !!! todo: replace
+        //$recs = \Alxnv\Nesttab\Models\TableRecsModel::getRecAddObjects($columns, $tbl['name'], 1, $requires);
+        $lnk2 = \yy::getEditSession();
+        if (Session::has($lnk2)) {
+            $lnk = \yy::getErrorEditSession();
+            $er2 = session($lnk);
+            //dd($er2);
+            $r_edited = session($lnk2);
+            $r = $r_edited; //\yy::addKeys($r, $r_edited);
+            // проставить значения полей из сессии (бывший post) в $recs
+            //$recs = \Alxnv\Nesttab\Models\TableRecsModel::setValues($recs, $r);
+        }
+        //dd($r);
+        return view('nesttab::edit-table.list', ['tbl' => $tbl, 'recs' => $recs,
+                'r' => $r, 'requires' => $requires, 'table_id' => $id2, 'rec_id' => $rec_id,
+                'parent_id' => $id,
+                'parent_table_id' => $parent_table_id, 'parent_table_rec' => $parent_table_rec]);
+        
+    }
     /**
      * Сохраняем данные редактирования в БД, либо устанваливаем сообщения об ошибках
      * @param array &$columns 
@@ -97,7 +180,12 @@ class ListTableModel extends BasicTableModel {
             if ($id == 0) {
                 // new record
                 $parentTableRec = []; // todo: determine this record
-                return $this->adapter->insert($tbl['name'], $arr, $parentTableRec);
+                $id5 = 0;
+                $res = $this->adapter->insert($tbl['name'], $arr, $parentTableRec, $id5);
+                if ($res) {
+                    $id = $id5;
+                }
+                return $res;
             } else {
                 $db->update($tbl['name'], $arr, "where id=" . $id);
                 return ($db->errorCode == 0);

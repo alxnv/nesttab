@@ -28,7 +28,7 @@ echo $err3;
 
 //dd($recs);
 echo '<br /><p class="center"><a class="addfield" href="' . $yy->nurl . 'editrec/' 
-        . $parent_id . '/' . $tbl['id'] . '/0">' . __('Add field') . '</a>'
+        . $parent_id . '/' . $tbl['id'] . '/0">' . __('Add record') . '</a>'
         . '</p>';
 echo '<br /><div id="idt" class="table center2 div-table">';
 echo '<div class="div-th"><span>№</span><span>' . __('Name') . '</span>'
@@ -50,5 +50,6 @@ foreach ($recs as $rec) {
 }
 echo '</div>';
 ?>
+<br />
 {{ $recs->links() }}
 @endsection
