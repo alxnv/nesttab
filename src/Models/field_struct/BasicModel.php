@@ -16,11 +16,11 @@ class BasicModel {
      */
     public $err; 
 
-    /* $fa - Models\<db_driver>\FieldAdapterModel - адаптер 
+    /* $adapter - Models\<db_driver>\FieldAdapterModel - адаптер 
      *   для бд для объектов полей Nesttab
       *  передается в объект этого класса при создании объекта
       */
-    protected $fa;
+    protected $adapter;
     /**
      * Конструктор
      * @param object $fa - Models\<db_driver>\FieldAdapterModel - адаптер 
@@ -28,7 +28,7 @@ class BasicModel {
      */
     public function __construct(object $fa) {
         $this->err = new \Alxnv\Nesttab\Models\ErrorModel();
-        $this->fa = $fa;
+        $this->adapter = $fa;
         $fa->init($this);
     }
    
