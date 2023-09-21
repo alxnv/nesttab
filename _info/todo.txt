@@ -1,3 +1,5 @@
+list delete/rename field 'name' - not allowed
+----
 if id == 0 && !hasErr() { getDefaults() }
 ---
 BasicTableModel->createField()
@@ -30,6 +32,14 @@ echo 'second ' . apache_getenv('SERVER_NAME');
 
 я наверное предпочту 1 вариант	   
 -------
+в boot() провайдера:
+что то типа 
+//$this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'name');
+$this->publishes([
+            __DIR__.'/../resources/lang' => resource_path('lang/vendor/name'),
+        ], 'lang');
+!!! проверить, как будет подключаться пагинация русифицированная
+------
 !!! добавить поле _srv_ для поля типа string - преобразование строки в вид для url
       к полю - признак "русское/английское"
 	в field.save() - добавить возможность добавлять-удалять дополнительное поле

@@ -27,7 +27,28 @@ class ListTableModel extends BasicTableModel {
             // таблица создана, добавляем поле 'name' типа 'string'
             $dummy = 0;
             $strModel = \Alxnv\Nesttab\Models\Factory::createFieldModel($dummy, 'str');
-            
+            $tbl = \Alxnv\Nesttab\Models\TablesModel::getOne($tableId);
+            $fld =  (new \Alxnv\Nesttab\Models\ColTypesModel())->getByName('str');
+            $old_values = [];
+            $r = ['name' => 'name', 'descr' => __('Name')];
+            $strModel->save($tbl, $fld, $r, $old_values);
+            if ($strModel->hasErr()) {
+                $message = $strModel->err->getAll();
+                return false;
+            } else {
+            // добавляем индексы с полем 'name'
+            $arr_commands = [
+                        "alter table " . $tbl['name'] . " add key(name(40))",
+                        ];
+                foreach ($arr_commands as $command) {
+                        $sth = $db->qdirectNoErrorMessage($command);
+                        if (!$sth) { # table already exists 
+                            $message = $db->errorMessage;
+                            return false;
+                        }
+
+                }
+            }
         }
         return $b;
 

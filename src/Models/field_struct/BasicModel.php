@@ -227,7 +227,7 @@ class BasicModel {
                         $db->qdirect("unlock tables");
                         return;
                     }
-                    $db->qdirect("unlock tables");
+                    $db->qdirectNoErrorMessage("unlock tables");
                     
                 }
                 if (!$this->hasErr() && !$this->addField($tblname_2, $name_2, $tbl['id'], 

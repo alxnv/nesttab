@@ -12,8 +12,8 @@ class BasicTableHelper {
      */
     public $definedFields = [
         'O' => ['id'],
-        'V' => ['id'],
-        'L' => ['id', 'ordr', 'name'],
+        'D' => ['id'],
+        'L' => ['id', 'ordr'],
         'C' => ['id', 'parent_leaf', 'ordr', 'name'],
     ];
     

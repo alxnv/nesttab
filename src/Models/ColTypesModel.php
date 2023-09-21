@@ -47,6 +47,22 @@ class ColTypesModel {
         return $arr;
     }
 
+    /**
+     * Получить один тип поля по имени поля
+     * @global type $db
+     * @global type $yy
+     * @param string $field_type - тип поля
+     * @return array - запись из бд
+     */
+    public function getByName($field_type) {
+        global $db, $yy;
+        
+        $lang = Lang::getLocale(); //$yy->settings['language'];
+        $arr = $db->q("select a.*,b.descr,b.language from yy_col_types a, yy_col_types_lang b"
+                . " where b.language=$1 "
+                . " and a.name=$2 and b.id=a.id ", [$lang, $field_type]);
+        return $arr;
+    }
     
 }
 

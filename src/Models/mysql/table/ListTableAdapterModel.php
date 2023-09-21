@@ -24,7 +24,6 @@ class ListTableAdapterModel  extends BasicTableAdapterModel {
         // выполняем команду создания таблицы
         $command = "create table $table_name (id int NOT NULL AUTO_INCREMENT,"
                         . " ordr int not null,"
-                        . " name varchar(255) not null default '',"
                         . " primary key (id))";                
         $sth = $db->qdirectNoErrorMessage($command);
         if (!$sth) {
@@ -41,7 +40,6 @@ class ListTableAdapterModel  extends BasicTableAdapterModel {
         // выполняем дополнительные команды
         $arr_commands = [
                     "alter table $table_name add key(ordr)",
-                    "alter table $table_name add key(name(40))",
                     ];
         foreach ($arr_commands as $command) {
                 $sth = $db->qdirectNoErrorMessage($command);

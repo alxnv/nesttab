@@ -111,11 +111,6 @@ class BasicDbNesttab {
         return $affected;
     }
 
-    
-    function qd(string $s, array $params = []) {
-        
-    }
-    
     /**
      * Вызывается иногда для сохранения кода и сообщения об ошибке БД
      * @param type $code - код ошибки БД

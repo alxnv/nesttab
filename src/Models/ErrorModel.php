@@ -26,6 +26,22 @@ class ErrorModel {
     }
     
     /**
+     * получить все ошибки в виде одной строки
+     * @return string
+     */
+    public function getAll() {
+        $s = '';
+        if (isset($this->err[''])) {
+            $s .= ($this->err[''] . chr(13) . chr(10));
+        }
+        foreach ($this->err as $key => $value) {
+            $s .= '[' . $key . ']' . chr(13) . chr(10);
+            $s .= $value . chr(13) . chr(10);
+        }
+        return $s;
+    }
+    
+    /**
      * возвращает div с ошибкой если есть ошибка для данного поля
      * @param string $field_name - ипя поля, для которого выводится ошибка
      */
