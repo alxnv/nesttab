@@ -136,7 +136,9 @@ class BasicModel {
      * пытается сохранить(изменить)  в таблице поле, шаг 2
      * @param array $tbl
      * @param array $fld
-     * @param array $r
+     * @param array $r - request
+     * @param array $old_values - если поле уже существует, то здесь его
+     *    предыдущее значение, иначе не используется
      * @param array $params - дополнительные параметры поля, если не пустые
      * @param array $saveParams - дополнительные параметры сохранения
      *     $saveParams['isNull'] == 1, то создать в таблице данных поле типа null

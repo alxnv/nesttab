@@ -18,7 +18,8 @@ class StructAddTableController extends BasicController {
 	$tbl_idx = intval($r['tbl_type']);
 	if ($tbl_idx < 0 || $tbl_idx >= count($arr2)) die('Wrong index of table');
         $model = \Alxnv\Nesttab\Models\Factory::createTableModel($yy->settings2['table_names'][$tbl_idx]);
-        if ($model->createTable($r, $message)) \yy::gotoMessagePage($message);
+        $tableId = 0;
+        if ($model->createTable($r, $message, $tableId)) \yy::gotoMessagePage($message);
            else \yy::gotoErrorPage($message);
         
     }

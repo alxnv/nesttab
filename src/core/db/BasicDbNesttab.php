@@ -58,7 +58,14 @@ class BasicDbNesttab {
         return $this->handle->quote($s);
     }
 
-    function qlist($s, $params = []) {
+    /**
+     * получить из бд набор записей в виде массива объектов,
+     *   перейти к странице ошибки в случае ошибки
+     * @param string $s
+     * @param array $params
+     * @return array
+     */
+    function qlist(string $s, array $params = []) {
         $sth = $this->handle->query(\yy::dbEscape($s, $params))
                 or \yy::gotoErrorPage(sprintf ("Error %s\n", mysqli_error($this->handle)));
 /*        if ($sth) {
@@ -70,7 +77,14 @@ class BasicDbNesttab {
         return $rows;
     }
 
-    function qlistArr($s, $params = []) {
+    /**
+     * запросить из бд набор записей в виде массива массивов,
+     *     перейти к странице ошибки в случае ошибки
+     * @param string $s
+     * @param array $params
+     * @return array - массив полученных строк
+     */
+    function qlistArr(string $s, array $params = []) {
         $sth = $this->handle->query(\yy::dbEscape($s, $params))
                 or \yy::gotoErrorPage(sprintf ("Error %s\n", mysqli_error($this->handle)));
 /*        if ($sth) {
@@ -82,6 +96,12 @@ class BasicDbNesttab {
         return $rows;
     }
 
+    /**
+     * выполнить команду бд, перейти к странице ошибки в случае ошибки
+     * @param string $s
+     * @param array $params
+     * @return int - number of affected rows
+     */
     function qdirect($s, $params = []) {
         $affected = $this->handle->exec(\yy::dbEscape($s, $params));
         if (intval($this->handle->errorInfo()[0]) <> 0) {
@@ -91,6 +111,11 @@ class BasicDbNesttab {
         return $affected;
     }
 
+    
+    function qd(string $s, array $params = []) {
+        
+    }
+    
     /**
      * Вызывается иногда для сохранения кода и сообщения об ошибке БД
      * @param type $code - код ошибки БД
@@ -104,6 +129,7 @@ class BasicDbNesttab {
      * Выполняется Mysqli запрос. в случае ошибки из $error_codes (например 
      *    1050 (таблица уже существует))
      *   не прерывается выполнение программы
+     * переходит к странице ошибки в случае ошибки
      * @param string $s
      * @param array $error_codes
      * @return handler
@@ -144,11 +170,11 @@ class BasicDbNesttab {
         return true;
     }
 
+    /**
+            выполняет запрос и возвращает одну строчку с полученным объектом из строки
+            @return array (или null если 0 записей)
+    */
     function qobj($s, $params =[]) {
-		/**
-			выполняет запрос и возвращает одну строчку с полученным объектом из строки
-			@return array (или null если 0 записей)
-		*/
         $sth = $this->handle->prepare(\yy::dbEscape($s, $params));
         $sth->execute();
         
@@ -172,11 +198,11 @@ class BasicDbNesttab {
     }
             
     
+    /**
+            выполняет запрос и возвращает одну строчку с полученным массивом
+            @return array (или null если 0 записей)
+    */
     function q($s, $params = []) {
-		/**
-			выполняет запрос и возвращает одну строчку с полученным массивом
-			@return array (или null если 0 записей)
-		*/
         $sth = $this->handle->prepare(\yy::dbEscape($s, $params));
         $this->errorCode = 0;
         try {

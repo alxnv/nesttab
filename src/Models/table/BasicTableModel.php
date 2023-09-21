@@ -71,7 +71,16 @@ class BasicTableModel {
 
     // create table structure, step 2, write to the tables
     // пытаемся создать таблицу указанного типа и с указанным именем
-    public function createTable(array $r, &$message) {
+    /**
+     * 
+     * @global \Alxnv\Nesttab\Http\Controllers\type $yy
+     * @global \Alxnv\Nesttab\Http\Controllers\type $db
+     * @param array $r - request
+     * @param type $message - message here returned (ok or error)
+     * @param type $tableId - id of created table in yy_tables
+     * @return boolean - if table creation was successful
+     */
+    public function createTable(array $r, &$message, &$tableId) {
 
         global $yy, $db;
 
@@ -79,8 +88,14 @@ class BasicTableModel {
         $arr_table_names_short = $yy->settings2['table_names_short'];
 	if (!isset($r['tbl_type']) || !isset($r['tbl_name']) || !isset($r['tbl_descr']))  die('Required parameter is not passed');
 	$tbl_idx = intval($r['tbl_type']);
-	if ($tbl_idx < 0 || $tbl_idx >= count($arr2)) die('Wrong index of table');
-        if (!isset($arr_table_names_short[$tbl_idx])) die('Not valid table type');
+	if ($tbl_idx < 0 || $tbl_idx >= count($arr2)) {
+            $message = 'Wrong index of table';
+            return false;
+        }
+        if (!isset($arr_table_names_short[$tbl_idx])) {
+            $message = 'Not valid table type';
+            return false;
+        }
         $tbl_name = substr($r['tbl_name'], 0, $yy->db_settings['max_table_name_size']);
 	$tbl_descr = trim(substr($r['tbl_descr'], 0, 200));
         $err = '';
@@ -98,26 +113,26 @@ class BasicTableModel {
         /*
          * создаем саму таблицу
          */
-        $s = "\\Alxnv\\Nesttab\\core\\db\\" . config('nesttab.db_driver') . "\\TableHelper";
-        $th = new $s();
+        //$s = "\\Alxnv\\Nesttab\\core\\db\\" . config('nesttab.db_driver') . "\\TableHelper";
+        //$th = new $s();
 
-        $arr_commands = $th->getCreateTableStrings($arr_table_names_short[$tbl_idx], $tbl_name);
-        //var_dump($arr_commands);exit;
-        foreach ($arr_commands as $command) {
-                $sth = $db->qdirectSpec($command, ['42S01']);
-                if (!$sth && $db->errorCode == '42S01') { # table already exists 
-                        $message = __('The table') . ' ' . \yy::qs($tbl_name) 
-                                . ' ' . __('is already exists');
-                        return false;
-                }
-            
+        $message = '';
+        if (!$this->adapter->createTableDbCommands($tbl_name, $message)) {
+            return false;
         }
 
         // Записываем данные таблицы в yy_tables
         $s3 = $db->escape($tbl_descr);
-        $db->qdirect("insert into yy_tables (name, descr, parent_tbl_id, table_type)"
-                . " values ('$tbl_name', $s3, 0, '$arr_table_names_short[$tbl_idx]')");
-        
+        $arr2 = ['name' => $tbl_name,
+            'descr' => $tbl_descr,
+            'parent_tbl_id' => 0,
+            'table_type' => $arr_table_names_short[$tbl_idx]];
+        if (!$db->insert('yy_tables', $arr2)) {
+            $message = $db->errorMessage;
+            return false;
+        }
+        $tableId = $db->handle->lastInsertId();
+
         // Если имя таблицы создано по шаблону, то проставляем номер таблицы в yy_settings 
         //   как следующий номер для автонумерации
         $arr_names = $yy->settings2['table_names'];
@@ -139,14 +154,14 @@ class BasicTableModel {
             
             if ($b) {
                 $field = $arr_names[$tbl_idx] . '_counter';
-                $db->qdirect("lock tables yy_settings write");
+                $db->qdirectNoErrorMessage("lock tables yy_settings write");
                 $obj = $db->qobj("select $field as v from yy_settings");
                 //var_dump($arr3);
                 //exit;
                 if ($n > $obj->v) {
-                    $db->qdirect("update yy_settings set $field = $n");
+                    $db->qdirectNoErrorMessage("update yy_settings set $field = $n");
                 }
-                $db->qdirect("unlock tables");
+                $db->qdirectNoErrorMessage("unlock tables");
             }
         }       
         

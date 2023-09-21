@@ -9,6 +9,29 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
 
 class ListTableModel extends BasicTableModel {
+    // create table structure, step 2, write to the tables
+    // пытаемся создать таблицу указанного типа и с указанным именем
+    /**
+     * @param array $r - request
+     * @param type $message - message here returned (ok or error)
+     * @param type $tableId - id of created table in yy_tables
+     * @return boolean - if table creation was successful
+     */
+    public function createTable(array $r, &$message, &$tableId) {
+
+        global $yy, $db;
+        
+        $tableId = 0;
+        $b = parent::createTable($r, $message, $tableId);
+        if ($b) {
+            // таблица создана, добавляем поле 'name' типа 'string'
+            $dummy = 0;
+            $strModel = \Alxnv\Nesttab\Models\Factory::createFieldModel($dummy, 'str');
+            
+        }
+        return $b;
+
+    }
     /**
      * Редактирование одной записи таблицы типа List
      * @param array $tbl - данные таблицы

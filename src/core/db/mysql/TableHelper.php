@@ -44,47 +44,6 @@ class TableHelper extends \Alxnv\Nesttab\core\db\BasicTableHelper {
         }
     }
 
-    /**
-     * Создать начальную структуру таблицы верхнего уровня
-     * @param string $table_type тип таблицы ('O','L','C','V')
-     * @param string $table_name - имя создаваемой таблицы
-     * @param array $additional_commands - массив с возвращаемыми дополнительными командами
-     * @param mixed $default_value - значение для поля по умолчанию
-     * @return array массив строк для создания пустой таблицы заданного типа (с возможными
-     *    дополнительными коммандами
-     */
-    function getCreateTableStrings(string $table_type, string $table_name):array {
-        global $db;
-        switch ($table_type) {
-            case 'O': // one record table
-                return ["create table $table_name (`id` int NOT NULL default 1, " 
-                    . " PRIMARY KEY (`id`))",
-                    "insert into $table_name (id) values (1)"];
-            case 'L': // list table
-                return ["create table $table_name (id int NOT NULL AUTO_INCREMENT,"
-                        . " ordr int not null,"
-                        . " name varchar(255) not null default '',"
-                        . " primary key (id))",
-                    "alter table $table_name add key(ordr)",
-                    "alter table $table_name add key(name(40))",
-                    ];
-            case 'C': // tree table
-                return ["create table $table_name (id int NOT NULL AUTO_INCREMENT,"
-                        . " parent_leaf int not null,"
-                        . " ordr int not null,"
-                        . " name varchar(255) not null default '',"
-                        . " primary key (id))",
-                    "alter table $table_name add key(parent_leaf, ordr)",
-                    "alter table $table_name add key(parent_leaf, name(40))",
-                    ];
-            case 'D': // ord table
-                return ["create table $table_name (`id` int NOT NULL AUTO_INCREMENT, " 
-                    . " PRIMARY KEY (`id`))"
-                       ];
-            default:
-                throw new \Exception("Table type is not defined");
-        }
-    }
 
     /**
      * Создать начальную структуру вложенной таблицы 
