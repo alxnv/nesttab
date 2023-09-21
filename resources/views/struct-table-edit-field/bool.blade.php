@@ -9,6 +9,7 @@
 global $yy, $db;
 
 $requires['need_confirm'] = 1;
+echo '<div id="main_contents">';
 echo '<a href="' . $yy->baseurl . config('nesttab.nurl') . '/struct-change-table/edit/' . $tbl['id'] . '/0">'
         .__('Back') . '</a><br /><br />';
 
@@ -93,5 +94,9 @@ const app = Vue.createApp({
 });
 app.mount('#app');
 </script>
+<?php
+echo '</div>';
+?>
+<div id="error_div"></div>
 
 @endsection

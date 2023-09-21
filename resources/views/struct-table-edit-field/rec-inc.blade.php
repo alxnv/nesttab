@@ -10,6 +10,8 @@
  *   $fld['ordr']
  */
 if (isset($r['id'])) { // если не новая запись
+
+$isDeletable = $tableModel->isDeletableField($r['name']);
 ?>
 <div id="idt">
     <table-elt></table-elt>
@@ -79,7 +81,7 @@ const TableElt = {
   template: '<?=__('To position')?>: \
    <input type="number" class="table_edit" v-model="this.moveto" />\
     &nbsp;<input type="button" class="move-button" @click="onMove" value="<?=__('Move')?>" />\
-    &nbsp;<input type="button" class="delete-button" @click="onDelete" value="<?=__('Delete')?>" /><hr />'
+    <?=($isDeletable ? '&nbsp;<input type="button" class="delete-button" @click="onDelete" value="' . __('Delete') . '" />' : '')?><hr />'
 }
 
 

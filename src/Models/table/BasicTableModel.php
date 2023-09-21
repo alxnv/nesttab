@@ -30,6 +30,23 @@ class BasicTableModel {
     }
 
     /**
+     * can the name of the field be changed
+     * @param string $name
+     * @return boolean
+     */
+    public function canChangeFieldName(string $name) {
+        return true;
+    }
+
+    /**
+     * is this field deletable
+     * @param string $fieldName 
+     * @return boolean
+     */
+    public function isDeletableField(string $fieldName) {
+        return true;
+    }
+    /**
      * save table data for all table types (now for 'one' type)
      *   it is called from saving main table data page
      * @global \Alxnv\Nesttab\Http\Controllers\type $db

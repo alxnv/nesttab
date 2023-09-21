@@ -58,6 +58,8 @@ dd($s);*/
         }
         $table_id = intval($id);
         $tbl = \Alxnv\Nesttab\Models\TablesModel::getOne($table_id);
+        $type = \Alxnv\Nesttab\core\TableHelper::getTableTypeByOneChar($tbl['table_type']);
+        $tableModel = \Alxnv\Nesttab\Models\Factory::createTableModel($type); 
         $lnk2 = \yy::getEditSession();
         $b = false;
         if (Session::has($lnk2)) {
@@ -87,7 +89,8 @@ dd($s);*/
         }
         if (is_null($fld)) \yy::gotoErrorPage('Field def in table is not found');
         return view('nesttab::struct-table-edit-field.' . $fld['name'], ['tbl' => $tbl, 'tblname' => $tbl['name'], 'tbl_id' => $table_id,
-            'field_type_id' => intval($r['field_type_id']), 'fld' => $fld, 'r' => $r] 
+            'field_type_id' => intval($r['field_type_id']), 'fld' => $fld, 'r' => $r,
+            'tableModel' => $tableModel] 
                 ); // вызываем контроллер
                   // названный по $fld['name']
 
@@ -107,6 +110,8 @@ dd($s);*/
         }
         $table_id = intval($r['t']);
         $tbl = \Alxnv\Nesttab\Models\TablesModel::getOne($table_id);
+        $type = \Alxnv\Nesttab\core\TableHelper::getTableTypeByOneChar($tbl['table_type']);
+        $tableModel = \Alxnv\Nesttab\Models\Factory::createTableModel($type); 
         $old_values = [];
         if (isset($r['id'])) {
             $r['id'] = intval($r['id']);
@@ -122,6 +127,7 @@ dd($s);*/
         try {
             $yy->setExitReleaseLock('addfield');
             $lock->block($yy->settings2['time_to_lock_add_field']);
+            $field_model->tableModel = $tableModel;
             $field_model->save($tbl, $fld, $r, $old_values);
 
             // Lock acquired after waiting a maximum of 5 seconds...

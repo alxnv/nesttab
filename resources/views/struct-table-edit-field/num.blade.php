@@ -9,6 +9,7 @@
 global $yy, $db;
 
 $requires['need_confirm'] = 1;
+echo '<div id="main_contents">';
 if (!isset($r['default'])) {
     $r['default'] = '0';
 }
@@ -101,5 +102,9 @@ const app = Vue.createApp({
 });
 app.mount('#app');
 </script>
+<?php
+echo '</div>';
+?>
+<div id="error_div"></div>
 
 @endsection

@@ -9,6 +9,30 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
 
 class ListTableModel extends BasicTableModel {
+    /**
+     * can the name of the field be changed
+     * @param string $name
+     * @return boolean
+     */
+    public function canChangeFieldName(string $name) {
+        switch ($name) {
+            case 'name':
+                return false;
+        }
+        return true;
+    }
+    /**
+     * is this field deletable
+     * @param string $fieldName 
+     * @return boolean
+     */
+    public function isDeletableField(string $fieldName) {
+        switch ($fieldName) {
+            case 'name':
+                return false;
+        }
+        return true;
+    }
     // create table structure, step 2, write to the tables
     // пытаемся создать таблицу указанного типа и с указанным именем
     /**
@@ -30,7 +54,7 @@ class ListTableModel extends BasicTableModel {
             $tbl = \Alxnv\Nesttab\Models\TablesModel::getOne($tableId);
             $fld =  (new \Alxnv\Nesttab\Models\ColTypesModel())->getByName('str');
             $old_values = [];
-            $r = ['name' => 'name', 'descr' => __('Name')];
+            $r = ['name' => 'name', 'descr' => __('Name ')];
             $strModel->save($tbl, $fld, $r, $old_values);
             if ($strModel->hasErr()) {
                 $message = $strModel->err->getAll();

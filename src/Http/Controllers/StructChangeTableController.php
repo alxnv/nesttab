@@ -64,6 +64,11 @@ class StructChangeTableController extends BasicController {
         $table_id = $column['table_id'];
         $tbl = $db->q("select * from yy_tables where id=$1", [$table_id]);
         if (is_null($tbl)) $err .= 'Table definition is not found';
+        $type = \Alxnv\Nesttab\core\TableHelper::getTableTypeByOneChar($tbl['table_type']);
+        $tableModel = \Alxnv\Nesttab\Models\Factory::createTableModel($type); 
+        if (($err == '') && (!$tableModel->isDeletableField($column['name']))) {
+            $err = 'This field can not be deleted';
+        }
         
         if ($err == '') {
             $field_model = \Alxnv\Nesttab\Models\Factory::createFieldModel($fld['id'], $fld['name']);

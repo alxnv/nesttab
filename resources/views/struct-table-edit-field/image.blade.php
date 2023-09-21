@@ -14,6 +14,7 @@
 global $yy, $db;
 
 $requires['need_confirm'] = 1;
+echo '<div id="main_contents">';
 if (isset($r['allowed'])) {
     $r['allowed'] = join(', ', $r['allowed']);
 } else {
@@ -218,5 +219,9 @@ for ($i = 0; $i < count($image_params); $i++) {
 app.mount('#app');
 
 </script>
+<?php
+echo '</div>';
+?>
+<div id="error_div"></div>
 
 @endsection

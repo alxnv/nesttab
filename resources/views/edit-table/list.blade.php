@@ -43,9 +43,11 @@ echo '<div class="div-th"><span>№</span><span>' . __('Name') . '</span>'
 //dd($recs);
 $i = 0;
 foreach ($recs as $rec) {
-    echo '<div><span>' . $rec->ordr;
-    echo '</span><span>' . \yy::qs($rec->name);
-    echo '</span></div>';
+    echo '<div><span><a class="addfield" href="' . $yy->nurl . 'editrec/' 
+        . $parent_id . '/' . $tbl['id'] . '/' . $rec->id . '">' . $rec->ordr;
+    echo '</a></span><span><a class="addfield" href="' . $yy->nurl . 'editrec/' 
+        . $parent_id . '/' . $tbl['id'] . '/' . $rec->id . '">' . \yy::qs($rec->name);
+    echo '</a></span></div>';
     $i++;
 }
 echo '</div>';

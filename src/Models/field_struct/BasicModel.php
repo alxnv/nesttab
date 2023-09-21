@@ -16,6 +16,13 @@ class BasicModel {
      */
     public $err; 
 
+    /**
+     * table model for this field
+     * filled by controller before calling $this->saveStep2()
+     * @var type
+     */
+    public $tableModel = null;
+    
     /* $adapter - Models\<db_driver>\FieldAdapterModel - адаптер 
      *   для бд для объектов полей Nesttab
       *  передается в объект этого класса при создании объекта
@@ -144,7 +151,7 @@ class BasicModel {
      *     $saveParams['isNull'] == 1, то создать в таблице данных поле типа null
      *        (не в yy_columns)
      */
-    public function saveStep2(array $tbl, array $fld, array $r, array $old_values, $default, array $params = [],
+    public function saveStep2(array $tbl, array $fld, array &$r, array $old_values, $default, array $params = [],
             array $saveParams = []) {
         /*
          * todo: если возникает ошибка при добавлении в физическую таблицу,
@@ -174,6 +181,15 @@ class BasicModel {
             $this->setErr('name', $s);
         }
         $name_2 = $db->nameEscape($name);
+        
+        if (!$is_newrec && !is_null($this->tableModel) && !$this->tableModel->canChangeFieldName($old_values['name'])) {
+            // если нельзя менять физическое имя поля
+            if ($old_values['name'] <> $name) {
+                $this->setErr('name', __('Can not change field name'));
+                $r['name'] = $old_values['name'];
+            }
+        }
+        
         if ($this->hasErr()) return;
         $definition = $th->getFieldDef($fld_type_id, $params);
         /*if (!$db->qdirectNoErrorMessage("lock tables yy_columns write")){
