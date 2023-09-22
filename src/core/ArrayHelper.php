@@ -22,6 +22,19 @@ class ArrayHelper {
         }
         return $arr2;
     }
+
+    /**
+     * make array with keys and values equal to values of another array
+     * @param array $arr
+     * @return array
+     */
+    public static function keyLikeValue(array $arr) {
+        $arr2 = [];
+        foreach ($arr as $value) {
+            $arr2[$value] = $value;
+        }
+        return $arr2;
+    }
     
     /**
      * Make array with keys = value of $arr[$i][$fld], values = $i (index in $arr)

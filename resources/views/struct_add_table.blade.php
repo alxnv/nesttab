@@ -26,7 +26,12 @@ foreach ($yy->settings2['table_names'] as $s2) {
     $arr8[] = "'" . $s5 . "'";
 }
 //$tblname = 
-
+$s = '\\Alxnv\\Nesttab\\core\\db\\' . config('nesttab.db_driver') . '\\TableHelper';
+$th = new $s();
+// получаем возможное количество байтов в поле типа int (tinyint и т.д.)
+$arFieldSizes = \Alxnv\Nesttab\core\ArrayHelper::keyLikeValue($th->arrayOfIntFieldSizes()); 
+$int4Bytes = 4;
+$s = \Alxnv\Nesttab\core\HtmlHelper::makeselect($arFieldSizes, $int4Bytes);
 ?>
 <script type="text/javascript">
     var table_names =[<?=join(', ', $arr8)?>];
@@ -34,14 +39,17 @@ foreach ($yy->settings2['table_names'] as $s2) {
 <form method="get" action="<?=$yy->nurl?>struct-add-table/step22">
 <h2 class="center"><?=__('Add table')?></h2>
 <br />
-<p class="center">
-<?=__('Table type')?>: <select name="tbl_type" class="tbl_choose"><?=\yy::makeselsimp($arr2)?></select><br />
+<p>
+<?=__('Table type')?>: <select name="tbl_type" class="tbl_choose"><?=\Alxnv\Nesttab\core\HtmlHelper::makeselsimp($arr2)?></select><br />
 <br />
 <?=__('Table name')?>: <input type="text" name="tbl_name" class="tbl_name" value="<?=$tblname?>" size="30" /><br />
 <br />
 <?=__('Table description (name)')?>: <input type="text" name="tbl_descr" size="50" /><br />
 <br />
-<input type="submit" value="<?=__('Submit')?>" />
+<?=__('Size in bytes of field')?> id: <select name="int_bytes"><?=$s?></select>
+<br />
+<br />
+<input type="submit" value="<?=__('Add')?>" />
 </p>
 
 <script type="text/javascript">

@@ -14,12 +14,15 @@ class StructAddTableController extends BasicController {
         global $yy;
         $r = $request->all();
         $arr2 = $yy->settings2['table_types'];
-	if (!isset($r['tbl_type']))  die('Required parameter is not passed');
+	if (!isset($r['tbl_type']) || !isset($r['int_bytes']))  die('Required parameter is not passed');
 	$tbl_idx = intval($r['tbl_type']);
+        $intBytes = intval($r['int_bytes']);
 	if ($tbl_idx < 0 || $tbl_idx >= count($arr2)) die('Wrong index of table');
         $model = \Alxnv\Nesttab\Models\Factory::createTableModel($yy->settings2['table_names'][$tbl_idx]);
+        
         $tableId = 0;
-        if ($model->createTable($r, $message, $tableId)) \yy::gotoMessagePage($message);
+        $topTable = 0; // parent table id for top level table equal to 0
+        if ($model->createTable($r, $message, $tableId, $topTable, $intBytes)) \yy::gotoMessagePage($message);
            else \yy::gotoErrorPage($message);
         
     }

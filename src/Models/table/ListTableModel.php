@@ -38,15 +38,21 @@ class ListTableModel extends BasicTableModel {
     /**
      * @param array $r - request
      * @param type $message - message here returned (ok or error)
-     * @param type $tableId - id of created table in yy_tables
+     * @param type $tableId - id of created table in yy_tables (no input value,
+     *   returns it)
+     * @param int $parentTableId - id of parent table for this table, or
+     *    0, if its a top level table
+     * @param int $idFieldSizeInBytes - size of field 'id' in bytes
      * @return boolean - if table creation was successful
      */
-    public function createTable(array $r, &$message, &$tableId) {
+    public function createTable(array $r, &$message, &$tableId, int $parentTableId, 
+            int $idFieldSizeInBytes) {
 
         global $yy, $db;
         
         $tableId = 0;
-        $b = parent::createTable($r, $message, $tableId);
+        $b = parent::createTable($r, $message, $tableId, $parentTableId, 
+               $idFieldSizeInBytes);
         if ($b) {
             // таблица создана, добавляем поле 'name' типа 'string'
             $dummy = 0;
@@ -54,7 +60,8 @@ class ListTableModel extends BasicTableModel {
             $tbl = \Alxnv\Nesttab\Models\TablesModel::getOne($tableId);
             $fld =  (new \Alxnv\Nesttab\Models\ColTypesModel())->getByName('str');
             $old_values = [];
-            $r = ['name' => 'name', 'descr' => __('Name ')];
+            $r = ['name' => 'name', 'descr' => __('Name '),
+                'req' => 1 /* не пустая строка */];
             $strModel->save($tbl, $fld, $r, $old_values);
             if ($strModel->hasErr()) {
                 $message = $strModel->err->getAll();

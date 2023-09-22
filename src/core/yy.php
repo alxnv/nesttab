@@ -259,13 +259,6 @@ class yy {
         return $yy->basepath;
     }
 	
-	public static function makeselsimp(&$arr,$n=0) {
-	$s='';
-	for ($i=0,$j=count($arr);$i<$j;$i++) {
-	 $s.='<option '.($i==$n ? 'selected ' : '').'value='.$i.'>'.$arr[$i];
-	 };
-	return $s;
-	}
 	/*
 	public static function t(string $text) {
 	/**

@@ -42,12 +42,30 @@ class TablesModel {
     
     /**
      * получить содержимое таблицы
+     *  в случае ошибки перейти на страницу с ошибкой
      * @param int $id - идентификатор таблицы
+     * @return array - строку из бд с информацией об этой бд
      */
     public static function getOne(int $id) {
         global $db;
         $tbl = $db->q("select * from yy_tables where id=$1", [$id]);
         if (is_null($tbl)) \yy::gotoErrorPage('Table not found');
+        return $tbl;
+    }
+    /**
+     * получить содержимое таблицы
+     *  в случае ошибки перейти на страницу с ошибкой
+     * @param int $id - идентификатор таблицы
+     * @return array|null - строку из бд с информацией об этой бд,
+     *   или null, если запись не найдена
+     */
+    public static function getOneRetError(int $id, string &$errorMessage) {
+        global $db;
+        $errorMessage = '';
+        $tbl = $db->q("select * from yy_tables where id=$1", [$id]);
+        if (is_null($tbl)) {
+            $errorMessage = 'Table not found';
+        }
         return $tbl;
     }
     /**

@@ -12,7 +12,7 @@ class TableHelper extends \Alxnv\Nesttab\core\db\BasicTableHelper {
      * @return string - дефиниция поля для функции create table
      * @throws Exception
      */
-    function getFieldDef(int $n, array $params = []) {
+    public function getFieldDef(int $n, array $params = []) {
         global $db;
         switch ($n) {
             case $db::BOOL_TYPE :
@@ -41,6 +41,37 @@ class TableHelper extends \Alxnv\Nesttab\core\db\BasicTableHelper {
                 }
             default:
                 throw new \Exception("Table type is not defined");
+        }
+    }
+    
+    /**
+     * returns array of possible sizes of integer db fields for mysql
+     * @return array
+     */
+    public function arrayOfIntFieldSizes() {
+        return [1, 2, 3, 4, 8];
+    }
+    
+    /**
+     * Returns field definition of int field this size in bytes,
+     *   or false if there is no field def for this size
+     * @param int $bytes - size in bytes of int field
+     * @return boolean|string - field definition for this size
+     */
+    public function getIntTypeDef(int $bytes) {
+        switch ($bytes) {
+            case 1:
+                return 'tinyint';
+            case 2: 
+                return 'smallint';
+            case 3:
+                return 'mediumint';
+            case 4:
+                return 'int';
+            case 8:
+                return 'bigint';
+            default:
+                return false;
         }
     }
 

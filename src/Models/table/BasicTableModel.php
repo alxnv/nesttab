@@ -94,10 +94,15 @@ class BasicTableModel {
      * @global \Alxnv\Nesttab\Http\Controllers\type $db
      * @param array $r - request
      * @param type $message - message here returned (ok or error)
-     * @param type $tableId - id of created table in yy_tables
+     * @param type $tableId - id of created table in yy_tables (no input value,
+     *   returns it)
+     * @param int $parentTableId - id of parent table for this table, or
+     *    0, if its a top level table
+     * @param int $idFieldSizeInBytes - size of field 'id' in bytes
      * @return boolean - if table creation was successful
      */
-    public function createTable(array $r, &$message, &$tableId) {
+    public function createTable(array $r, &$message, &$tableId, int $parentTableId, 
+            int $idFieldSizeInBytes) {
 
         global $yy, $db;
 
@@ -122,11 +127,32 @@ class BasicTableModel {
         if ($tbl_descr == '') {
             $err .= chr(13) . __("The table's description could not be empty");
         }
+
+        $s = '\\Alxnv\\Nesttab\\core\\db\\' . config('nesttab.db_driver') . '\\TableHelper';
+        $th = new $s();
+        if (($idFieldDef = $th->getIntTypeDef($idFieldSizeInBytes)) === false) {
+            $err .= chr(13) . 'No int types of this size';
+        }
+
         if ($err <>'') {
                 $message = $err;
                 return false;
         }
-	$tbl_name2 = $db->escape($tbl_name);
+
+        if ($parentTableId <> 0) {
+            $errorMessage = '';
+            // читаем данные о родительской таблице из yy_tables
+            $parentTbl = \Alxnv\Nesttab\Models\TablesModel::getOneRetError($parentTableId, $errorMessage);
+            if (is_null($parentTbl)) { // если не найдена родительская таблица
+                                       //  в yy_tables
+                $message = $errorMessage;
+                return false;
+            }
+        } else {
+            $parentTbl = null;
+        }
+        
+        $tbl_name2 = $db->escape($tbl_name);
         /*
          * создаем саму таблицу
          */
@@ -134,21 +160,37 @@ class BasicTableModel {
         //$th = new $s();
 
         $message = '';
-        if (!$this->adapter->createTableDbCommands($tbl_name, $message)) {
+        if (!$this->adapter->createTableDbCommands($tbl_name, $message, $idFieldDef, $parentTableId, $parentTbl)) {
             return false;
         }
 
+        if ($parentTableId == 0) {
+            $topId = 0; // временно присваиваем 0, после записи 
+            // присвоим идентификатор этой созданной таблицы
+        } else {
+            $topId = $parentTbl['lvl1_tbl_id'];
+        }
+        
         // Записываем данные таблицы в yy_tables
         $s3 = $db->escape($tbl_descr);
         $arr2 = ['name' => $tbl_name,
             'descr' => $tbl_descr,
-            'parent_tbl_id' => 0,
+            'parent_tbl_id' => $parentTableId,
+            'lvl1_tbl_id' => $topId,
+            'id_bytes' => $idFieldSizeInBytes,
             'table_type' => $arr_table_names_short[$tbl_idx]];
         if (!$db->insert('yy_tables', $arr2)) {
             $message = $db->errorMessage;
             return false;
         }
         $tableId = $db->handle->lastInsertId();
+        
+        // если получилась таблица верхнего уровня, то присваиваем lvl1_tbl_id
+        //   равный id
+        if ($parentTableId == 0) {
+            $db->qdirectNoErrorMessage("update yy_tables set lvl1_tbl_id = id "
+                    . " where id = $1", [$tableId]);
+        }
 
         // Если имя таблицы создано по шаблону, то проставляем номер таблицы в yy_settings 
         //   как следующий номер для автонумерации
