@@ -438,8 +438,13 @@ class BasicTableModel {
      */
     public function getRecAddObjects(array &$columns, string $table, int $id, array &$requires = []) {
         global $db;
-        $rec = $db->q("select * from $table where id=$1", [$id]);
+        $tableName = $db->nameEscape($table);
+        $rec = $db->q("select * from $tableName where id=$1", [$id]);
         //if (is_null($rec)) \yy::gotoErrorPage('Record not found');
+        if (isset($rec['ordr']) && (count($columns) > 0)) {
+            // сохраняем ordr если есть
+            $columns[0]['save_ordr'] = $rec['ordr'];
+        }
         for ($i = 0; $i < count($columns); $i++) {
             if ($columns[$i]['name_field'] == 'html') {
                 $requires['need_html_editor'] = 1;

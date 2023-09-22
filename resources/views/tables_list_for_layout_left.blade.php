@@ -11,7 +11,7 @@ global $yy;
 
 $list = \Alxnv\Nesttab\Models\TablesModel::getAllByDescr();
 
-echo '<hr />';
+//echo '<hr />';
 //echo '<h2>' . __("Tables list") . ':</h2>';
 echo '<ul>';
 

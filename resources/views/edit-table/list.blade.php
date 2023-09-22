@@ -11,9 +11,6 @@ use Illuminate\Support\Facades\Session;
 $yy->loadPhpScript(app_path() . '/Models/nesttab/tables/' 
         . ucfirst($tbl['name']) . '.php');
 
-if ($parent_id <> 0) echo '<p><a href="#" onClick="history.back()">' . __('Back') . '</a></p>';
-$title = '<h1>"' . \yy::qs($tbl['descr']) . '"</h1><br />';
-echo $title;
 
 
 $e = new \Alxnv\Nesttab\Models\ErrorModel();
@@ -25,6 +22,10 @@ if (Session::has($lnk_err)) {
 echo \yy::getSuccessOrErrorMessage($r, $e);
 $err3 = $e->getErr('');
 echo $err3;
+
+if ($parent_id <> 0) echo '<p><a href="#" onClick="history.back()">' . __('Back') . '</a></p>';
+$title = '<h1>' . \yy::qs($tbl['descr']) . '</h1><br />';
+echo $title;
 
 //dd($recs);
 echo '<br /><p class="center"><a class="addfield" href="' . $yy->nurl . 'editrec/' 

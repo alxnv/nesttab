@@ -1,12 +1,9 @@
-list delete/rename field 'name' - not allowed
+list/editrec - move, delete
+------
+edit, editrec - id parent_id а не parent_table
 ----
 if id == 0 && !hasErr() { getDefaults() }
 ---
-BasicTableModel->createField()
- сделать добавление поля name для list как обычного поля, и невозможность изменения имени и удаления
-----
-в следующих версиях - сделать возможность делать id таблицы 1,2,4,8 байтов
-----
 !!! таблицы типа "one" могут быть на любом уровне
          для таблицы типа one можно устанавливать yy_tables->make_with_parents (установленный флаг значит,
 		  что этот элемент нужно создавать при создании родительского (на один уровень вниз))

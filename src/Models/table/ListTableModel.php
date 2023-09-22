@@ -118,13 +118,58 @@ class ListTableModel extends BasicTableModel {
             // проставить значения полей из сессии (бывший post) в $recs
             //$recs = \Alxnv\Nesttab\Models\TableRecsModel::setValues($recs, $r);
         }
-        //dd($r);
+        // На какую страницу возвращаться после редактирования записи, или
+        //   при нажатии "Назад" на странице редактирования
+        $returnToPage = $this->getReturnToPage($tbl, $parent_table_id, $id3, $recs);  
         return view('nesttab::edit-table.list_rec', ['tbl' => $tbl, 'recs' => $recs,
                 'r' => $r, 'requires' => $requires, 'table_id' => $id2, 'rec_id' => $rec_id,
-                'parent_id' => $id,
+                'parent_id' => $id, 'returnToPage' => $returnToPage,
                 'parent_table_id' => $parent_table_id, 'parent_table_rec' => $parent_table_rec]);
         
     }
+    
+    
+    /**
+     * На какую страницу возвращаться после редактирования записи, или
+     *   при нажатии "Назад" на странице редактирования
+     *    подразумевается, что список сортируется по ordr
+     * 
+     * @param array $tbl - данные о таблице
+     * @param int $parentTableId - id родительской таблицы для данной,
+     *    либо 0 если это таблица верхнего уровня
+     * @param int $idRec - идентификатор редактируемой записи, либо 0 если новая запись
+     * @param type $recs - массив полей редкатируемой записи
+     * @return int - номер страницы (начиная с 1)
+     */
+    public function getReturnToPage(array $tbl, int $parentTableId, int $idRec, $recs) {
+        global $yy, $db;
+        if ($parentTableId == 0) {
+            if ($idRec == 0) {
+                // новая запись
+                // подсчитываем исходя из текущего количества записей + 1
+                $tableName = $db->nameEscape($tbl['name']);
+                $res = $db->qobj("select count(*) as cnt from $tableName");
+                if (is_null($res)) {
+                    return 1; // ошибка, возвращаем любое значение
+                }
+                $page = 1 + (int)floor(($res->cnt + 1) / $yy->settings2['recs_per_page']);
+                return $page;
+            } else {
+                if ((count($recs) > 0) && isset($recs[0]['save_ordr'])) {
+                    $page = 1 + (int)floor(($recs[0]['save_ordr'] - 1)
+                            / $yy->settings2['recs_per_page']);
+                    return $page;
+                } else {
+                    return 1; // ошибка
+                }
+            }
+        } else {
+            // todo
+            // now temporary set value
+            return 1;
+        }
+    }  
+
     /**
      * Редактирование таблицы типа List - точка входа
      * @param array $tbl - данные таблицы
@@ -165,6 +210,50 @@ class ListTableModel extends BasicTableModel {
                 'parent_table_id' => $parent_table_id, 'parent_table_rec' => $parent_table_rec]);
         
     }
+    /**
+     * save table data for all table types (now for 'one' type)
+     *   it is called from saving main table data page
+     * @global \Alxnv\Nesttab\Http\Controllers\type $db
+     * @global \Alxnv\Nesttab\Http\Controllers\type $yy
+     * @param array $tbl - table data
+     * @param int $id - id of the record of the parent table (0 for main level table)
+     * @param int $id2 -  the id of the table in yy_tables
+     * @param int $id3 - id of the record (0 for new record)
+     * @param Request $request - request data
+     */
+    public function saveTableRec(array $tbl, int $id, int $id2, int $id3, object $request) {
+        global $yy;
+        $r = $request->all();
+        $columns = \Alxnv\Nesttab\Models\ColumnsModel::getTableColumnsWithNames($tbl['id']);
+        $requires_stub = [];
+        $this->getRecAddObjects($columns, $tbl['name'], $id3, $requires_stub);
+        $this->save($columns, $tbl, $id3, $r); // сохраняем запись
+        // на какую страницу списка записей возвращаемся
+        $retPage = (isset($r['return_to_page5871']) 
+                ? intval($r['return_to_page5871']) : 1);
+        if (!$this->hasErr()) {
+            $request ->session()->flash('saved_successfully', 1);
+            Session::save();
+            \yy::redirectNow($yy->nurl . 'edit/' . $id . '/' . $tbl['id'] 
+                    . '?page=' . $retPage);
+            exit;
+        } else {
+            //\yy::gotoErrorPage($s);
+            $lnk = \yy::getErrorEditSession();
+            //session([$lnk => $recs->err->err]);
+            $request->session()->flash($lnk, $this->err->err);
+            //dd($recs->err->err);
+            $lnk2 = \yy::getEditSession();
+            //session([$lnk2 => $r]);
+            $request->session()->flash($lnk2, $r);
+            Session::save();
+            \yy::redirectNow($yy->nurl . 'editrec/' . $id . '/' . $tbl['id'] . '/' . $id3);
+            exit;
+        }
+        
+        
+    }
+    
     /**
      * Сохраняем данные редактирования в БД, либо устанваливаем сообщения об ошибках
      * @param array &$columns 

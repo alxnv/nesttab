@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Session;
 $yy->loadPhpScript(app_path() . '/Models/nesttab/tables/' 
         . ucfirst($tbl['name']) . '.php');
 
-$title = '<h1>"' . \yy::qs($tbl['descr']) . '"</h1><br />';
+$title = '<h1>' . \yy::qs($tbl['descr']) . '</h1><br />';
 if (function_exists('\callbacks\onShow')) \callbacks\onShow($recs, -2, '', true, $title);
 echo $title;
 

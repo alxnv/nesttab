@@ -71,8 +71,12 @@
           <div id="header"><a href="<?=asset('/' . config('nesttab.nurl'))?>">Nesttab</a></div>
         <div id="page_content">
 	<div id="admin_left">
-	@include('nesttab::menu_left')
-	@include('nesttab::tables_list_for_layout_left')
+           <div id="admin_left1">
+                @include('nesttab::menu_left')
+           </div>
+           <div id="admin_left2">
+                @include('nesttab::tables_list_for_layout_left')
+           </div>     
 <?php
 /*
 if ($user['can_modify_structure']) {

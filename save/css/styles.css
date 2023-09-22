@@ -18,6 +18,10 @@ h2 {
     padding:5px;
 }
 
+input {
+	font-size: 70%;
+}
+
 .table {
     border-collapse: collapse;
 }
@@ -123,10 +127,19 @@ img {
 }
 
 #admin_left {
+	margin: 0;
+	padding: 0;
+	display: grid;
+	grid-template-rows: max-content auto;
+
+}
+
+#admin_left1, #admin_left2 {
 	border: 3px solid #008000;
 	margin: 3px;
 	padding: 15px;
 }
+
 
 #admin_right {
 	border: 3px solid #008000;
@@ -251,6 +264,8 @@ hr {
 	margin-top: 5px;
 }
 
+
+
 .minus_button input, .plus_button input {
 	width: 30px;
 	height: 30px;
@@ -259,4 +274,66 @@ hr {
 #footer a, #footer a:visited, #footer a:hover {
 	color: white;
     text-decoration:underline;
+}
+
+.dbContainer_0 {
+	border: 2px solid green;
+	margin: 3px;
+	padding: 4px;
+}
+
+.dbHeader h4 {
+	overflow: hidden !important;
+	text-overflow: ellipsis !important;
+	font-size: 16px;
+	font-weight: normal;
+}
+.navbar-brand {
+	font-size: 16px;
+}
+.db-show {
+	background-color:#fff;
+}
+.input-sm {
+	font-size: 12px;
+	width: 35px;
+	border: 1px solid green;
+	color: green;
+}
+.navbar-header {
+	float:left;
+	margin-right: 30px;
+}
+
+.dbCloser, .dbCloser:visited, .btn-default, .btn-default:visited {
+	text-decoration:none;
+	color:green;
+	font-size: 16px;
+}
+.dbBoxNext, .dbBoxPrev {
+	padding-left: 13px;
+}
+.dbBoxNext {
+	margin-bottom: 5px;
+}
+
+
+.input-group {
+    position: relative;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    -ms-flex-align: stretch;
+    align-items: stretch;
+    width: 100%;
+}
+
+.dbOpenButton {
+	margin-left: 5px;
+}
+
+.w-5 {
+	width: 16px;
+	height: 16px;
 }

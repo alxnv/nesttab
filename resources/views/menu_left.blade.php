@@ -8,7 +8,7 @@
 <?php
 global $yy;
 if ($yy->settings2['are_tests_accessible']) {
-    echo '<br /><li><a href="' . asset('/' . config('nesttab.nurl') . '/tests') . '">Тесты</a><br /><br /></li>';
+    echo '<br /><li><a href="' . asset('/' . config('nesttab.nurl') . '/tests') . '">Тесты</a><br /></li>';
 }
 ?>
 </ul>
