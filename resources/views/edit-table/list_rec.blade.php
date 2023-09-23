@@ -31,7 +31,7 @@ echo $err3;
 echo '<p><a href="' . $yy->baseurl . config('nesttab.nurl') . '/edit/' .
         $parent_id . '/' . $table_id . '?page=' . ($rec_id == 0 ? 1 : $returnToPage) . '">' . __('Back') . '</a></p>';
 $title = '<h1>' . \yy::qs($tbl['descr']) . ' - ' 
-        . ($rec_id == 0 ? __('Add record') : __('Edit record')) . '</h1><br />';
+        . ($rec_id == 0 ? __('add record') : __('edit record')) . '</h1><br />';
 if (function_exists('\callbacks\onShow')) \callbacks\onShow($recs, -2, '', true, $title);
 echo $title;
 
