@@ -150,6 +150,8 @@ class BasicModel {
      * @param array $saveParams - дополнительные параметры сохранения
      *     $saveParams['isNull'] == 1, то создать в таблице данных поле типа null
      *        (не в yy_columns)
+     *     if (isset($saveParams['defaultForPhys'])), то это значение записывается
+     *       в физическую таблицу вместо $default
      */
     public function saveStep2(array $tbl, array $fld, array &$r, array $old_values, $default, array $params = [],
             array $saveParams = []) {
@@ -160,7 +162,9 @@ class BasicModel {
          */
         global $yy, $db;
                     //\yy::gotoErrorPage('Unable to lock process555555');
-
+        // определяем значение $default для записи в физическую БД
+        $defForPhys = (array_key_exists('defaultForPhys', $saveParams) ? $saveParams['defaultForPhys']
+                : $default);
         $is_newrec = (!isset($r['id']));
         $name = (isset($r['name']) ? $r['name'] : '');
         $descr = (isset($r['descr']) ? $r['descr'] : '');
@@ -247,7 +251,7 @@ class BasicModel {
                     
                 }
                 if (!$this->hasErr() && !$this->addField($tblname_2, $name_2, $tbl['id'], 
-                        $tbl['table_type'], $default, $fld_type_id, $definition,
+                        $tbl['table_type'], $defForPhys, $fld_type_id, $definition,
                         $saveParams)) {
                     return;
                 }
@@ -271,7 +275,7 @@ class BasicModel {
                     }
                 }
                 if (!$this->hasErr()) {
-                    $df5 = $db->escape($default);
+                    $df5 = $db->escape($defForPhys);
                     if (!$db->qdirectNoErrorMessage("alter table $tblname_2 alter"
                             . " $name_2 set default $df5")) {
                         $this->setErr('default', __('Error setting default value: ' . 
@@ -326,15 +330,14 @@ class BasicModel {
      *     $saveParams['isNull'] == 1, то создать в таблице данных поле типа null
      *        (не в yy_columns)
      */
-    protected function addField(string $table_name, string $field_name, int $table_id, string $table_type, $default_value, int $fld_type_id, string $def,
+    protected function addField(string $table_name, string $field_name, int $table_id, string $table_type, $defForPhys, int $fld_type_id, string $def,
             array $saveParams) {
         global $db;
-        $df2 = $db->escape($default_value);
+        $df2 = $db->escape($defForPhys);
         //$def = $th->getFieldDef($fld_type_id); // вернуть определение поля типа для create table
         $s = "alter table $table_name "
                 . "add $field_name $def default $df2 ";
-        if (isset($saveParams['isNull'])) $s .= ' null';
-            else $s .= " not null";
+        if (!isset($saveParams['isNull'])) $s .= " not null";
         if (!$db->qdirectNoErrorMessage($s)) { // removed default value seting
             $message = __('Error') . ' ' . 
                     $db->errorMessage;

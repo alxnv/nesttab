@@ -55,6 +55,7 @@ class BasicDbNesttab {
     public function escape($s) {
 	//	global $db;
 //        return mysqli_real_escape_string($this->handle, $s);
+        if (is_null($s)) return 'null';
         return $this->handle->quote($s);
     }
 

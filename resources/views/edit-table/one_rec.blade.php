@@ -11,9 +11,6 @@ use Illuminate\Support\Facades\Session;
 $yy->loadPhpScript(app_path() . '/Models/nesttab/tables/' 
         . ucfirst($tbl['name']) . '.php');
 
-$title = '<h1>' . \yy::qs($tbl['descr']) . '</h1><br />';
-if (function_exists('\callbacks\onShow')) \callbacks\onShow($recs, -2, '', true, $title);
-echo $title;
 
 
 $e = new \Alxnv\Nesttab\Models\ErrorModel();
@@ -23,6 +20,10 @@ if (Session::has($lnk_err)) {
     //if (count($e->err) > 0 ) dd($e);
 }
 echo \yy::getSuccessOrErrorMessage($r, $e);
+$title = '<h1>' . \yy::qs($tbl['descr']) . '</h1><br />';
+if (function_exists('\callbacks\onShow')) \callbacks\onShow($recs, -2, '', true, $title);
+echo $title;
+
 $err3 = $e->getErr('');
 if (function_exists('\callbacks\onShow')) \callbacks\onShow($recs, -2, '', false, $err3);
 echo $err3;

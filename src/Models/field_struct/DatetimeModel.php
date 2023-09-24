@@ -101,7 +101,8 @@ class DatetimeModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
             $default = '';
         }
         return $this->saveStep2($tbl, $fld, $r, $old_values, $default,
-                [], ['isNull' => 1]);
+                [], ['isNull' => 1, 'defaultForPhys' => ($default == '' ?
+                null : $default)]);
 
     }
     
