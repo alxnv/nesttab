@@ -85,6 +85,32 @@ class ColumnsModel {
     }
     
     /**
+     * Возвращает в виде готовом для вывода в <select> список полей таблицы,
+     *   которые могут быть использованы в поле типа select 
+     * @global \Alxnv\Nesttab\Models\type $db
+     * @global \Alxnv\Nesttab\Models\type $yy
+     * @param int $table_id - id of the table
+     * @return array - массив для вывода в select со списком всех полей таблицы
+     */
+    public static function getSelectColumns(int $table_id) {
+        global $db, $yy;
+        // получаем все типы полей, которые могут быть использованы в поле типа select
+        $ar1 = \Alxnv\Nesttab\core\db\BasicTableHelper::getTypesForSelectFld();
+        $allowed_types = join(', ', $ar1);
+        $flds = $db->qlistArr("select a.*, b.descr as descr_fld from yy_columns a "
+                . "left join yy_col_types_lang b on a.field_type = b.id where a.table_id = $1"
+                . " and a.field_type in ($allowed_types) and b.language=$2 order by a.descr, a.id",
+                [$table_id, Lang::getLocale()]);
+
+        $arr = [];
+        foreach ($flds as $fld) {
+            $arr[$fld['id']] = \yy::qs($fld['descr'] . ' (' .
+                    $fld['name'] . '), ' . mb_strtolower($fld['descr_fld']));
+        }
+        return $arr;
+    }
+    
+    /**
      * Получаем данные столбцов таблицы с присоединенными названиями типов полей
      * @global type $db
      * @global type $yy

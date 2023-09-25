@@ -44,7 +44,10 @@ dd($s);*/
 
     /**
      * По выбранному типу поля вывести форму редактирования данного типа поля
-     * @param type $r
+     * @param int $id - id таблицы
+     * @param int $parm - id редактируемого поля в yy_columns (0, если новое поле)
+     *  если 0, то $request->input('field_type_id') == id типа поля
+     * @param type $request
      */
     public function step2($id, $parm, Request $request) {
         global $db, $yy;
@@ -88,9 +91,13 @@ dd($s);*/
             
         }
         if (is_null($fld)) \yy::gotoErrorPage('Field def in table is not found');
+
+        // $r['field_type_id'] - id типа записи
+        // получаем объект данного типа поля
+        $fieldModel = \Alxnv\Nesttab\Models\Factory::createFieldModel($r['field_type_id'], $fld['name']);
         return view('nesttab::struct-table-edit-field.' . $fld['name'], ['tbl' => $tbl, 'tblname' => $tbl['name'], 'tbl_id' => $table_id,
             'field_type_id' => intval($r['field_type_id']), 'fld' => $fld, 'r' => $r,
-            'tableModel' => $tableModel] 
+            'tableModel' => $tableModel, 'fieldModel' =>$fieldModel] 
                 ); // вызываем контроллер
                   // названный по $fld['name']
 

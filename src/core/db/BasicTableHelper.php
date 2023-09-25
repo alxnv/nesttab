@@ -31,4 +31,12 @@ class BasicTableHelper {
             return '';
         }
     }
+    
+    /**
+     * Вернуть все типы полей, на которые может ссылаться поле типа select
+     * @return array - массив типов полей
+     */
+    public static function getTypesForSelectFld() {
+        return [1, 2, 3, 6, 9]; // bool, num, float, str, datetime
+    }
 }

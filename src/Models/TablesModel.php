@@ -10,6 +10,39 @@ namespace Alxnv\Nesttab\Models;
 class TablesModel {
 
     /**
+     * Returns data for select, data is taken from $this->getAllForSelect()
+     * @param array $fromDb
+     * @return array
+     */
+    public function getAllTablesSelectData(array $fromDb) {
+        global $yy;
+        $arr = [0 => '-- ' . __('choose a table') .' --'];
+        //for ($i = 1; $i < 300; $i++) $arr[$i] = 'Value';
+        foreach ($fromDb as $rec) {
+            $arr[$rec['id']] = \yy::qs($rec['descr'] . ' (' . $rec['name'] . ')');
+        }
+        return $arr;
+    }
+    
+    /**
+     * Возвращает данные всех таблиц нулевого уровня типа "L" и "D"
+     *  (выводится в <select> при создании нового поля типа select)
+     * @global \Alxnv\Nesttab\Models\type $yy
+     * @global \Alxnv\Nesttab\Models\type $db
+     * @return array - данные списка всех таблиц нулевого уровня типа "L" и "D"
+     */
+    public function getAllForSelect() {
+        global $yy, $db;
+
+        $allowed_types = '("D", "L")'; // выбираем из таблиц типов 'list' и 'ord'
+        $list = $db->qlistArr("select id, table_type, name, descr from yy_tables"
+                . " where parent_tbl_id = 0 and table_type in $allowed_types"
+                . " order by descr, id");
+                
+        return $list;
+    }
+            
+    /**
      * Возвращает все таблицы верхнего уровня
      * @global type $yy
      * @global type $db
