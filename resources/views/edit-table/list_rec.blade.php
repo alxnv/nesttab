@@ -13,8 +13,8 @@ $yy->loadPhpScript(app_path() . '/Models/nesttab/tables/'
 
 echo '<div id="main_contents">';
 
-if ((count($recs) > 0) && isset($recs[0]['save_ordr'])) {
-    $moveTo = $recs[0]['save_ordr']; // для edit и кнопки "Переместить"
+if (count($rec) > 0) { // если не новая запись
+    $moveTo = $rec['ordr']; // для edit и кнопки "Переместить"
 }
 
 $e = new \Alxnv\Nesttab\Models\ErrorModel();

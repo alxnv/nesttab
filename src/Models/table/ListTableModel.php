@@ -107,7 +107,13 @@ class ListTableModel extends BasicTableModel {
         //$tbl = \Alxnv\Nesttab\Models\TablesModel::getOne($id2);
         $rec_id = $id3; // record 'id' field value !!! todo: replace
         //$recs = \Alxnv\Nesttab\Models\TableRecsModel::getRecAddObjects($columns, $tbl['name'], 1, $requires);
-        $recs = $this->getRecAddObjects($columns, $tbl['name'], $id3, $requires);
+        // get data from db
+        if ($id3 == 0) {
+            $rec = [];
+        } else {
+            $rec = \Alxnv\Nesttab\Models\ArbitraryTableModel::getOne($tbl['name'], $id3);
+        }
+        $recs = $this->getRecAddObjects($columns, $rec, $requires);
         $lnk2 = \yy::getEditSession();
         if (Session::has($lnk2)) {
             $lnk = \yy::getErrorEditSession();
@@ -120,10 +126,10 @@ class ListTableModel extends BasicTableModel {
         }
         // На какую страницу возвращаться после редактирования записи, или
         //   при нажатии "Назад" на странице редактирования
-        $returnToPage = $this->getReturnToPage($tbl, $parent_table_id, $id3, $recs);  
+        $returnToPage = $this->getReturnToPage($tbl, $parent_table_id, $id3, $recs, $rec);  
         return view('nesttab::edit-table.list_rec', ['tbl' => $tbl, 'recs' => $recs,
                 'r' => $r, 'requires' => $requires, 'table_id' => $id2, 'rec_id' => $rec_id,
-                'parent_id' => $id, 'returnToPage' => $returnToPage,
+                'parent_id' => $id, 'returnToPage' => $returnToPage, 'rec' => $rec,
                 'parent_table_id' => $parent_table_id, 'parent_table_rec' => $parent_table_rec]);
         
     }
@@ -138,10 +144,11 @@ class ListTableModel extends BasicTableModel {
      * @param int $parentTableId - id родительской таблицы для данной,
      *    либо 0 если это таблица верхнего уровня
      * @param int $idRec - идентификатор редактируемой записи, либо 0 если новая запись
-     * @param type $recs - массив полей редкатируемой записи
+     * @param array $recs - массив полей редактируемой записи
+     * @param array $rec - запись БД с данными
      * @return int - номер страницы (начиная с 1)
      */
-    public function getReturnToPage(array $tbl, int $parentTableId, int $idRec, $recs) {
+    public function getReturnToPage(array $tbl, int $parentTableId, int $idRec, array $recs, array $rec) {
         global $yy, $db;
         if ($parentTableId == 0) {
             if ($idRec == 0) {
@@ -155,13 +162,9 @@ class ListTableModel extends BasicTableModel {
                 $page = 1 + (int)floor(($res->cnt + 1) / $yy->settings2['recs_per_page']);
                 return $page;
             } else {
-                if ((count($recs) > 0) && isset($recs[0]['save_ordr'])) {
-                    $page = 1 + (int)floor(($recs[0]['save_ordr'] - 1)
-                            / $yy->settings2['recs_per_page']);
-                    return $page;
-                } else {
-                    return 1; // ошибка
-                }
+                $page = 1 + (int)floor(($rec['ordr'] - 1)
+                        / $yy->settings2['recs_per_page']);
+                return $page;
             }
         } else {
             // todo
@@ -226,7 +229,12 @@ class ListTableModel extends BasicTableModel {
         $r = $request->all();
         $columns = \Alxnv\Nesttab\Models\ColumnsModel::getTableColumnsWithNames($tbl['id']);
         $requires_stub = [];
-        $this->getRecAddObjects($columns, $tbl['name'], $id3, $requires_stub);
+        if ($id3 == 0) {
+            $rec = [];
+        } else {
+            $rec = \Alxnv\Nesttab\Models\ArbitraryTableModel::getOne($tbl['name'], $id3);
+        }
+        $this->getRecAddObjects($columns, $rec, $requires_stub);
         $this->save($columns, $tbl, $id3, $r); // сохраняем запись
         // на какую страницу списка записей возвращаемся
         $retPage = (isset($r['return_to_page5871']) 

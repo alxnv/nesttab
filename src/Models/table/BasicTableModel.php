@@ -60,9 +60,12 @@ class BasicTableModel {
     public function saveTableRec(array $tbl, int $id, int $id2, int $id3, object $request) {
         global $yy;
         $r = $request->all();
+        // get data from db
+        $rec = \Alxnv\Nesttab\Models\ArbitraryTableModel::getOne($tbl['name'], $id3);
+        // get columns data
         $columns = \Alxnv\Nesttab\Models\ColumnsModel::getTableColumnsWithNames($tbl['id']);
         $requires_stub = [];
-        $this->getRecAddObjects($columns, $tbl['name'], $id3, $requires_stub);
+        $this->getRecAddObjects($columns, $rec, $requires_stub);
         $this->save($columns, $tbl, $id3, $r); // сохраняем запись
         if (!$this->hasErr()) {
             $request ->session()->flash('saved_successfully', 1);
@@ -428,23 +431,23 @@ class BasicTableModel {
     }
     
     /**
-     * Получаем запись таблицы, добавляя к ней соответствующие объекты для 
-     *   различных типов полей
+     * Добавляем к $columns данные из БД $rec 
+     *  также добавляем соответствующие объекты типов полей к полям $columns,
+     *  преобразуем данные в формат для отображения на странице редактирования
      * @param array $columns - массив структуры полей для данной таблицы
-     * @param string $table - имя таблицы
-     * @param int $id - идентификатор записи таблицы
+     * @param array $rec - запись из БД с данными для заполнения
      * @param array $requires - сюда заносятся ключи 'need_html_editor', 'need_filepond'
      *   этой функцией, если они нужны
      */
-    public function getRecAddObjects(array &$columns, string $table, int $id, array &$requires = []) {
+    public function getRecAddObjects(array &$columns, array $rec, array &$requires = []) {
         global $db;
-        $tableName = $db->nameEscape($table);
-        $rec = $db->q("select * from $tableName where id=$1", [$id]);
+        //$tableName = $db->nameEscape($table);
+        //$rec = $db->q("select * from $tableName where id=$1", [$id]);
         //if (is_null($rec)) \yy::gotoErrorPage('Record not found');
-        if (isset($rec['ordr']) && (count($columns) > 0)) {
+        /*if (isset($rec['ordr']) && (count($columns) > 0)) {
             // сохраняем ordr если есть
             $columns[0]['save_ordr'] = $rec['ordr'];
-        }
+        }*/
         for ($i = 0; $i < count($columns); $i++) {
             if ($columns[$i]['name_field'] == 'html') {
                 $requires['need_html_editor'] = 1;

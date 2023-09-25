@@ -1,13 +1,13 @@
 <?php
 
 /**
- * yy_tables
+ * arbitary tables access procedures
  */
 
 namespace Alxnv\Nesttab\Models;
 
 
-class TablesModel {
+class ArbitraryTableModel {
 
     /**
      * Возвращает все таблицы верхнего уровня
@@ -15,7 +15,7 @@ class TablesModel {
      * @global type $db
      * @return array
      */
-    public function getAll() {
+    /*public function getAll() {
 
         global $yy, $db;
         
@@ -30,7 +30,7 @@ class TablesModel {
      * @global type $db
      * @return array
      */
-    public static function getAllByDescr() {
+    /*public static function getAllByDescr() {
 
         global $yy, $db;
         
@@ -43,13 +43,15 @@ class TablesModel {
     /**
      * получить содержимое таблицы
      *  в случае ошибки перейти на страницу с ошибкой
+     * @param string $table - имя таблицы
      * @param int $id - идентификатор таблицы
      * @return array - строку из бд с информацией об этой бд
      */
-    public static function getOne(int $id) {
+    public static function getOne(string $table, int $id) {
         global $db;
-        $tbl = $db->q("select * from yy_tables where id=$1", [$id]);
-        if (is_null($tbl)) \yy::gotoErrorPage('Table not found');
+        $tableName = $db->nameEscape($table);
+        $tbl = $db->q("select * from $tableName where id=$1", [$id]);
+        if (is_null($tbl)) \yy::gotoErrorPage('Record not found');
         return $tbl;
     }
     /**
@@ -59,7 +61,7 @@ class TablesModel {
      * @return array|null - строку из бд с информацией об этой бд,
      *   или null, если запись не найдена
      */
-    public static function getOneRetError(int $id, string &$errorMessage) {
+    /*public static function getOneRetError(int $id, string &$errorMessage) {
         global $db;
         $errorMessage = '';
         $tbl = $db->q("select * from yy_tables where id=$1", [$id]);
@@ -73,10 +75,10 @@ class TablesModel {
      *  при вызове из ajax запроса
      * @param int $id - идентификатор таблицы
      */
-    public static function getOneAjax(int $id) {
+    /*public static function getOneAjax(int $id) {
         global $db;
         $tbl = $db->q("select * from yy_tables where id=$1", [$id]);
         if (is_null($tbl)) \App::abort(404);
         return $tbl;
-    }
+    }*/
 }

@@ -21,7 +21,8 @@ class OneTableModel extends BasicTableModel {
         $columns = \Alxnv\Nesttab\Models\ColumnsModel::getTableColumnsWithNames($tbl['id']);
         $requires = [];
         $rec_id = 1; // record 'id' field value
-        $recs = $this->getRecAddObjects($columns, $tbl['name'], 1, $requires);
+        $rec = \Alxnv\Nesttab\Models\ArbitraryTableModel::getOne($tbl['name'], 1);
+        $recs = $this->getRecAddObjects($columns, $rec, $requires);
         $lnk2 = \yy::getEditSession();
         if (Session::has($lnk2)) {
             $lnk = \yy::getErrorEditSession();
@@ -30,7 +31,7 @@ class OneTableModel extends BasicTableModel {
             $r_edited = session($lnk2);
             $r = $r_edited; //\yy::addKeys($r, $r_edited);
             // проставить значения полей из сессии (бывший post) в $recs
-            $recs = $tableModel->setValues($recs, $r);
+            $recs = $this->setValues($recs, $r);
         }
         //dd($r);
         return view('nesttab::edit-table.one_rec', ['tbl' => $tbl, 'recs' => $recs,
@@ -142,7 +143,9 @@ class OneTableModel extends BasicTableModel {
         $r = $request->all();
         $columns = \Alxnv\Nesttab\Models\ColumnsModel::getTableColumnsWithNames($tbl['id']);
         $requires_stub = [];
-        $this->getRecAddObjects($columns, $tbl['name'], 1, $requires_stub);
+        // get data from db
+        $rec = \Alxnv\Nesttab\Models\ArbitraryTableModel::getOne($tbl['name'], 1);
+        $this->getRecAddObjects($columns, $rec, $requires_stub);
         $this->save($columns, $tbl, 1, $r); // сохраняем запись с id=1
         if (!$this->hasErr()) {
             $request ->session()->flash('saved_successfully', 1);
