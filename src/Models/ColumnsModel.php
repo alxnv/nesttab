@@ -24,7 +24,7 @@ class ColumnsModel {
         
         $i=1;
         while (true) {
-            $s = ($i == 1 ? '' : $i);
+            $s = $i; //($i == 1 ? '' : $i);
             if (!isset($arr3[$field_type . $s])) return $field_type . $s;
             $i++;
         }

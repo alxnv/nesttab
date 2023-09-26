@@ -85,7 +85,7 @@ echo  '<input id="required" type="checkbox"'
         . ' <label for="required">' . __ ('Is required') .'</label><br />';*/
 echo $e->getErr('');
 if ($is_new_rec) {
-    echo __('Choose a table to link to');
+    echo '<br />' . __('Choose a table to link to');
 ?> : <br />
 <select name="table_id"
         @change="select_item()" v-model="tables_index"><?= \Alxnv\Nesttab\core\HtmlHelper::makeselect($arTables, -1)?></select>
