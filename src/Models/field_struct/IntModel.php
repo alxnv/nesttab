@@ -7,7 +7,7 @@
 
 namespace Alxnv\Nesttab\Models\field_struct;
 
-class NumModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
+class IntModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
 
     
     /**

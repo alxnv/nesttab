@@ -37,6 +37,6 @@ class BasicTableHelper {
      * @return array - массив типов полей
      */
     public static function getTypesForSelectFld() {
-        return [1, 2, 3, 6, 9]; // bool, num, float, str, datetime
+        return [1, 2, 3, 6, 9]; // bool, int, float, str, datetime
     }
 }
