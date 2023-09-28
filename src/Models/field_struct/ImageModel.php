@@ -131,8 +131,9 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
      * @param int $table_id - id of the table
      * @param int $rec_id - 'id' of the record in the table
      * @param array $r - request data of redirected request
+     * @param array $selectsInitialValues - array(<id значения поля из yy_columns для полей типа select> => <initial value>)
      */
-    public function editField(array $rec, array $errors, int $table_id, int $rec_id, $r) {
+    public function editField(array $rec, array $errors, int $table_id, int $rec_id, $r, array $selectsInitialValues) {
         $params = json_decode($rec['parameters']);
         //var_dump($r);
         $accepted = $this->getAcceptedFileTypes($params->allowed);

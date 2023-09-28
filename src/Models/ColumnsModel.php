@@ -8,6 +8,90 @@ use Illuminate\Support\Facades\DB;
 class ColumnsModel {
     
     /**
+     * получаем имена полей участвующих в отображении всех полей типа select данной таблицы
+     * @param int $table_id - id of the table
+     */
+    public static function getSelectFldNames(int $table_id) {
+        global $db, $yy;
+        $selectType = 10; // 'select' field type code
+        $recs = $db->qlistArr("select a.id as src_column_id, "
+                . " a.ref_table, d.name as table_name, b.ordr, c.name, c.descr"
+                . " from yy_columns a, yy_select b,"
+                . "yy_columns c, yy_tables d "
+                . "where a.table_id = $1 and a.field_type = $2 "
+                . " and a.ref_table = c.table_id"
+                . " and b.src_fld_id = a.id and b.fld_id = c.id"
+                . " and a.ref_table = d.id"
+                . " order by a.id, b.ordr", [$table_id, $selectType]);
+        $id = 0;
+        $i = 0;
+        $ar2 = [];
+        while ($i < count($recs)) {
+            if ($id <> $recs[$i]['src_column_id']) {
+                $id = $recs[$i]['src_column_id'];
+                $ar2[] = [$recs[$i]['src_column_id'], $recs[$i]['ref_table'],
+                    $recs[$i]['table_name'], []];
+            }
+            $ar2[count($ar2) - 1][3][] = $recs[$i]['name'];
+            $i++;
+        }
+        
+        return $ar2;
+        
+    }
+    
+    /**
+     * 
+     * @param array $rec - запись с данными
+     * @param array $columns - колонки текущей таблицы
+     * @param array $selectFldNames - имена полей участвующих в отображении всех полей
+     *     типа select данной таблицы
+     * @return array - <id значения поля из yy_columns> => <initial value>
+     */
+    public static function getSelectsInitialValues(array $rec, array $columns, array $selectFldNames) {
+        global $db, $yy;
+        
+        $selectType = 10; // 'select' field type code
+        $arr4 = [];
+        // проставляем в $arr4 значения <id поля> => <значение из записи этого поля>
+        for ($i = 0; $i < count($columns); $i++) {
+            if ($columns[$i]['field_type'] == $selectType) {
+                $name1 = $columns[$i]['name'];
+                if (isset($rec[$name1])) {
+                    $arr4[$columns[$i]['id']] = $rec[$name1];
+                }
+            }
+        }
+        
+        $arr = [];
+        $i = 1;
+        foreach ($selectFldNames as $sfn) {
+            if (!isset($arr4[$sfn[0]])) continue;
+            $ar2 = [];
+            foreach ($sfn[3] as $name) {
+                $ar2[] = 'trim(' . $db->nameEscape($name) . ')';
+            }
+            $s2 = join(' + ', $ar2);
+            $s = 's' . $i;
+            $id = $arr4[$sfn[0]];
+            $arr[] = "select $sfn[0] as id, $s2 as name from $sfn[2] $s"
+                . " where $s.id = $id";
+            $i++;        
+        }
+        if (count($arr) == 0) {
+            $initValues = [];
+        } else {
+            $s3 = join(' UNION ', $arr);
+            $initValues = $db->qlistArr($s3);
+        }
+        $arr7 = [];
+        foreach ($initValues as $rec1) {
+            $arr7[$rec1['id']] = $rec1['name'];
+        }
+        return $arr7;
+    }
+
+    /**
      * Получить следующее незанятое имя данного типа для данной таблицы
      */
     public static function getNextNameOfType($table_id, $field_type) {

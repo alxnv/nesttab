@@ -9,10 +9,13 @@ class TableHelper extends \Alxnv\Nesttab\core\db\BasicTableHelper {
     /**
      * Вернуть определение поля для функции create table
      * @param int $n - номер типа поля
+     * @param array $params - параметры которые сохраняются в поле 'params' yy_columns
+     * @param array $saveParams - дополнительные параметры передающиеся в функцию
+     *    сохранения определения поля
      * @return string - дефиниция поля для функции create table
      * @throws Exception
      */
-    public function getFieldDef(int $n, array $params = []) {
+    public function getFieldDef(int $n, array $params = [], array $saveParams = []) {
         global $db;
         switch ($n) {
             case $db::BOOL_TYPE :
@@ -40,7 +43,7 @@ class TableHelper extends \Alxnv\Nesttab\core\db\BasicTableHelper {
                     return 'double(' . $m . ',' . $d . ')';
                 }
             case $db::SELECT_TYPE :
-                $def = $this->getIntTypeDef($params['intSize']);
+                $def = $this->getIntTypeDef($saveParams['intSize']);
                 if ($def === false) throw new \Exception("Bad int type");
                 return $def;
             default:

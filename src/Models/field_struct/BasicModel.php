@@ -101,8 +101,9 @@ class BasicModel {
      * @param int $table_id - id of the table
      * @param int $rec_id - 'id' of the record in the table
      * @param array $r - request data of redirected request
+     * @param array $selectsInitialValues - array(<id значения поля из yy_columns для полей типа select> => <initial value>)
      */
-    public function editField(array $rec, array $errors, int $table_id, int $rec_id, $r) {
+    public function editField(array $rec, array $errors, int $table_id, int $rec_id, $r, array $selectsInitialValues) {
         echo '<input type="hidden" name="' .$rec['name'] . '" value="1" />'; 
         echo \yy::qs($rec['descr']);
         echo '<br />';
@@ -167,6 +168,7 @@ class BasicModel {
         // определяем значение $default для записи в физическую БД
         $defForPhys = (array_key_exists('defaultForPhys', $saveParams) ? $saveParams['defaultForPhys']
                 : $default);
+        $ref_table = (isset($saveParams['ref_table']) ? $saveParams['ref_table'] : 0);
         $is_newrec = (!isset($r['id']));
         $name = (isset($r['name']) ? $r['name'] : '');
         $descr = (isset($r['descr']) ? $r['descr'] : '');
@@ -197,7 +199,7 @@ class BasicModel {
         }
         
         if ($this->hasErr()) return;
-        $definition = $th->getFieldDef($fld_type_id, $params);
+        $definition = $th->getFieldDef($fld_type_id, $params, $saveParams);
         /*if (!$db->qdirectNoErrorMessage("lock tables yy_columns write")){
             $err .= __('The table does not exist');
             return $err;
@@ -243,8 +245,8 @@ class BasicModel {
                     $obj = $db->qobj("select max(ordr) as mx from yy_columns where table_id = $tbl_id");
                     $n2 = ($obj ? $obj->mx : 0) + 1;
                     if (!$db->qdirectNoErrorMessage("insert into yy_columns (name,descr,"
-                            . "parameters,table_id,ordr,field_type) values"
-                            . "($1, $2, $3, $4, $5, $6)", [$name, $descr, $params2, $tbl_id, $n2, $fld_type_id])) {
+                            . "parameters,table_id,ordr,field_type,ref_table) values"
+                            . "($1, $2, $3, $4, $5, $6, $7)", [$name, $descr, $params2, $tbl_id, $n2, $fld_type_id,$ref_table])) {
                         $this->setErr('', __('Error modifying table structure'));
                         $db->qdirect("unlock tables");
                         return;

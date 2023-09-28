@@ -9,6 +9,9 @@ if (isset($r['is_error'])) {
     //echo '<br /><p align="left" class="red">' . nl2br(\yy::qs(session($lnk_err))) . '</p><br />';
     //\app\core\Helper::assignData($r, $_SESSION[$lnk_data]); // читаем сохраненные данные формы
 }
+
+//$arr76 = \Alxnv\Nesttab\Models\ColumnsModel::getSelectFldNames(5);
+//dd($arr76);
 //dd(session($lnk_err));
 ?>
 <?php
@@ -53,13 +56,13 @@ if ($is_new_rec) {
     }
 } else {
     // редактируем существующую запись
-    $linkedTable = \Alxnv\Nesttab\Models\TablesModel::getOne($r['link_table_id']);
+    $linkedTable = \Alxnv\Nesttab\Models\TablesModel::getOne($r['ref_table']);
     if ($e->hasErr()) {
         if (!isset($r['table_id'])) die('No link table id');
         $curTable = intval($r['table_id']);
         $flds = (isset($r['flds']) ? $r['flds'] : []);
     } else {
-        $curTable = $r['link_table_id'];
+        $curTable = $r['ref_table'];
         $flds = $fieldModel->getSelectData($r['id']);
     }
     $sFldList = getSelCol($curTable);
@@ -99,7 +102,7 @@ if (isset($r['opt_fields'])) {
     $optOpened = true;
 } else {
     $optOpened = false;
-    if ($e->hasOneOf(['name', 'required', 'iprm', 'iprm0', 'iprm1', 'iprm2', 'iprm3', 'iprm4'])) $optOpened = true; // если есть ошибки, относящиеся к
+    if ($e->hasOneOf(['name', 'required'])) $optOpened = true; // если есть ошибки, относящиеся к
        // имени поля, то открываем div с именем поля
 }
 
@@ -156,6 +159,12 @@ echo $e->getErr('table_id');
 <div v-show="checked" class="opt_fields">
 <?=$e->getErr('name')?>
 <?=__('Physical name of the field')?> : <input type="text" name="name" size="25" value="<?=\yy::qs($r['name'])?>" /><br/>
+<?php
+echo $e->getErr('required');
+echo  '<input id="required" type="checkbox"'
+        . ' name="req" ' .(isset($r['req']) ? 'checked="checked"' : '') . ' />'
+        . ' <label for="required">' . __ ('Is required') .'</label><br />';
+?>
 </div>
 
 </div>

@@ -52,12 +52,13 @@ echo '<form enctype="multipart/form-data" method="post" action="' . $yy->baseurl
 //dd($recs);
 $i = 0;
 foreach ($recs as $rec) {
+    //var_dump($rec);
     $err3 = $e->getErr($rec['name']);
     if (function_exists('\callbacks\onShow')) \callbacks\onShow($recs, $i, $rec['name'], false, $err3);
     echo $err3;
     
     ob_start();
-    $rec['obj']->editField($rec, [], $table_id, $rec_id, $r);
+    $rec['obj']->editField($rec, [], $table_id, $rec_id, $r, $selectsInitialValues);
     $out1 = ob_get_contents();
     ob_end_clean();
     if (function_exists('\callbacks\onShow')) \callbacks\onShow($recs, $i, $rec['name'], true, $out1);

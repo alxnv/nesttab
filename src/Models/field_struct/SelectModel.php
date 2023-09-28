@@ -37,8 +37,9 @@ class SelectModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
         $linkedTable = \Alxnv\Nesttab\Models\TablesModel::getOne($link_table_id);
         $intSize = $linkedTable['id_bytes'];
         
-        $params = ['link_table_id' => $link_table_id, 'intSize' => $intSize]; // id of the table to link to
-        $this->saveStep2($tbl, $fld, $r, $old_values, $default, $params);
+        $params = [];
+        $saveParams = ['ref_table' => $link_table_id, 'intSize' => $intSize]; // id of the table to link to
+        $this->saveStep2($tbl, $fld, $r, $old_values, $default, $params, $saveParams);
         if (!$this->hasErr()) {
             // сохраняем выбранные поля для поля select
             $this->adapter->saveSelectValues($tbl, $fld, $r, $old_values, $link_table_id);
@@ -58,11 +59,46 @@ class SelectModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
     public function delete(array $column, array $fld, array $tbl, array $r) {
         global $yy, $db;
         
-        $db->qdirect("delete from yy_select where src_fld_id = $1", [$column['id']]);
-
         $err = parent::delete($column, $fld, $tbl, $r);
+        
+        if ($err == '') {
+            $db->qdirect("delete from yy_select where src_fld_id = $1", [$column['id']]);
+        }
+        
         return $err;
     }
+    
+    /**
+     * Вывод поля таблицы для редактирования
+     * @param array $rec - массив с данными поля
+     * @param array $errors - массив ошибок
+     * @param int $table_id - id of the table
+     * @param int $rec_id - 'id' of the record in the table
+     * @param array $r - request data of redirected request
+     * @param array $selectsInitialValues - array(<id значения поля из yy_columns для полей типа select> => <initial value>)
+     */
+    public function editField(array $rec, array $errors, int $table_id, int $rec_id, $r, array $selectsInitialValues) {
+        global $yy;
+        echo $rec['id'];
+        $value = $rec['value'];
+        if (isset($selectsInitialValues[$rec['id']])) {
+            $name = $selectsInitialValues[$rec['id']];
+        } else {
+            $name = '-- ' . __('choose') . ' --';
+        }
+        var_dump($selectsInitialValues);
+        echo '<br />';
+        echo \yy::qs($rec['descr']);
+        echo '<br />';
+        echo '<br />';
+        echo '<select id="' . $rec['name'] . '"'
+                . ' name="' . $rec['name'] . '" >';
+        echo '<option selected value="' . $value . '">' . \yy::qs($name);
+        echo '</select>';
+        echo '<br />';
+        echo '<br />';
+    }
+
     /**
      * Получить все данные об отображаемых полях для поля типа select
      * @global type $db

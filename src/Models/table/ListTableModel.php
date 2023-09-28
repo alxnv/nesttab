@@ -97,6 +97,8 @@ class ListTableModel extends BasicTableModel {
         global $yy;
         $page = (isset($r['page']) ? intval($r['page']) : 1); // page to return to
         $columns = \Alxnv\Nesttab\Models\ColumnsModel::getTableColumnsWithNames($tbl['id']);
+        // получаем имена полей участвующих в отображении всех полей типа select данной таблицы
+        $selectFldNames = \Alxnv\Nesttab\Models\ColumnsModel::getSelectFldNames($tbl['id']);
         $requires = [];
         $parent_table_id = $tbl['parent_tbl_id'];
         if ($parent_table_id == 0) {
@@ -111,8 +113,11 @@ class ListTableModel extends BasicTableModel {
         // get data from db
         if ($id3 == 0) {
             $rec = [];
+            $selectsInitialValues = [];
         } else {
             $rec = \Alxnv\Nesttab\Models\ArbitraryTableModel::getOne($tbl['name'], $id3);
+            // получаем текущие значения всех полей select данной записи
+            $selectsInitialValues = \Alxnv\Nesttab\Models\ColumnsModel::getSelectsInitialValues($rec, $columns, $selectFldNames);
         }
         $recs = $this->getRecAddObjects($columns, $rec, $requires);
         $lnk2 = \yy::getEditSession();
@@ -136,6 +141,7 @@ class ListTableModel extends BasicTableModel {
         return view('nesttab::edit-table.list_rec', ['tbl' => $tbl, 'recs' => $recs,
                 'r' => $r, 'requires' => $requires, 'table_id' => $id2, 'rec_id' => $rec_id,
                 'parent_id' => $id, 'returnToPage' => $returnToPage, 'rec' => $rec,
+                'selectFldNames' => $selectFldNames, 'selectsInitialValues' => $selectsInitialValues,
                 'parent_table_id' => $parent_table_id, 'parent_table_rec' => $parent_table_rec]);
         
     }
