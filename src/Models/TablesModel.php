@@ -34,7 +34,8 @@ class TablesModel {
     public function getAllForSelect() {
         global $yy, $db;
 
-        $allowed_types = '("D", "L")'; // выбираем из таблиц типов 'list' и 'ord'
+        // выбираем из таблиц типов 'list','tree' и 'ord'
+        $allowed_types = \Alxnv\Nesttab\core\db\BasicTableHelper::getSelectTablesTypes(); 
         $list = $db->qlistArr("select id, table_type, name, descr from yy_tables"
                 . " where parent_tbl_id = 0 and table_type in $allowed_types"
                 . " order by descr, id");

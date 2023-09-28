@@ -95,6 +95,7 @@ class ListTableModel extends BasicTableModel {
     public function editTableRec(array $tbl, array $r, int $id, int $id2, int $id3) {
         // получаем строку с id=1 для one rec table (это единственная строка там)
         global $yy;
+        $page = (isset($r['page']) ? intval($r['page']) : 1); // page to return to
         $columns = \Alxnv\Nesttab\Models\ColumnsModel::getTableColumnsWithNames($tbl['id']);
         $requires = [];
         $parent_table_id = $tbl['parent_tbl_id'];
@@ -126,7 +127,12 @@ class ListTableModel extends BasicTableModel {
         }
         // На какую страницу возвращаться после редактирования записи, или
         //   при нажатии "Назад" на странице редактирования
-        $returnToPage = $this->getReturnToPage($tbl, $parent_table_id, $id3, $recs, $rec);  
+        if ($id3 == 0) {
+            // new record
+            $returnToPage = $this->getReturnToPage($tbl, $parent_table_id, $id3, $recs, $rec);  
+        } else {
+            $returnToPage = $page;
+        }
         return view('nesttab::edit-table.list_rec', ['tbl' => $tbl, 'recs' => $recs,
                 'r' => $r, 'requires' => $requires, 'table_id' => $id2, 'rec_id' => $rec_id,
                 'parent_id' => $id, 'returnToPage' => $returnToPage, 'rec' => $rec,
@@ -150,6 +156,7 @@ class ListTableModel extends BasicTableModel {
      */
     public function getReturnToPage(array $tbl, int $parentTableId, int $idRec, array $recs, array $rec) {
         global $yy, $db;
+        // !todo: Для 'id asc' сделать то же определение страницы что и для 'ord asc'
         if ($parentTableId == 0) {
             if ($idRec == 0) {
                 // новая запись

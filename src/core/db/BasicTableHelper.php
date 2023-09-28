@@ -18,6 +18,14 @@ class BasicTableHelper {
     ];
     
     /**
+     * get table types appropriate for 'select' field link
+     * @return string
+     */
+    public static function getSelectTablesTypes() {
+        return '("D", "L", "C")';
+    }
+    
+    /**
      * 
      * @param string $typeId - enum('O', 'L', 'C', 'V') (тип таблицы БД)
      * @param string $fieldName - тестируемое имя таблицы, которое пытается

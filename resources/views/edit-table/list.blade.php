@@ -3,7 +3,9 @@
 <?php
 global $yy;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Request;
 
+$page = (Request::has('page') ? Request::input('page') : 1); // current page for current list
 //$with_html_editor = 1;
 
 
@@ -45,9 +47,9 @@ echo '<div class="div-th"><span>№</span><span>' . __('Name') . '</span>'
 $i = 0;
 foreach ($recs as $rec) {
     echo '<div><span><a class="addfield" href="' . $yy->nurl . 'editrec/' 
-        . $parent_id . '/' . $tbl['id'] . '/' . $rec->id . '">' . $rec->ordr;
+        . $parent_id . '/' . $tbl['id'] . '/' . $rec->id . '?page=' . $page . '">' . $rec->ordr;
     echo '</a></span><span><a class="addfield" href="' . $yy->nurl . 'editrec/' 
-        . $parent_id . '/' . $tbl['id'] . '/' . $rec->id . '">' . \yy::qs($rec->name);
+        . $parent_id . '/' . $tbl['id'] . '/' . $rec->id . '?page=' . $page . '">' . \yy::qs($rec->name);
     echo '</a></span></div>';
     $i++;
 }
