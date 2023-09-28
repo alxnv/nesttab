@@ -141,6 +141,8 @@ class BasicModel {
 
     /**
      * пытается сохранить(изменить)  в таблице поле, шаг 2
+     *  если поле новое, то в $r['id'] проставляется id нового вставленного поля
+     *    в yy_columns
      * @param array $tbl
      * @param array $fld
      * @param array $r - request
@@ -247,6 +249,8 @@ class BasicModel {
                         $db->qdirect("unlock tables");
                         return;
                     }
+                    $r['id'] = $db->handle->lastInsertId();
+
                     $db->qdirectNoErrorMessage("unlock tables");
                     
                 }

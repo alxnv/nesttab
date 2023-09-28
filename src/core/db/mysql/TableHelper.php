@@ -39,6 +39,10 @@ class TableHelper extends \Alxnv\Nesttab\core\db\BasicTableHelper {
                 } else {
                     return 'double(' . $m . ',' . $d . ')';
                 }
+            case $db::SELECT_TYPE :
+                $def = $this->getIntTypeDef($params['intSize']);
+                if ($def === false) throw new \Exception("Bad int type");
+                return $def;
             default:
                 throw new \Exception("Table type is not defined");
         }

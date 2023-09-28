@@ -1,34 +1,79 @@
 @extends(config('nesttab.layout'))
 @section('content')
-<script>
-    var fld_list = {}; // новая запись для параметров
-     // трансформации (добавляется по нажатию кнопки "+"
-    var _this;
-    var baseUrl = '<?=asset('/' . config('nesttab.nurl'))?>';
-</script>
+<?php
+$e = new \Alxnv\Nesttab\Models\ErrorModel();
+if (isset($r['is_error'])) {
+    $lnk_err = \yy::getErrorEditSession();
+    $e->err = session($lnk_err);
+    //$lnk_data = \yy::getEditSession();
+    //echo '<br /><p align="left" class="red">' . nl2br(\yy::qs(session($lnk_err))) . '</p><br />';
+    //\app\core\Helper::assignData($r, $_SESSION[$lnk_data]); // читаем сохраненные данные формы
+}
+//dd(session($lnk_err));
+?>
 <?php
 /**
  * редактирование структуры поля типа select - поле выбора записи из другой таблицы
  * 
  * если isset($r['is_error']), то произошел возврат к редактированию с ошибкой
- */
+ * $r['params'] отображаются в $r
+ * $r['id'] - id поля
+   вызывается return view('nesttab::struct-table-edit-field.' . $fld['name'], ['tbl' => $tbl, 'tblname' => $tbl['name'], 'tbl_id' => $table_id,
+            'field_type_id' => intval($r['field_type_id']), 'fld' => $fld, 'r' => $r,
+            'tableModel' => $tableModel, 'fieldModel' =>$fieldModel] 
+
+ *  */
 global $yy, $db;
 
 $is_new_rec = !isset($r['id']);
 
+function getSelCol($table_id) {
+    $arr = \Alxnv\Nesttab\Models\ColumnsModel::getSelectColumns($table_id);
+    $ar2 = [];
+    foreach ($arr as $key => $value) {
+        $ar2[] = "{'id' : $key, 'name' : " . '"' . \yy::jsmstr($value) . '"' . "}";
+    }
+    $s = join(', ', $ar2);
+    return $s;
+}
+
+$sFldList = '';
 if ($is_new_rec) {
     // новая запись
     $tm = new \Alxnv\Nesttab\Models\TablesModel();
     $arr1 = $tm->getAllForSelect();
     $arTables = $tm->getAllTablesSelectData($arr1);
     $curTable = 0;
-    $visibleTable = 0; // таблица невидима
     $flds = []; // fields loaded
+    if ($e->hasErr()) {
+        if (!isset($r['table_id'])) die('No link table id');
+        $curTable = intval($r['table_id']);
+        $flds = (isset($r['flds']) ? $r['flds'] : []);
+        if ($curTable <>0) $sFldList = getSelCol($curTable);
+    }
 } else {
     // редактируем существующую запись
+    $linkedTable = \Alxnv\Nesttab\Models\TablesModel::getOne($r['link_table_id']);
+    if ($e->hasErr()) {
+        if (!isset($r['table_id'])) die('No link table id');
+        $curTable = intval($r['table_id']);
+        $flds = (isset($r['flds']) ? $r['flds'] : []);
+    } else {
+        $curTable = $r['link_table_id'];
+        $flds = $fieldModel->getSelectData($r['id']);
+    }
+    $sFldList = getSelCol($curTable);
 }
+$visibleTable = ((count($flds) > 0) ? 1 : 0);
+?>
+<script>
+    var fld_list = [<?=$sFldList?>]; // новая запись для параметров
+     // трансформации (добавляется по нажатию кнопки "+"
+    var _this;
+    var baseUrl = '<?=asset('/' . config('nesttab.nurl'))?>';
+</script>
 
-
+<?php
 $requires['need_confirm'] = 1;
 echo '<div id="main_contents">';
 
@@ -49,18 +94,6 @@ echo '<br />';
 
 ?>
 @include('nesttab::struct-table-edit-field.rec-inc')
-<?php
-$e = new \Alxnv\Nesttab\Models\ErrorModel();
-if (isset($r['is_error'])) {
-    $lnk_err = \yy::getErrorEditSession();
-    $e->err = session($lnk_err);
-    //$lnk_data = \yy::getEditSession();
-    echo $e->getErr('');
-    //echo '<br /><p align="left" class="red">' . nl2br(\yy::qs(session($lnk_err))) . '</p><br />';
-    //\app\core\Helper::assignData($r, $_SESSION[$lnk_data]); // читаем сохраненные данные формы
-}
-
-?>
 <?php
 if (isset($r['opt_fields'])) {
     $optOpened = true;
@@ -86,15 +119,23 @@ echo  '<input id="required" type="checkbox"'
 echo $e->getErr('');
 if ($is_new_rec) {
     echo '<br />' . __('Choose a table to link to');
-?> : <br />
+?> : 
+<?php 
+echo $e->getErr('table_id');
+?>
 <select name="table_id"
         @change="select_item()" v-model="tables_index"><?= \Alxnv\Nesttab\core\HtmlHelper::makeselect($arTables, -1)?></select>
 <br />
 <br />
-<input type="hidden" id="hidden" name="table_id" v-model="tables_index" />
+<?php
+} else {
+?>
+<br />
+<?=__('Link to table'). ': ' . \yy::qs($linkedTable['descr'] . ' (' . $linkedTable['name'] . ')')?><br />
+<input type="hidden" name="table_id" v-model="tables_index" />
 <?php
 }
-?><div v-show="visible">
+?><br /><div v-show="visible">
     <table class="table">
         <tr><th><?=__('Fields to show')?></th></tr>
         <tr v-for="(field, index) in recs">
@@ -161,10 +202,11 @@ const app = Vue.createApp({
       recs: [
 <?php
 for ($i = 0; $i < count($flds); $i++) {
+    $id1 = $flds[$i];
     echo "{
         flds: fld_list,
-        vl: 0,
-        err: " . '"' . \yy::jsmstr($e->getErr('flds' . $i)) . '"' .  "   },
+        vl: " . $id1 . ",
+        err: " . '"' . \yy::jsmstr($e->getErr('flds' . $id1)) . '"' .  "   },
             "; 
 }
 ?>
@@ -175,6 +217,9 @@ for ($i = 0; $i < count($flds); $i++) {
     select_item() {
       // alert(document.getElementById("hidden").value); - нормально отображается
       if (this.tables_index == 0) {
+              _this.recs.splice(0, 1000000);
+              fld_list = [];
+              _this.visible = 0;
       } else {
         _this = this;  
         exec_ajax_json(baseUrl +'/ajax_flds_for_select/' + this.tables_index, {},

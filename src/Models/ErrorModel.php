@@ -57,6 +57,7 @@ class ErrorModel {
     
     
     public function hasErr() {
+        if (is_null($this->err)) return false;
         return (count($this->err) <> 0);
     }
     /**

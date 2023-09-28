@@ -18,6 +18,7 @@ class BasicDbNesttab {
     const FILE_TYPE = 7;
     const IMAGE_TYPE = 8;
     const FLOAT_TYPE = 9;
+    const SELECT_TYPE = 10;
 /*
     function connect() {
 		global $yy;
@@ -69,11 +70,6 @@ class BasicDbNesttab {
     function qlist(string $s, array $params = []) {
         $sth = $this->handle->query(\yy::dbEscape($s, $params))
                 or \yy::gotoErrorPage(sprintf ("Error %s\n", mysqli_error($this->handle)));
-/*        if ($sth) {
-	    $rs = [];
-		while ($obj = $sth->fetch_object()) {
-			$rs[] = $obj;
-		}*/
         $rows = $sth->fetchAll(\PDO::FETCH_CLASS);
         return $rows;
     }
@@ -88,12 +84,27 @@ class BasicDbNesttab {
     function qlistArr(string $s, array $params = []) {
         $sth = $this->handle->query(\yy::dbEscape($s, $params))
                 or \yy::gotoErrorPage(sprintf ("Error %s\n", mysqli_error($this->handle)));
-/*        if ($sth) {
-	    $rs = [];
-		while ($obj = $sth->fetch_object()) {
-			$rs[] = $obj;
-		}*/
         $rows = $sth->fetchAll();
+        return $rows;
+    }
+
+    /**
+     * запросить из бд набор записей в виде массива массивов,
+     *     установить код ошибки в $db->errorCode, $db->errorMessage
+     *   в случае ошибки
+     * @param string $s
+     * @param array $params
+     * @param mode (\PDO::FETCH_ASSOC (возвращаем массив) или другой режим pdo)
+     * @return array - массив полученных строк
+     */
+    function qlistN(string $s, array $params = [], $mode = \PDO::FETCH_ASSOC) {
+        $this->setExceptionReturnValues(0, '');
+        try {
+        $sth = $this->handle->query(\yy::dbEscape($s, $params));
+        } catch (\Exception $e) {
+            $this->setExceptionReturnValues($e->getCode(), $e->getMessage());
+        }
+        $rows = $sth->fetchAll($mode);
         return $rows;
     }
 
