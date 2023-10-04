@@ -7,13 +7,70 @@ use Illuminate\Support\Facades\DB;
 
 class ColumnsModel {
     
+
+    /**
+     * Returns table name and fields to show for particular column of 'select' type
+     * @global \Alxnv\Nesttab\Models\type $db
+     * @global \Alxnv\Nesttab\Models\type $yy
+     * @param int $column_id
+     * @param int $ref_table_id
+     * @param string &$table_name - returns table name from which to gather data
+     * @return array - returns fields to show
+     */
+    public static function getOneSelectFldNames(int $column_id, int $ref_table_id,
+            string &$table_name) {
+        global $db, $yy;
+        $selectType = 10; // 'select' field type code
+        
+        
+        $recs = $db->qlistArr("select  "
+                . " d.name as table_name, b.ordr, c.name, c.descr"
+                . " from yy_select b,"
+                . "yy_columns c, yy_tables d "
+                . "where "
+                . " c.table_id = $2"
+                . " and b.src_fld_id = $1 and b.fld_id = c.id"
+                . " and d.id = $2"
+                . " order by b.ordr", [$column_id, $ref_table_id]);
+        $id = 0;
+        $i = 0;
+        $ar2 = [];
+        while ($i < count($recs)) {
+            $table_name = $recs[$i]['table_name'];
+            $ar2[] = $recs[$i]['name'];
+            $i++;
+        }
+        
+        return $ar2;
+    }
+
+    public static function getSelectData(int $table_id, array $names) {
+        global $db, $yy;
+        $ar2 = [];
+        foreach ($names as $name) {
+            $ar2[] = 'trim(' . $db->nameEscape($name) . ')';
+        }
+        $s2 = join(' + ' . config('nesttab.select_fld_delimeter') . ' + ', $ar2);
+
+    }        
     /**
      * получаем имена полей участвующих в отображении всех полей типа select данной таблицы
      * @param int $table_id - id of the table
+     * @param array $columns - данные текущей записи из yy_columns
+     * @return array - массив вида [<src_column_id> ,<ref_table>, 
+     *   <имя таблицы на которую ссылка>, [<имя поля для вывода>, ...]]
      */
-    public static function getSelectFldNames(int $table_id) {
+    public static function getSelectFldNames(int $table_id, array $columns) {
         global $db, $yy;
         $selectType = 10; // 'select' field type code
+        
+        // если в yy_columns нет полей типа select, то просто возвращаем пустой массив
+        $b = false;
+        foreach ($columns as $column) {
+            if ($column['field_type'] == $selectType) $b = true;
+        }
+        if (!$b) return [];
+        
         $recs = $db->qlistArr("select a.id as src_column_id, "
                 . " a.ref_table, d.name as table_name, b.ordr, c.name, c.descr"
                 . " from yy_columns a, yy_select b,"
@@ -41,7 +98,8 @@ class ColumnsModel {
     }
     
     /**
-     * 
+     * Получаем начальные значения отображения полей типа select текущей записи
+     *   (данные непосредственно из таблиц, на которые они ссылаются)
      * @param array $rec - запись с данными
      * @param array $columns - колонки текущей таблицы
      * @param array $selectFldNames - имена полей участвующих в отображении всех полей
@@ -71,7 +129,7 @@ class ColumnsModel {
             foreach ($sfn[3] as $name) {
                 $ar2[] = 'trim(' . $db->nameEscape($name) . ')';
             }
-            $s2 = join(' + ', $ar2);
+            $s2 = join(' + ' . config('nesttab.select_fld_delimeter') . ' + ', $ar2);
             $s = 's' . $i;
             $id = $arr4[$sfn[0]];
             $arr[] = "select $sfn[0] as id, $s2 as name from $sfn[2] $s"

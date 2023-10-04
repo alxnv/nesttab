@@ -21,4 +21,14 @@ class AjaxController extends BasicController
         return response()->json(['arr' => $ar2]);
         
     }
+    
+    /**
+     * Получить даные для содержимого тэга <select> поля типа select
+     * @param int $id - id поля типа select
+     * @param int $id2 - id текущей записи в таблице на которую ссылается поле
+     *   (оно проставляется как текущее значение)
+     */
+    public function getSelectListHtml(int $id) {
+        
+    }
 }

@@ -39,6 +39,9 @@ class BasicDbNesttab {
     public $handle;
     public $errorCode; // код ошибки БД
     public $errorMessage; // сообщение обо ошибке БД
+    // use standart exception handler 
+    public $useStandartExceptionHandler = true;
+    public $isDbException = false; // is the last exception a db exception
     public function __construct() {
         $this->handle = DB::connection()->getPdo();
         $this->handle->setAttribute(\PDO::ATTR_AUTOCOMMIT,1);
@@ -62,31 +65,56 @@ class BasicDbNesttab {
 
     /**
      * получить из бд набор записей в виде массива объектов,
-     *   перейти к странице ошибки в случае ошибки
+     *     перейти к странице ошибки в случае ошибки если используем стандартный
+     *       обработчик ошибок, иначе вызвать исключение
      * @param string $s
      * @param array $params
      * @return array
      */
     function qlist(string $s, array $params = []) {
-        $sth = $this->handle->query(\yy::dbEscape($s, $params))
-                or \yy::gotoErrorPage(sprintf ("Error %s\n", mysqli_error($this->handle)));
+        $this->setExceptionReturnValues(0, '');
+        $this->isDbException = false;
+        try {
+        $sth = $this->handle->query(\yy::dbEscape($s, $params));
+        } catch (\Exception $e) {
+            if ($this->useStandartExceptionHandler) {
+                \yy::gotoErrorPage(sprintf ("Error %s\n",  $e->getMessage()));
+            } else {
+            $this->setExceptionReturnValues($e->getCode(), $e->getMessage());
+            $this->isDbException = true;
+            throw $e; // rethrow the exception
+            }
+        }
         $rows = $sth->fetchAll(\PDO::FETCH_CLASS);
         return $rows;
     }
 
     /**
      * запросить из бд набор записей в виде массива массивов,
-     *     перейти к странице ошибки в случае ошибки
+     *     перейти к странице ошибки в случае ошибки если используем стандартный
+     *       обработчик ошибок, иначе вызвать исключение
      * @param string $s
      * @param array $params
      * @return array - массив полученных строк
      */
     function qlistArr(string $s, array $params = []) {
-        $sth = $this->handle->query(\yy::dbEscape($s, $params))
-                or \yy::gotoErrorPage(sprintf ("Error %s\n", mysqli_error($this->handle)));
+        $this->setExceptionReturnValues(0, '');
+        $this->isDbException = false;
+        try {
+        $sth = $this->handle->query(\yy::dbEscape($s, $params));
+        } catch (\Exception $e) {
+            if ($this->useStandartExceptionHandler) {
+                \yy::gotoErrorPage(sprintf ("Error %s\n",  $e->getMessage()));
+            } else {
+            $this->setExceptionReturnValues($e->getCode(), $e->getMessage());
+            $this->isDbException = true;
+            throw $e; // rethrow the exception
+            }
+        }
         $rows = $sth->fetchAll();
         return $rows;
     }
+
 
     /**
      * запросить из бд набор записей в виде массива массивов,

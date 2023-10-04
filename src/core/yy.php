@@ -32,7 +32,7 @@ class yy {
         $this->baseurl=dirname($_SERVER['SCRIPT_NAME']).'/';
         if ($this->baseurl=='//') $this->baseurl='/';
         $this->nurl = $this->baseurl . config('nesttab.nurl') . '/';
-        $this->uurl = $this->baseurl . config('nesttab.uurl') . '/';
+        //$this->uurl = $this->baseurl . config('nesttab.uurl') . '/';
         $this->basepath = dirname($_SERVER["SCRIPT_FILENAME"]).'/'; //dirname(__DIR__);  
 		//$this->settings = require($this->Engine_Path . '/settings/settings.php');
 		//$this->built_in_settings = require('built_in_settings.php');

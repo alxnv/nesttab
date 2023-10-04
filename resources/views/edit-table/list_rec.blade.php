@@ -1,7 +1,7 @@
 @extends(config('nesttab.layout'))
 @section('content')
 <?php
-global $yy;
+global $db, $yy;
 use Illuminate\Support\Facades\Session;
 
 //$with_html_editor = 1;
@@ -12,6 +12,16 @@ $yy->loadPhpScript(app_path() . '/Models/nesttab/tables/'
         . ucfirst($tbl['name']) . '.php');
 
 echo '<div id="main_contents">';
+
+$db->useStandartExceptionHandler = false;
+try {
+$db->qlistArr("select jkjl from hjhkjh");
+} catch (\Exception $e) {
+    var_dump($e->getMessage());
+}
+$table_name = '';
+$arr = \Alxnv\Nesttab\Models\ColumnsModel::getOneSelectFldNames(93, 2, $table_name);
+dd($arr, $table_name);
 
 if (count($rec) > 0) { // если не новая запись
     $moveTo = $rec['ordr']; // для edit и кнопки "Переместить"

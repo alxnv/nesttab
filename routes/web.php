@@ -14,28 +14,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-/*
-Route::get('/', function () {
-    return view('welcome');
-});
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-*/
-
-/*    Route::get('/nesttab', function () {
-            return 'Hello';
-    });
-*/
-
 // Route for not secret pages
 //  todo: go to not secret place to enter login password if not logged in
 //  todo: make not secret message and error page (if needed) - all links on that pages
 //    must be not secret
-Route::prefix(config('nesttab.uurl'))->group(function () {
-});
+/*Route::prefix(config('nesttab.uurl'))->group(function () {
+});*/
 
 // Route for admin system. Maybe secret
 Route::prefix(config('nesttab.nurl'))->group(function () {
@@ -63,6 +47,7 @@ Route::prefix(config('nesttab.nurl'))->group(function () {
     Route::get('/edit/{id}/{id2}', CP9 . 'EditController@index');
     Route::get('/editrec/{id}/{id2}/{id3}', CP9 . 'EditController@editRec');
     Route::post('/editrec/save/{id}/{id2}/{id3}', CP9 . 'EditController@save');
+    //Route::get('/ajax_select_get/{id}', CP9 . 'AjaxController@selectFldGetFieldsForTable');
     Route::get('/', CP9 . 'IndexController@index');
     
     

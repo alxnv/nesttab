@@ -98,7 +98,7 @@ class ListTableModel extends BasicTableModel {
         $page = (isset($r['page']) ? intval($r['page']) : 1); // page to return to
         $columns = \Alxnv\Nesttab\Models\ColumnsModel::getTableColumnsWithNames($tbl['id']);
         // получаем имена полей участвующих в отображении всех полей типа select данной таблицы
-        $selectFldNames = \Alxnv\Nesttab\Models\ColumnsModel::getSelectFldNames($tbl['id']);
+        $selectFldNames = \Alxnv\Nesttab\Models\ColumnsModel::getSelectFldNames($tbl['id'], $columns);
         $requires = [];
         $parent_table_id = $tbl['parent_tbl_id'];
         if ($parent_table_id == 0) {
