@@ -1,4 +1,6 @@
-SelectModel->editField()
+selectsValues[$columns] use
+-----
+ListTable - SelectModel->editField()
 ---
  сделан вывод вью при создании новой записи
  
@@ -36,6 +38,10 @@ list/editrec - move, delete
 edit, editrec - id parent_id а не parent_table
 ----
 !!!!! таблицы типа one могут быть вложены в таблицы типа one только верхнего уровня
+----
+в следующих версиях сделать (в основном для Jquery в models/nesttab/tables)
+     addBlockOnce($blockName, $tagName, $value) - где $blockName может быть равно 'jquery'
+	   для уникального $tagName $value добавляется только один раз
 ----
 удалять текущий элемент + весь предыдущий уровень
 ----
