@@ -115,10 +115,6 @@ echo '<form method="post" action="' . $yy->baseurl . config('nesttab.nurl') . '/
 <div id="app">
 <?php
 
-/*echo $e->getErr('required');
-echo  '<input id="required" type="checkbox"'
-        . ' name="req" ' .(isset($r['req']) ? 'checked="checked"' : '') . ' />'
-        . ' <label for="required">' . __ ('Is required') .'</label><br />';*/
 echo $e->getErr('');
 if ($is_new_rec) {
     echo '<br />' . __('Choose a table to link to');

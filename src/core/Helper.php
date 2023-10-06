@@ -7,6 +7,7 @@
 namespace Alxnv\Nesttab\core;
 
 class Helper {
+
     /**
      * Возвращает table_types, соответствующее заданному коду вида таблицы ('O','L','C','V')
      * @global type $yy

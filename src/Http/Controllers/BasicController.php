@@ -13,8 +13,11 @@ class BasicController extends Controller
     public function __construct()
     {
         //dd(vendor_path());
-        require(__DIR__ . '/../../core/yy.php');
-        require(__DIR__ . '/../../core/blocks.php');
+        global $yy, $blocks;
+        if (!isset($yy)) {
+            require(__DIR__ . '/../../core/yy.php');
+            require(__DIR__ . '/../../core/blocks.php');
+        }
     }
     
     public function maintain() {

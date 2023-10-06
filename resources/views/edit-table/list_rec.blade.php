@@ -13,15 +13,26 @@ $yy->loadPhpScript(app_path() . '/Models/nesttab/tables/'
 
 echo '<div id="main_contents">';
 
-$db->useStandartExceptionHandler = false;
+/*$db->useStandartExceptionHandler = false;
 try {
 $db->qlistArr("select jkjl from hjhkjh");
 } catch (\Exception $e) {
     var_dump($e->getMessage());
 }
-$table_name = '';
-$arr = \Alxnv\Nesttab\Models\ColumnsModel::getOneSelectFldNames(93, 2, $table_name);
-dd($arr, $table_name);
+
+ 
+ $db->useStandartExceptionHandler = true;*/
+
+/*$contr = new \Alxnv\Nesttab\Http\Controllers\AjaxController();
+var_dump($contr->getSelectListHtml(93, request()));
+*/
+
+//$columnsModel = new \Alxnv\Nesttab\Models\ColumnsModel();
+//$table_name = '';
+//var_dump($columnsModel->getSelectListHtml(93));
+//$table_name = '';
+//$arr = \Alxnv\Nesttab\Models\ColumnsModel::getOneSelectFldNames(93, 2, $table_name);
+//dd($arr, $table_name);
 
 if (count($rec) > 0) { // если не новая запись
     $moveTo = $rec['ordr']; // для edit и кнопки "Переместить"

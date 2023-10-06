@@ -4,6 +4,7 @@
 4) очистить таблицы:
     truncate yy_tables;
 	truncate yy_columns;
+	truncate yy_select;
 	
 	update yy_settings set one_counter=1, list_counter=1, ord_counter=1, cat_counter=1;
 5) убрать ckeditor из дистрибутива, и сделать к нему коннектор, а его загружать с моего сайта

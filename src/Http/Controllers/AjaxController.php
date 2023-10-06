@@ -3,6 +3,8 @@
 namespace Alxnv\Nesttab\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Response;
 
 class AjaxController extends BasicController
 {
@@ -28,7 +30,24 @@ class AjaxController extends BasicController
      * @param int $id2 - id текущей записи в таблице на которую ссылается поле
      *   (оно проставляется как текущее значение)
      */
-    public function getSelectListHtml(int $id) {
+    public function getSelectListHtml(int $id, Request $request) {
+        $columnsModel = new \Alxnv\Nesttab\Models\ColumnsModel();
+        //Log::debug('req ' . print_r($request->all(), true));
+        
+        if (!$request->has('q')) {
+            $search_value = '%';
+        } else {
+            $search_value = '%' . $request->input('q') . '%';
+        }
+        $table_name = '';
+        $names = $columnsModel->getOneSelectFldNames($id, $table_name);
+        $more = false;
+        $aresult = $columnsModel->getSelectValuesList($table_name, $names, $search_value, $more);
+        $arr = ['list' => $aresult, 'more' => $more];
+        //Log::debug('ajax ' . response()->json($arr));
+        //var_dump(aresult);
+        //$aresult = [['id' => 1, 'text' => 'gfdghd']];
+        return response()->json($arr);
         
     }
 }

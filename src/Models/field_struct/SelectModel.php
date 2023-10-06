@@ -84,19 +84,50 @@ class SelectModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
         if (isset($selectsInitialValues[$rec['id']])) {
             $name = $selectsInitialValues[$rec['id']];
         } else {
-            $name = '-- ' . __('choose') . ' --';
+            $name = $yy->settings2['not_selected'];
         }
         var_dump($selectsInitialValues);
         echo '<br />';
         echo \yy::qs($rec['descr']);
         echo '<br />';
         echo '<br />';
-        echo '<select id="' . $rec['name'] . '"'
+        echo '<select class="select2" id="f_' . $rec['name'] . '"'
                 . ' name="' . $rec['name'] . '" >';
         echo '<option selected value="' . $value . '">' . \yy::qs($name);
         echo '</select>';
         echo '<br />';
         echo '<br />';
+        
+        $js = "$('#f_" . $rec['name'] . "').select2({ dropdownCssClass: 'dropdown-select2',"
+                . "    placeholder: 'Search for source',
+    //minimumInputLength: 1,
+    language: '" . config('app.locale') . "',
+    ajax: { 
+        url: '" . asset('/' . config('nesttab.nurl') . '/ajax_select_get')
+                . "/" . $rec['id'] . "',
+        dataType: 'json',
+        type: 'post',
+        headers: {
+            'X-CSRF-TOKEN': '" . Session::token() . "',
+        },
+        quietMillis: 250,
+        data: function (term, page) {
+            return {
+                q: term.term, // search term
+                page: term.page || 1, //??? does it work?
+            };
+        },
+        processResults: function (data) {
+            return {
+                results: data.list,
+                pagination: {
+                    'more' : data.more,
+                }
+            };
+        }
+        },
+ });";
+        \blocks::add('jquery', $js);
     }
 
     /**

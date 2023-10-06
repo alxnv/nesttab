@@ -47,7 +47,7 @@ Route::prefix(config('nesttab.nurl'))->group(function () {
     Route::get('/edit/{id}/{id2}', CP9 . 'EditController@index');
     Route::get('/editrec/{id}/{id2}/{id3}', CP9 . 'EditController@editRec');
     Route::post('/editrec/save/{id}/{id2}/{id3}', CP9 . 'EditController@save');
-    //Route::get('/ajax_select_get/{id}', CP9 . 'AjaxController@selectFldGetFieldsForTable');
+    Route::post('/ajax_select_get/{id}', CP9 . 'AjaxController@getSelectListHtml');
     Route::get('/', CP9 . 'IndexController@index');
     
     

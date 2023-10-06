@@ -455,6 +455,9 @@ class BasicTableModel {
             if ($columns[$i]['name_field'] == 'datetime') {
                 $requires['need_datetimepicker'] = 1;
             }
+            if ($columns[$i]['name_field'] == 'select') {
+                $requires['need_select2'] = 1;
+            }
             if (in_array($columns[$i]['name_field'], ['image', 'file'])) {
                 $requires['need_filepond'] = 1;
             }

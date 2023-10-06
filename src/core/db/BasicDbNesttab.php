@@ -103,12 +103,14 @@ class BasicDbNesttab {
         try {
         $sth = $this->handle->query(\yy::dbEscape($s, $params));
         } catch (\Exception $e) {
+            $message = (\yy::dbEscape($s, $params) . chr(13) . chr(10) . 
+                    $e->getMessage());
             if ($this->useStandartExceptionHandler) {
-                \yy::gotoErrorPage(sprintf ("Error %s\n",  $e->getMessage()));
+                \yy::gotoErrorPage(sprintf ("Error %s\n",  $message()));
             } else {
             $this->setExceptionReturnValues($e->getCode(), $e->getMessage());
             $this->isDbException = true;
-            throw $e; // rethrow the exception
+            throw new \Exception($message, $e->getCode()); // rethrow the exception
             }
         }
         $rows = $sth->fetchAll();

@@ -1,0 +1,5 @@
+models\nesttab\tables\yz_xxxxx.php :
+
+при использовании jquery для добавления кода для в конец страницы в $(function() { }) 
+  можно использовать команды \blocks::add('jquer', $js_text), либо
+   \blocks::addBlockOnce('jquery', '<tag>', $js_text); - в этом случае код добавится только один раз для каждого тэга

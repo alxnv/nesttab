@@ -6,6 +6,7 @@ class blocks {
 */
     
     public $blocks = [];
+    public $tags = [];
     
     /**
      * Add Block
@@ -20,12 +21,37 @@ class blocks {
     }
     
     /**
+     * Add text to block once for every tag
+     * @param string $blockName
+     * @param strign $tag
+     * @param string $text
+     */
+    public static function addBlockOnce(string $blockName, string $tag, string $text) {
+        global $blocks;
+        if (!isset($blocks->tags[$blockName])) {
+            $blocks->tags[$blockName] = [];
+        }
+        if (isset($blocks->tags[$blockName][$tag])) return; // text for tag already
+          // exists. do nothing
+
+        // set text for tag
+        $blocks->tags[$blockName][$tag] = $text . chr(13) . chr(10);
+    }
+    
+    /**
      * Show block
+     *  first show tags in alphabetical order, then main block
      * @global blocks $blocks
      * @param string $blockName -  block name
      */
     public static function show(string $blockName) { 
         global $blocks;
+        if (isset($blocks->tags[$blockName])) {
+            ksort($blocks->tags[$blockName]); // sort tag by array keys
+            foreach ($blocks->tags[$blockName] as $txt) {
+                echo $txt;
+            }
+        }
         if (isset($blocks->blocks[$blockName])) echo $blocks->blocks[$blockName];
     }
 }

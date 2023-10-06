@@ -10,6 +10,7 @@ return [
 	'table_types' => ['One record', 'List', 'Ordinary table', 'Catalogue'],
 	'table_names' => ['one', 'list', 'ord', 'tree'],
         'table_names_short' => ['O', 'L', 'D', 'C'],
+        'not_selected' => '-- ' . __('not selected') . ' --', // text for not selected element for select
         'aliases' => ['app' => $yy->Engine_Path,
             'core' => $yy->Engine_Path . '/core'], # алиасы префиксов путей к файлам (классам)
 	

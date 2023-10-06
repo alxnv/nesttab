@@ -6,18 +6,22 @@ use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\DB;
 
 class ColumnsModel {
-    
+    public $adapter;
 
+    public function __construct() {
+        $s = '\\Alxnv\\Nesttab\\Models\\' . config('nesttab.db_driver') . '\\ColumnsModel';
+        $this->adapter = new $s();
+        $this->adapter->init($this);
+    }
     /**
      * Returns table name and fields to show for particular column of 'select' type
      * @global \Alxnv\Nesttab\Models\type $db
      * @global \Alxnv\Nesttab\Models\type $yy
      * @param int $column_id
-     * @param int $ref_table_id
      * @param string &$table_name - returns table name from which to gather data
      * @return array - returns fields to show
      */
-    public static function getOneSelectFldNames(int $column_id, int $ref_table_id,
+    public function getOneSelectFldNames(int $column_id,
             string &$table_name) {
         global $db, $yy;
         $selectType = 10; // 'select' field type code
@@ -25,13 +29,13 @@ class ColumnsModel {
         
         $recs = $db->qlistArr("select  "
                 . " d.name as table_name, b.ordr, c.name, c.descr"
-                . " from yy_select b,"
+                . " from yy_columns a, yy_select b,"
                 . "yy_columns c, yy_tables d "
-                . "where "
-                . " c.table_id = $2"
+                . "where a.id = $1"
+                . " and c.table_id = a.ref_table"
                 . " and b.src_fld_id = $1 and b.fld_id = c.id"
-                . " and d.id = $2"
-                . " order by b.ordr", [$column_id, $ref_table_id]);
+                . " and d.id = a.ref_table"
+                . " order by b.ordr", [$column_id]);
         $id = 0;
         $i = 0;
         $ar2 = [];
@@ -44,15 +48,6 @@ class ColumnsModel {
         return $ar2;
     }
 
-    public static function getSelectData(int $table_id, array $names) {
-        global $db, $yy;
-        $ar2 = [];
-        foreach ($names as $name) {
-            $ar2[] = 'trim(' . $db->nameEscape($name) . ')';
-        }
-        $s2 = join(' + ' . config('nesttab.select_fld_delimeter') . ' + ', $ar2);
-
-    }        
     /**
      * получаем имена полей участвующих в отображении всех полей типа select данной таблицы
      * @param int $table_id - id of the table
@@ -98,6 +93,30 @@ class ColumnsModel {
     }
     
     /**
+     * Returns select values list from $table_name, with the text of fields $names,
+     *   filtered by $search_value, ordered by $names fields
+     * @param string $table_name
+     * @param array $names
+     * @param string $search_value
+     * @param bool $more
+     */
+    public function getSelectValuesList(string $table_name, array $names, 
+            string $search_value, bool &$more) {
+        global $db;
+
+        $s2 = $this->adapter->getSelectCalcField($names); 
+        $sOrder = join(', ', $names);
+        $arr = $db->qlistArr("select id, ($s2) as name from $table_name"
+                . " where ($s2) like $1 order by $sOrder", [$search_value]);
+        $ars = [];
+        foreach ($arr as $rec) {
+            $ars[] = ['id' => $rec['id'], 'text' => \yy::qs($rec['name'])];
+        }
+        $more = false;
+        return $ars;
+    }
+    
+    /**
      * Получаем начальные значения отображения полей типа select текущей записи
      *   (данные непосредственно из таблиц, на которые они ссылаются)
      * @param array $rec - запись с данными
@@ -106,7 +125,7 @@ class ColumnsModel {
      *     типа select данной таблицы
      * @return array - <id значения поля из yy_columns> => <initial value>
      */
-    public static function getSelectsInitialValues(array $rec, array $columns, array $selectFldNames) {
+    public function getSelectsInitialValues(array $rec, array $columns, array $selectFldNames) {
         global $db, $yy;
         
         $selectType = 10; // 'select' field type code
@@ -125,11 +144,8 @@ class ColumnsModel {
         $i = 1;
         foreach ($selectFldNames as $sfn) {
             if (!isset($arr4[$sfn[0]])) continue;
-            $ar2 = [];
-            foreach ($sfn[3] as $name) {
-                $ar2[] = 'trim(' . $db->nameEscape($name) . ')';
-            }
-            $s2 = join(' + ' . config('nesttab.select_fld_delimeter') . ' + ', $ar2);
+            // получаем вычисляемое поле для запроса
+            $s2 = $this->adapter->getSelectCalcField($sfn[3]); 
             $s = 's' . $i;
             $id = $arr4[$sfn[0]];
             $arr[] = "select $sfn[0] as id, $s2 as name from $sfn[2] $s"

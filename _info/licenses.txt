@@ -1,4 +1,4 @@
-laravel, laravel breeze - mit license
+laravel, laravel breeze, select2 - mit license
 -----------
 
 jquery - You are free to use a jQuery project in commercial projects as long as the copyright header is left intact.

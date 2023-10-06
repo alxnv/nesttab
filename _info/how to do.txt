@@ -3,3 +3,4 @@
  выполнить команды mysql:
  delete from yy_tables
  delete from yy_columns
+ delete from yy_select

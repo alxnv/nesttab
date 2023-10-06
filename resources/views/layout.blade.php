@@ -14,6 +14,13 @@
     <?php
     }
     ?>
+    <?php
+    if (isset($requires) && isset($requires['need_select2'])) {
+    ?>
+    <link rel="stylesheet" href="<?=asset('/nsttab/select2/select2.css')?>">
+    <?php
+    }
+    ?>
     <link rel="stylesheet" href="<?=asset('/nsttab/css/styles.css')?>">
     <?php 
     if (isset($requires) && isset($requires['need_filepond'])) {
@@ -35,6 +42,12 @@
     <?php 
     if (isset($requires) && isset($requires['need_html_editor'])) {
         echo '<script src="' . asset('/nsttab/js/ckeditor4/ckeditor.js') . '"></script>';
+    }
+    if (isset($requires) && isset($requires['need_select2'])) {
+        echo '<script src="' . asset('/nsttab/select2/select2.min.js') . '"></script>';
+        if (config('app.locale') <> 'en') {
+            echo '<script src="' . asset('/nsttab/select2/i18n/' . config('app.locale')  . '.js') . '"></script>';
+        }
     }
     ?>
     <?php 

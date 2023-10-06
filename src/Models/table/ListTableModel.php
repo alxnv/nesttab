@@ -96,6 +96,7 @@ class ListTableModel extends BasicTableModel {
         // получаем строку с id=1 для one rec table (это единственная строка там)
         global $yy;
         $page = (isset($r['page']) ? intval($r['page']) : 1); // page to return to
+        $columnsModel = new \Alxnv\Nesttab\Models\ColumnsModel();
         $columns = \Alxnv\Nesttab\Models\ColumnsModel::getTableColumnsWithNames($tbl['id']);
         // получаем имена полей участвующих в отображении всех полей типа select данной таблицы
         $selectFldNames = \Alxnv\Nesttab\Models\ColumnsModel::getSelectFldNames($tbl['id'], $columns);
@@ -117,7 +118,7 @@ class ListTableModel extends BasicTableModel {
         } else {
             $rec = \Alxnv\Nesttab\Models\ArbitraryTableModel::getOne($tbl['name'], $id3);
             // получаем текущие значения всех полей select данной записи
-            $selectsInitialValues = \Alxnv\Nesttab\Models\ColumnsModel::getSelectsInitialValues($rec, $columns, $selectFldNames);
+            $selectsInitialValues = $columnsModel->getSelectsInitialValues($rec, $columns, $selectFldNames);
         }
         $recs = $this->getRecAddObjects($columns, $rec, $requires);
         $lnk2 = \yy::getEditSession();
