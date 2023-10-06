@@ -52,6 +52,55 @@ edit, editrec - id parent_id а не parent_table
 ----
 удалять текущий элемент + весь предыдущий уровень
 ----
+в этой версии : сделать класс вывода шапки  таблицы со списком имен полей с возможностью сортировки при 
+  нажатии на имя
+-----
+later in futher versions:
+  сделать уровни доступа:
+  $db::ACCESS_NONE = 0
+  $db::ACCESS_READ = 30
+  $db::ACCESS_WRITE = 60
+  $db::ACCESS_SUPER = 255 (этот уровень доступа может быть только у 'admin')
+  
+  в программе после старта должен быть доступен $user
+   c методами и полями: $user->group
+   $user->hasAccess(int $accessLevel, string $tag, int $id)
+   в каталоге Models\nesttab может быть создан файл access.php
+    с функциями
+	makeGroups() - здесь создаются группы методами $ac->makeMainGroup($name, $id, bool $hidden = false)
+	 для main group доступен метод $group->addDefaultAccess(array $tags, $accessLevel) - он должен быть
+	   вызван для всех основных тэгов
+	 $ac->makeGroup($name, $id, $parentGroupName, bool $hidden = false)
+	  здесь $id - id вновь создаваемой группы (int)
+	  $hidden = false, то не нужно отображать в общем списке доступных для назначения групп
+	 где $ac - Access Control Object
+	 $group->setAccess(['edit', 'struct', ...], [<table_id>, ...], $accessLevel)
+	setUserAccess($userName, $user) {
+		switch ($userName) {
+		   case 'user1':
+		   $user->setAccess(array $tags /*['edit', 'struct', ...]*/, [<table_id>, ...], $accessLevel)
+		}
+	}
+	каждый объект пользователя или группы содержит список $tags[$tag_name][$table_id]
+	  каждая main group содержит также список $defaultAccess[$tag_name]
+	значениями в обоих этих списках являются (int)$accessLevel
+    методом hasAccess() проходится вверх начиная от $user и дальше по всей цепочке групп до главной
+      если в списках находится переданный id, то берется его $accessLevel
+       если нигде вплоть до main group не найдено, но найдено в $mainGroup->defaultAccess для тэга, то 	  
+	   возвращается это значение
+	  значение сравнивается с требуемым уровнем доступа, если оно >= чем он, то возвращается true
+       если нигде не найдено, возвращается false	  
+	специальной функцией создаются predefined group list
+	 в нем 
+	 'superadmin' - группа c id = 1 из одного пользователя 'admin' ему разрешен доступ ко всему
+	 'admins' (id = 2)
+	 'moderators' - группа модераторов с id = 3
+	 'users' (id = 4) - пользователя относят к этой группе, если он залогинен, но не принадлежит ни к 
+	   одной из других групп (в БД), либо он не прошел проверку на принадлежность к другой группе
+	 'guests' (id = 5) - все незалогиненные пользователи  
+	   и назначаются теми же функциями начальные права на эти группы
+-----
+
 i think, in this version:
    при добавлении component к проекту, может быть создано в таблице типа 'one' поле типа 'filedata' (hidden -
     не может быть добавлено через интерфейс nesttab)
