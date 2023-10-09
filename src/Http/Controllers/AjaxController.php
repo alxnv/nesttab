@@ -31,6 +31,7 @@ class AjaxController extends BasicController
      *   (оно проставляется как текущее значение)
      */
     public function getSelectListHtml(int $id, Request $request) {
+        global $yy;
         $columnsModel = new \Alxnv\Nesttab\Models\ColumnsModel();
         //Log::debug('req ' . print_r($request->all(), true));
         
@@ -41,10 +42,18 @@ class AjaxController extends BasicController
         }
         $page = ($request->has('page') ? intval($request->input('page')) : 1);
         $table_name = '';
+        $parameters = '';
         // Returns table name and fields to show for particular column of 'select' type
-        $names = $columnsModel->getOneSelectFldNames($id, $table_name);
+        $names = $columnsModel->getOneSelectFldNames($id, $table_name, $parameters);
         $more = false;
         $aresult = $columnsModel->getSelectValuesList($table_name, $names, $search_value, $page, $more);
+        $parm = json_decode($parameters);
+        //dd($parm);
+        if (!isset($parm->req) && ($page == 1)) {
+            // добавляем нулевой элемент
+            $aresult = array_merge([['id' => 0, 'text' =>$yy->settings2['not_selected']]],
+                    $aresult);
+        }
         $arr = ['list' => $aresult, 'more' => $more];
         //Log::debug('ajax ' . response()->json($arr));
         //var_dump(aresult);

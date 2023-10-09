@@ -112,15 +112,6 @@ class ListTableModel extends BasicTableModel {
         $rec_id = $id3; // record 'id' field value !!! todo: replace
         //$recs = \Alxnv\Nesttab\Models\TableRecsModel::getRecAddObjects($columns, $tbl['name'], 1, $requires);
         // get data from db
-        if ($id3 == 0) {
-            $rec = [];
-            $selectsInitialValues = [];
-        } else {
-            $rec = \Alxnv\Nesttab\Models\ArbitraryTableModel::getOne($tbl['name'], $id3);
-            // получаем текущие значения всех полей select данной записи
-            $selectsInitialValues = $columnsModel->getSelectsInitialValues($rec, $columns, $selectFldNames);
-        }
-        $recs = $this->getRecAddObjects($columns, $rec, $requires);
         $lnk2 = \yy::getEditSession();
         if (Session::has($lnk2)) {
             $lnk = \yy::getErrorEditSession();
@@ -131,6 +122,20 @@ class ListTableModel extends BasicTableModel {
             // проставить значения полей из сессии (бывший post) в $recs
             //$recs = \Alxnv\Nesttab\Models\TableRecsModel::setValues($recs, $r);
         }
+        if ($id3 == 0) {
+            $rec = [];
+        } else {
+            $rec = \Alxnv\Nesttab\Models\ArbitraryTableModel::getOne($tbl['name'], $id3);
+        }
+        /**
+         * Добавляем к $columns данные из БД $rec 
+         *  также добавляем соответствующие объекты типов полей к полям $columns,
+         *  преобразуем данные в формат для отображения на странице редактирования
+         * @return array - измененный $columns
+         */
+        $recs = $this->getRecAddObjects($columns, $rec, $requires, $r);
+        // получаем текущие значения всех полей select данной записи
+        $selectsInitialValues = $columnsModel->getSelectsInitialValues($rec, $recs, $selectFldNames);
         // На какую страницу возвращаться после редактирования записи, или
         //   при нажатии "Назад" на странице редактирования
         if ($id3 == 0) {

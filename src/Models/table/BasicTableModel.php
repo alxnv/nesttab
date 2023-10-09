@@ -438,8 +438,11 @@ class BasicTableModel {
      * @param array $rec - запись из БД с данными для заполнения
      * @param array $requires - сюда заносятся ключи 'need_html_editor', 'need_filepond'
      *   этой функцией, если они нужны
+     * @param array $r - request data
+     * @return array - измененный $columns
      */
-    public function getRecAddObjects(array &$columns, array $rec, array &$requires = []) {
+    public function getRecAddObjects(array &$columns, array $rec, 
+            array &$requires = [], array &$r = []) {
         global $db;
         //$tableName = $db->nameEscape($table);
         //$rec = $db->q("select * from $tableName where id=$1", [$id]);
@@ -462,6 +465,7 @@ class BasicTableModel {
                 $requires['need_filepond'] = 1;
             }
             $columns[$i]['obj'] = \Alxnv\Nesttab\Models\Factory::createFieldModel($columns[$i]['field_type'], $columns[$i]['name_field']);
+            // проставляем в $columns данные из $rec
             if (isset($rec[$columns[$i]['name']])) {
                 if (in_array($columns[$i]['name_field'], ['image', 'file'])) {
                     $columns[$i]['value_old'] = $rec[$columns[$i]['name']];
@@ -471,6 +475,17 @@ class BasicTableModel {
                 }
             } else {
                 $columns[$i]['value'] = null;
+            }
+            
+            // проставляем в $columns данные из $r
+            if (isset($r[$columns[$i]['name']])) {
+                $val2 = $r[$columns[$i]['name']];
+                if (in_array($columns[$i]['name_field'], ['image', 'file'])) {
+                    $columns[$i]['value_old'] = $val2;
+                } else {
+                    $columns[$i]['value'] = $val2;
+                    $columns[$i]['value_old'] = $val2;
+                }
             }
             $columns[$i]['obj']->convertDataForInput($columns, $i); // если нужно, то
                // преобразовываем данные из БД в данном поле

@@ -19,16 +19,18 @@ class ColumnsModel {
      * @global \Alxnv\Nesttab\Models\type $yy
      * @param int $column_id
      * @param string &$table_name - returns table name from which to gather data
+     * @param string &$parameters - returns 'parameters' field of column $column_id from
+     *    yy_columns
      * @return array - returns fields to show
      */
     public function getOneSelectFldNames(int $column_id,
-            string &$table_name) {
+            string &$table_name, string &$parameters) {
         global $db, $yy;
         $selectType = 10; // 'select' field type code
         
         
         $recs = $db->qlistArr("select  "
-                . " d.name as table_name, b.ordr, c.name, c.descr"
+                . " a.parameters, d.name as table_name, b.ordr, c.name, c.descr"
                 . " from yy_columns a, yy_select b,"
                 . "yy_columns c, yy_tables d "
                 . "where a.id = $1"
@@ -41,6 +43,7 @@ class ColumnsModel {
         $ar2 = [];
         while ($i < count($recs)) {
             $table_name = $recs[$i]['table_name'];
+            $parameters = $recs[$i]['parameters'];
             $ar2[] = $recs[$i]['name'];
             $i++;
         }
@@ -139,12 +142,14 @@ class ColumnsModel {
         
         $selectType = 10; // 'select' field type code
         $arr4 = [];
+        // индексируем $columns по полю 'name'
+        $arInd = \Alxnv\Nesttab\core\ArrayHelper::getArrayIndexes($columns, 'name');
         // проставляем в $arr4 значения <id поля> => <значение из записи этого поля>
         for ($i = 0; $i < count($columns); $i++) {
             if ($columns[$i]['field_type'] == $selectType) {
                 $name1 = $columns[$i]['name'];
-                if (isset($rec[$name1])) {
-                    $arr4[$columns[$i]['id']] = $rec[$name1];
+                if (isset($columns[$arInd[$name1]]['value'])) {
+                    $arr4[$columns[$i]['id']] = $columns[$arInd[$name1]]['value'];
                 }
             }
         }

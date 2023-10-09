@@ -11,6 +11,24 @@ use Illuminate\Support\Facades\Session;
 
 class SelectModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
     /**
+     * Проверяем на валидность значение $value, и в случае ошибки записываем ее в
+     *   $table_recs->err
+     * @param type $value
+     * @param object $table_recs (Models/table/BasicTableModel)
+     * @param string $index - индекс в массиве ошибок для записи сообщения об ошибке
+     * @param array $columns - массив всех колонок таблицы
+     * @param int $i - индекс текущего элемента в $columns
+     * @param array $r - (array)Request
+     * @return mixed - возвращает валидированное (и, возможно, обработанное) значение
+     *   текущего поля
+     */
+    public function validate($value, object $table_recs, string $index, array &$columns, int $i, array &$r) {
+        if (isset($columns[$i]['parameters']['req']) && (is_null($value) || (intval($value) == 0))) {
+            $table_recs->setErr($index, __('Select an item'));
+        }
+        return $value;
+    }
+    /**
      * пытается сохранить(изменить)  в таблице поле
      * @param array $tbl - данные о текущей таблице которой принадлежит поле
      * @param array $fld - данные о типе текущего поля из yy_col_types
@@ -79,14 +97,16 @@ class SelectModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
      */
     public function editField(array $rec, array $errors, int $table_id, int $rec_id, $r, array $selectsInitialValues) {
         global $yy;
-        echo $rec['id'];
+        //echo $rec['id'];
         $value = $rec['value'];
+        if (is_null($value)) $value = 0;
+        //echo $rec['parameters'];
         if (isset($selectsInitialValues[$rec['id']])) {
             $name = $selectsInitialValues[$rec['id']];
         } else {
             $name = $yy->settings2['not_selected'];
         }
-        var_dump($selectsInitialValues);
+        //var_dump($selectsInitialValues);
         echo '<br />';
         echo \yy::qs($rec['descr']);
         echo '<br />';
