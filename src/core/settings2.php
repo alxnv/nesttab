@@ -14,7 +14,7 @@ return [
         'not_selected' => '-- ' . __('not selected') . ' --', // text for not selected element for select
         'aliases' => ['app' => $yy->Engine_Path,
             'core' => $yy->Engine_Path . '/core'], # алиасы префиксов путей к файлам (классам)
-	
+        'extended_db_messages' => true, // выводится текст запроса к бд в случае ошибки
         'col_categories' => [ 1 => __('Basic types of fields'),
             2 => __('Additional types of fields'),
             ],

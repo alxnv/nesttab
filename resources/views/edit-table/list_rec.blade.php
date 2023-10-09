@@ -12,16 +12,10 @@ $yy->loadPhpScript(app_path() . '/Models/nesttab/tables/'
         . ucfirst($tbl['name']) . '.php');
 
 echo '<div id="main_contents">';
-
-/*$db->useStandartExceptionHandler = false;
-try {
-$db->qlistArr("select jkjl from hjhkjh");
-} catch (\Exception $e) {
-    var_dump($e->getMessage());
-}
-
- 
- $db->useStandartExceptionHandler = true;*/
+/*
+$s8=$db->qdirect("insert into temp5 values(2,2,2)", [], $db::ERROR_MODE_RETURN_ERROR);
+    var_dump($s8, $db->errorCode, $db->errorMessage);
+*/
 
 /*$contr = new \Alxnv\Nesttab\Http\Controllers\AjaxController();
 var_dump($contr->getSelectListHtml(93, request()));
