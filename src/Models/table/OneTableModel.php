@@ -18,11 +18,24 @@ class OneTableModel extends BasicTableModel {
     public function editTable(array $tbl, array $r, int $id, int $id2) {
         // получаем строку с id=1 для one rec table (это единственная строка там)
         if ($id <> 0) die('This table must be on the top level');
+
+        $columnsModel = new \Alxnv\Nesttab\Models\ColumnsModel();
         $columns = \Alxnv\Nesttab\Models\ColumnsModel::getTableColumnsWithNames($tbl['id']);
+        // получаем имена полей участвующих в отображении всех полей типа select данной таблицы
+        $selectFldNames = \Alxnv\Nesttab\Models\ColumnsModel::getSelectFldNames($tbl['id'], $columns);
         $requires = [];
-        $rec_id = 1; // record 'id' field value
-        $rec = \Alxnv\Nesttab\Models\ArbitraryTableModel::getOne($tbl['name'], 1);
-        $recs = $this->getRecAddObjects($columns, $rec, $requires);
+        $parent_table_id = $tbl['parent_tbl_id'];
+        if ($parent_table_id == 0) {
+            // top level table
+            $parent_table_rec = [];
+        } else {
+            // nested table
+        }
+        $id3 = 1;
+        //$tbl = \Alxnv\Nesttab\Models\TablesModel::getOne($id2);
+        $rec_id = $id3; // record 'id' field value !!! todo: replace
+        //$recs = \Alxnv\Nesttab\Models\TableRecsModel::getRecAddObjects($columns, $tbl['name'], 1, $requires);
+        // get data from db
         $lnk2 = \yy::getEditSession();
         if (Session::has($lnk2)) {
             $lnk = \yy::getErrorEditSession();
@@ -30,11 +43,28 @@ class OneTableModel extends BasicTableModel {
             //dd($er2);
             $r_edited = session($lnk2);
             $r = $r_edited; //\yy::addKeys($r, $r_edited);
+        }
+        if ($id3 == 0) {
+            $rec = [];
+        } else {
+            $rec = \Alxnv\Nesttab\Models\ArbitraryTableModel::getOne($tbl['name'], $id3);
+        }
+        /**
+         * Добавляем к $columns данные из БД $rec 
+         *  также добавляем соответствующие объекты типов полей к полям $columns,
+         *  преобразуем данные в формат для отображения на странице редактирования
+         * @return array - измененный $columns
+         */
+        $recs = $this->getRecAddObjects($columns, $rec, $requires, $r);
+        // получаем текущие значения всех полей select данной записи
+        $selectsInitialValues = $columnsModel->getSelectsInitialValues($rec, $recs, $selectFldNames);
+
+        if (Session::has($lnk2)) {
             // проставить значения полей из сессии (бывший post) в $recs
             $recs = $this->setValues($recs, $r);
         }
-        //dd($r);
         return view('nesttab::edit-table.one_rec', ['tbl' => $tbl, 'recs' => $recs,
+                'extra' => ['selectsInitialValues' => $selectsInitialValues],
                 'r' => $r, 'requires' => $requires, 'table_id' => $id2, 'rec_id' => $rec_id]);
         
     }

@@ -144,10 +144,14 @@ class ListTableModel extends BasicTableModel {
         } else {
             $returnToPage = $page;
         }
+        if (Session::has($lnk2)) {
+            // проставить значения полей из сессии (бывший post) в $recs
+            $recs = $this->setValues($recs, $r);
+        }
         return view('nesttab::edit-table.list_rec', ['tbl' => $tbl, 'recs' => $recs,
                 'r' => $r, 'requires' => $requires, 'table_id' => $id2, 'rec_id' => $rec_id,
                 'parent_id' => $id, 'returnToPage' => $returnToPage, 'rec' => $rec,
-                'selectFldNames' => $selectFldNames, 'selectsInitialValues' => $selectsInitialValues,
+                'extra' => ['selectsInitialValues' => $selectsInitialValues],
                 'parent_table_id' => $parent_table_id, 'parent_table_rec' => $parent_table_rec]);
         
     }

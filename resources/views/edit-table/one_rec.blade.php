@@ -45,7 +45,7 @@ foreach ($recs as $rec) {
     echo $err3;
     
     ob_start();
-    $rec['obj']->editField($rec, [], $table_id, $rec_id, $r);
+    $rec['obj']->editField($rec, [], $table_id, $rec_id, $r, $extra);
     $out1 = ob_get_contents();
     ob_end_clean();
     if (function_exists('\callbacks\onShow')) \callbacks\onShow($recs, $i, $rec['name'], true, $out1);

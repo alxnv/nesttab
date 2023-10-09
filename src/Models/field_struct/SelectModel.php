@@ -93,11 +93,13 @@ class SelectModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
      * @param int $table_id - id of the table
      * @param int $rec_id - 'id' of the record in the table
      * @param array $r - request data of redirected request
-     * @param array $selectsInitialValues - array(<id значения поля из yy_columns для полей типа select> => <initial value>)
+     * @param array $extra['selectsInitialValues' - array(<id значения поля из yy_columns для полей типа select> => <initial value>)
+     * ]
      */
-    public function editField(array $rec, array $errors, int $table_id, int $rec_id, $r, array $selectsInitialValues) {
+    public function editField(array $rec, array $errors, int $table_id, int $rec_id, $r, array $extra) {
         global $yy;
         //echo $rec['id'];
+        $selectsInitialValues = $extra['selectsInitialValues'];
         $value = $rec['value'];
         if (is_null($value)) $value = 0;
         //echo $rec['parameters'];
