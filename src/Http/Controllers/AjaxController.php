@@ -39,10 +39,12 @@ class AjaxController extends BasicController
         } else {
             $search_value = '%' . $request->input('q') . '%';
         }
+        $page = ($request->has('page') ? intval($request->input('page')) : 1);
         $table_name = '';
+        // Returns table name and fields to show for particular column of 'select' type
         $names = $columnsModel->getOneSelectFldNames($id, $table_name);
         $more = false;
-        $aresult = $columnsModel->getSelectValuesList($table_name, $names, $search_value, $more);
+        $aresult = $columnsModel->getSelectValuesList($table_name, $names, $search_value, $page, $more);
         $arr = ['list' => $aresult, 'more' => $more];
         //Log::debug('ajax ' . response()->json($arr));
         //var_dump(aresult);

@@ -10,6 +10,7 @@ return [
 	'table_types' => ['One record', 'List', 'Ordinary table', 'Catalogue'],
 	'table_names' => ['one', 'list', 'ord', 'tree'],
         'table_names_short' => ['O', 'L', 'D', 'C'],
+        'select_fld_rec_limit' => 20, // limit x,this for data ajaxed into 'select' fld
         'not_selected' => '-- ' . __('not selected') . ' --', // text for not selected element for select
         'aliases' => ['app' => $yy->Engine_Path,
             'core' => $yy->Engine_Path . '/core'], # алиасы префиксов путей к файлам (классам)

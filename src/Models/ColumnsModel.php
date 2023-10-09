@@ -101,18 +101,27 @@ class ColumnsModel {
      * @param bool $more
      */
     public function getSelectValuesList(string $table_name, array $names, 
-            string $search_value, bool &$more) {
-        global $db;
+            string $search_value, int $page, bool &$more) {
+        global $db, $yy;
 
         $s2 = $this->adapter->getSelectCalcField($names); 
         $sOrder = join(', ', $names);
+        $limit = $yy->settings2['select_fld_rec_limit'];
+        $limit2 = $limit + 1;
+        $offset = ($page - 1) * $limit;
+        
         $arr = $db->qlistArr("select id, ($s2) as name from $table_name"
-                . " where ($s2) like $1 order by $sOrder", [$search_value]);
+                . " where ($s2) like $1 order by $sOrder limit $offset, $limit2", [$search_value]);
         $ars = [];
         foreach ($arr as $rec) {
             $ars[] = ['id' => $rec['id'], 'text' => \yy::qs($rec['name'])];
         }
         $more = false;
+        if (count($ars) == $limit + 1) {
+            // not the end of data set
+            $more = true;
+            array_pop($ars); // delete the last element of array
+        } 
         return $ars;
     }
     
