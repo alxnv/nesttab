@@ -10,6 +10,19 @@ use Illuminate\Support\Facades\DB;
 
 class EditController extends BasicController {
     /**
+     * Перемещение записи (изменение ordr) для L
+     * @param int $id - table id
+     * @param int $id2 - record id
+     * @param int $id3 - new ordr value
+     * @param int $id4 - page to return to (maybe)
+     */
+    public function move(int $id, int $id2, int $id3, int $id4) {
+        // вызываем модель тип L, moveRec()
+        $type = \Alxnv\Nesttab\core\TableHelper::getTableTypeByOneChar('L');
+        $tableModel = \Alxnv\Nesttab\Models\Factory::createTableModel($type);
+        return $tableModel->moveRec($id, $id2, $id3, $id4);
+    }
+    /**
      * Редактриование содержимого таблицы с идентификатором id
      * @global type $db
      * @global type $yy

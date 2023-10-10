@@ -10,7 +10,7 @@
  * Структура папки upload:
  * 
  * n подпапок с номерами 1..n, где n>=0
- * файл counter.txt - содержит чилсло n в текстовом виде
+ * файл .counter - содержит чилсло n в текстовом виде
  * папка temp - в нее загружаются временные файлы
  * !!! папка upload и все ее подпапки должно стоять разрешение на запись
  * 
@@ -116,7 +116,7 @@ class UploadModel {
                     $k . '/' . $filename[0];
                 if (!\Alxnv\Nesttab\core\FileHelper::numberOfFilesInDirLessThen(public_path() .
                         '/upload/' . $k, $n + 2)) {
-                    // если в директории больше файлов чем число в upload/counter.txt,
+                    // если в директории больше файлов чем число в upload/.counter,
                     //  то новая попытка, туда не пишем
                     $tries++;
                     continue;
@@ -215,7 +215,7 @@ class UploadModel {
      * @return int - новое количество цифровых директорий в папке upload
      */
     public function increaseCounter() {
-        $s = public_path() . '/upload/counter.txt';
+        $s = public_path() . '/upload/.counter';
         $ms = 300;
         $t = microtime(true);
         do {
@@ -228,11 +228,11 @@ class UploadModel {
             if ($fp === false) usleep(10000); // сон 0.01 секунды
         } while (microtime(true) - $t < ($ms/1000));
         
-        if ($fp === false) \yy::gotoErrorPage ('Error opening upload/counter.txt');
+        if ($fp === false) \yy::gotoErrorPage ('Error opening upload/.counter');
         if (flock($fp, LOCK_EX)) { // exclusive lock
             if (($data = fread($fp, 100)) !== false) {
                 if (!ftruncate($fp, 0)) {
-                    \yy::gotoErrorPage ('Error truncating upload/counter.txt');
+                    \yy::gotoErrorPage ('Error truncating upload/.counter');
                 }
                 fseek($fp, 0);
                 $n = intval($data) + 1;
@@ -248,24 +248,24 @@ class UploadModel {
         }
         fclose($fp);
         if ($data === false) {
-            \yy::gotoErrorPage ('Error writing to upload/counter.txt');
+            \yy::gotoErrorPage ('Error writing to upload/.counter');
         }
         return $n;
     }
     
     /**
-     * Получить содержимое файла upload/counter.txt
+     * Получить содержимое файла upload/.counter
      * @return string - содержимое файла
      */
     public static function getCounterFile() {
-        $s = public_path() . '/upload/counter.txt';
+        $s = public_path() . '/upload/.counter';
         $s2 = \Alxnv\Nesttab\core\FileHelper::readLocked($s);
         if ($s2 === false) {
             \Alxnv\Nesttab\core\FileHelper::createNewFileAndWriteString($s, '0');
             $s2 = \Alxnv\Nesttab\core\FileHelper::readLocked($s);
         }
         if ($s2 === false) {
-            \yy::gotoErrorPage('Error writing file upload/counter.txt');
+            \yy::gotoErrorPage('Error writing file upload/.counter');
         }
         return $s2;
         

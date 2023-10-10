@@ -307,14 +307,60 @@ class BasicDbNesttab {
     }
 
     /**
-            выполняет запрос и возвращает одну строчку с полученным объектом из строки
-            @return array (или null если 0 записей)
+    выполняет запрос и возвращает одну строчку с полученным объектом из строки
+    * @param string $s - строка запроса, в ней могут быть параметры вида $1,...
+    * @param array $params - параметры, если есть
+    * @param int $errorMode - temporary set errorMode for this call
+    * @return object (или null если 0 записей)
     */
-    function qobj($s, $params =[]) {
-        $sth = $this->handle->prepare(\yy::dbEscape($s, $params));
-        $sth->execute();
+    function qobj($s, $params = [], int $errorMode = null) {
+        global $yy;
+        if (!is_null($errorMode)) {
+            $errorMode2 = $errorMode;
+        } else {
+            $errorMode2 = $this->errorMode;
+        }
         
-        //$sth=$this->qdirect($s, $params);
+        $this->setExceptionReturnValues(0, '');
+        $this->isDbException = false;
+        try {
+            $s5 = \yy::dbEscape($s, $params);
+        } catch (\Exception $e) {
+            $message = $e->getMessage();
+            $code = static::BAD_DBESCAPE_PARAMS;
+            if ($errorMode2 == static::ERROR_MODE_GOTO_PAGE) {
+                \yy::gotoErrorPage(sprintf ("Error %s\n",  $message));
+            } else {
+                $this->setExceptionReturnValues($code, $message);
+                if ($errorMode2 == static::ERROR_MODE_EXCEPTION) {
+                    throw new \Exception($message, $code); // rethrow the exception
+                }
+            }
+            
+        }
+        
+        try {
+        $sth = $this->handle->query($s5);
+        } catch (\Exception $e) {
+            $message = $e->getMessage();
+            if ($yy->settings2['extended_db_messages']) {
+                $message = (\yy::dbEscape($s, $params) . chr(13) . chr(10) . 
+                    $message);
+            }
+            if ($errorMode2 == static::ERROR_MODE_GOTO_PAGE) {
+                \yy::gotoErrorPage(sprintf ("Error %s\n",  $message));
+            } else {
+                $this->setExceptionReturnValues($e->getCode(), $message);
+                if ($errorMode2 == static::ERROR_MODE_EXCEPTION) {
+                    $this->isDbException = true;
+                    throw new \Exception($message, 1, $e); // rethrow the exception
+                } else {
+                    // just return, error is set
+                    return [];
+                }
+            }
+        }
+
         $f = $sth->fetchObject();
         return ($f ? $f : null);
     }

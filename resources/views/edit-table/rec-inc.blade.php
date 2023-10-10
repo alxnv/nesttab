@@ -5,6 +5,7 @@
  *  - выводит поле 'edit' для редактирования позиции, куда переместить запись,
  *     кнопку "Переместить" для начала перемещения, и кнопку "Удалить" для удаления
  *     этой записи
+ * @param $returnToPage - номер страницы вывода записи в списке
  * 
  * input values:
  *   $fld['ordr']
@@ -73,7 +74,7 @@ const TableElt = {
         },
         onMove: function() {
             location.href=baseUrl + '/editrec/move/<?=$tbl['id']?>/'
-                + this.id + '/moveto/' + this.moveto;
+                + this.id + '/' + this.moveto + '/<?=$returnToPage?>';
             
         },
   },

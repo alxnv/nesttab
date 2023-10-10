@@ -44,6 +44,8 @@ class ListTableAdapterModel  extends BasicTableAdapterModel {
 
 
         // выполняем дополнительные команды
+        // todo: если есть parent table, то вместо этого
+        //   делать индекс по parent_id, ordr
         $arr_commands = [
                     "alter table $table_name add key(ordr)",
                     ];

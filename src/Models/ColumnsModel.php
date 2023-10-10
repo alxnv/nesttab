@@ -102,6 +102,8 @@ class ColumnsModel {
      * @param array $names
      * @param string $search_value
      * @param bool $more
+     * 
+     * developer comments: for this method I think error interception is not needed
      */
     public function getSelectValuesList(string $table_name, array $names, 
             string $search_value, int $page, bool &$more) {
@@ -135,13 +137,18 @@ class ColumnsModel {
      * @param array $columns - колонки текущей таблицы
      * @param array $selectFldNames - имена полей участвующих в отображении всех полей
      *     типа select данной таблицы
+     * @param string &$retError - в эту переменную метод возвращает '', если не было
+     *    ошибок при выполнении запроса к БД (если все таблицы и поля заданные в 
+     *      запросе существуют), или сообщение обо ошибке
      * @return array - <id значения поля из yy_columns> => <initial value>
      */
-    public function getSelectsInitialValues(array $rec, array $columns, array $selectFldNames) {
+    public function getSelectsInitialValues(array $rec, array $columns, array $selectFldNames,
+            string &$retError) {
         global $db, $yy;
         
         $selectType = 10; // 'select' field type code
         $arr4 = [];
+        $retError = '';
         // индексируем $columns по полю 'name'
         $arInd = \Alxnv\Nesttab\core\ArrayHelper::getArrayIndexes($columns, 'name');
         // проставляем в $arr4 значения <id поля> => <значение из записи этого поля>
@@ -170,7 +177,11 @@ class ColumnsModel {
             $initValues = [];
         } else {
             $s3 = join(' UNION ', $arr);
-            $initValues = $db->qlistArr($s3);
+            $initValues = $db->qlistArr($s3, [], $db::ERROR_MODE_RETURN_ERROR);
+            if ($db->errorCode <> 0) {
+                $retError = __("Error getting 'select' type fields values. Some tables or fields do not exist");
+                return [];
+            }
         }
         $arr7 = [];
         foreach ($initValues as $rec1) {

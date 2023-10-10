@@ -22,6 +22,7 @@ if (Session::has($lnk_err)) {
     //if (count($e->err) > 0 ) dd($e);
 }
 echo \yy::getSuccessOrErrorMessage($r, $e);
+if ($errorMsg <>'') $e->setErr('', $errorMsg);
 $err3 = $e->getErr('');
 echo $err3;
 
@@ -30,7 +31,7 @@ $title = '<h1>' . \yy::qs($tbl['descr']) . '</h1><br />';
 echo $title;
 
 //dd($recs);
-echo '<br /><p class="center"><a class="addfield" href="' . $yy->nurl . 'editrec/' 
+if ($errorMsg == '') echo '<br /><p class="center"><a class="addfield" href="' . $yy->nurl . 'editrec/' 
         . $parent_id . '/' . $tbl['id'] . '/0">' . __('Add record') . '</a>'
         . '</p>';
 echo '<br /><div id="idt" class="table center2 div-table">';
@@ -56,5 +57,7 @@ foreach ($recs as $rec) {
 echo '</div>';
 ?>
 <br />
-{{ $recs->links() }}
+<?php
+if (!is_array($recs)) echo $recs->links();
+?>
 @endsection

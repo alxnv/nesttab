@@ -10,7 +10,49 @@ use Illuminate\Support\Facades\DB;
 
 class ListTableModel extends BasicTableModel {
     /**
-     * can the name of the field be changed
+     * Перемещение записи (изменение ordr) для L
+     * @param int $tableId - table id
+     * @param int $recId - record id
+     * @param int $newOrdr - new ordr value
+     * @param int $page - page to return to (maybe)
+     */
+    public function moveRec(int $tableId, int $recId, int $newOrdr, int $page) {
+        global $yy;
+        if ($recId == 0) {
+            die('can not move record with id 0');
+        }
+        $tbl = \Alxnv\Nesttab\Models\TablesModel::getOne($tableId);
+        $rec = \Alxnv\Nesttab\Models\ArbitraryTableModel::getOne($tbl['name'], $recId);
+        $parentId = (isset($rec['parent_id']) ? $rec['parent_id'] : 0);
+        $aModel = new \Alxnv\Nesttab\Models\ArbitraryTableModel();
+        $aModel->adapter->move($tbl['name'], $rec, $newOrdr, $parentId);
+        $page2 = $this->getMovePage($page);
+        \yy::redirectNow($yy->nurl . 'edit/' . $parentId . '/' . $tbl['id'] 
+                    . '?page=' . $page2);
+        exit;
+    }
+    
+    /**
+     * 
+     * @param array $tbl - table data
+     * @param array $rec - current record data
+     * @param int $newOrdr - new value of 'ordr' field
+     * @param int $parentId - if it is 0, its a top level, otherwise its parent_id value
+     */
+    public function moveRecPhys(array $tbl, array $rec, int $newOrdr, int $parentId) {
+        
+    }
+    
+    /**
+     * get the page to return for 'move' action
+     * @param int $page
+     * @return int
+     */
+    public function getMovePage(int $page) {
+        return 1;
+    }
+    /**
+     * can the name of the field be changed?
      * @param string $name
      * @return boolean
      */
@@ -134,8 +176,9 @@ class ListTableModel extends BasicTableModel {
          * @return array - измененный $columns
          */
         $recs = $this->getRecAddObjects($columns, $rec, $requires, $r);
+        $errorMsg = '';
         // получаем текущие значения всех полей select данной записи
-        $selectsInitialValues = $columnsModel->getSelectsInitialValues($rec, $recs, $selectFldNames);
+        $selectsInitialValues = $columnsModel->getSelectsInitialValues($rec, $recs, $selectFldNames, $errorMsg);
         // На какую страницу возвращаться после редактирования записи, или
         //   при нажатии "Назад" на странице редактирования
         if ($id3 == 0) {
@@ -152,6 +195,7 @@ class ListTableModel extends BasicTableModel {
                 'r' => $r, 'requires' => $requires, 'table_id' => $id2, 'rec_id' => $rec_id,
                 'parent_id' => $id, 'returnToPage' => $returnToPage, 'rec' => $rec,
                 'extra' => ['selectsInitialValues' => $selectsInitialValues],
+                'errorMsg' => $errorMsg,
                 'parent_table_id' => $parent_table_id, 'parent_table_rec' => $parent_table_rec]);
         
     }
@@ -209,10 +253,16 @@ class ListTableModel extends BasicTableModel {
         //$columns = \Alxnv\Nesttab\Models\ColumnsModel::getTableColumnsWithNames($tbl['id']);
         $requires = [];
         $parent_table_id = $tbl['parent_tbl_id'];
+        $errorMsg = '';
         if ($parent_table_id == 0) {
             // top level table
             $parent_table_rec = [];
-            $recs = DB::table($tbl['name'])->paginate($yy->settings2['recs_per_page']);
+            try {
+                $recs = DB::table($tbl['name'])->orderBy('ordr')->paginate($yy->settings2['recs_per_page']);
+            } catch (\Exception $e) {
+                $recs = [];
+                $errorMsg = sprintf(__('Table %s does not exist'), $tbl['name']);
+            }
         } else {
             // nested table
         }
@@ -233,6 +283,7 @@ class ListTableModel extends BasicTableModel {
         return view('nesttab::edit-table.list', ['tbl' => $tbl, 'recs' => $recs,
                 'r' => $r, 'requires' => $requires, 'table_id' => $id2, 'rec_id' => $rec_id,
                 'parent_id' => $id,
+                'errorMsg' => $errorMsg,
                 'parent_table_id' => $parent_table_id, 'parent_table_rec' => $parent_table_rec]);
         
     }

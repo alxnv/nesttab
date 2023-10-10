@@ -39,6 +39,11 @@ if (Session::has($lnk_err)) {
     //if (count($e->err) > 0 ) dd($e);
 }
 echo \yy::getSuccessOrErrorMessage($r, $e);
+$formNoSubmit = false; // запретить отправку формы
+if ($errorMsg <> '') {
+    $e->setErr('', $errorMsg);
+    $formNoSubmit = true;
+}
 $err3 = $e->getErr('');
 if (function_exists('\callbacks\onShow')) \callbacks\onShow($recs, -2, '', false, $err3);
 echo $err3;
@@ -55,7 +60,7 @@ echo $title;
 @include('nesttab::edit-table.rec-inc')
 <?php
 
-echo '<form enctype="multipart/form-data" method="post" action="' . $yy->baseurl . config('nesttab.nurl') . '/editrec/save/' . $parent_id .
+if (!$formNoSubmit) echo '<form enctype="multipart/form-data" method="post" action="' . $yy->baseurl . config('nesttab.nurl') . '/editrec/save/' . $parent_id .
         '/' . $table_id. '/' . $rec_id . '" >';
 ?>
 @csrf
@@ -86,9 +91,11 @@ if (count($recs) > 0) {
     $footer = '<input type="submit" value="' . __('Save') . '" />';
 }
 if (function_exists('\callbacks\onShow')) \callbacks\onShow($recs, -1, '$', true, $footer);
-echo $footer;
-
-echo '</form></div>';
+if (!$formNoSubmit) {
+    echo $footer;
+    echo '</form>';
+}
+echo '</div>';
 ?>
 <div id="error_div"></div>
 @endsection

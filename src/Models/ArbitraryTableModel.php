@@ -9,6 +9,13 @@ namespace Alxnv\Nesttab\Models;
 
 class ArbitraryTableModel {
 
+    public $adapter;
+
+    public function __construct() {
+        $s = '\\Alxnv\\Nesttab\\Models\\' . config('nesttab.db_driver') . '\\ArbitraryTableModel';
+        $this->adapter = new $s();
+        $this->adapter->init($this);
+    }
     /**
      * Возвращает все таблицы верхнего уровня
      * @global type $yy
@@ -39,7 +46,8 @@ class ArbitraryTableModel {
                 
         return $list;
     }
-    
+    */
+
     /**
      * получить содержимое таблицы
      *  в случае ошибки перейти на страницу с ошибкой
