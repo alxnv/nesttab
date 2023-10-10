@@ -31,11 +31,12 @@ class ColumnsModel {
         
         $recs = $db->qlistArr("select  "
                 . " a.parameters, d.name as table_name, b.ordr, c.name, c.descr"
-                . " from yy_columns a, yy_select b,"
+                . " from yy_columns a, yy_ref b,"
                 . "yy_columns c, yy_tables d "
                 . "where a.id = $1"
                 . " and c.table_id = a.ref_table"
-                . " and b.src_fld_id = $1 and b.fld_id = c.id"
+                . " and b.is_table = 0"
+                . " and b.src_id = $1 and b.fld_id = c.id"
                 . " and d.id = a.ref_table"
                 . " order by b.ordr", [$column_id]);
         $id = 0;
@@ -71,11 +72,12 @@ class ColumnsModel {
         
         $recs = $db->qlistArr("select a.id as src_column_id, "
                 . " a.ref_table, d.name as table_name, b.ordr, c.name, c.descr"
-                . " from yy_columns a, yy_select b,"
+                . " from yy_columns a, yy_ref b,"
                 . "yy_columns c, yy_tables d "
                 . "where a.table_id = $1 and a.field_type = $2 "
                 . " and a.ref_table = c.table_id"
-                . " and b.src_fld_id = a.id and b.fld_id = c.id"
+                . " and b.is_table = 0"
+                . " and b.src_id = a.id and b.fld_id = c.id"
                 . " and a.ref_table = d.id"
                 . " order by a.id, b.ordr", [$table_id, $selectType]);
         $id = 0;

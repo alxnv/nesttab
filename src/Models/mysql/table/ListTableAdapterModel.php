@@ -79,30 +79,34 @@ class ListTableAdapterModel  extends BasicTableAdapterModel {
      * @param array $arrValues - values to insert into db
      * @param array $parentTableRec - parent table record (or empty array if
      *    its a top level table)
-     * @return boolean
+     * @return string - '' if there is no error, or error message otherwise
      */
     public function insert(string $tbl_name, array $arrValues, array $parentTableRec, &$id) {
 
         global $db;
-        $where = '';
+        $where = ''; // todo: устанвить его в другое значение для таблиц с parent_id
         $arr2 = $this->addSaveValues($arrValues, $parentTableRec, $where);
         
+        $error = '';
         
         if (!$db->qdirectNoErrorMessage("lock tables $tbl_name write")){
-            $this->tableObj->setErr('', __('The table does not exist'));
+            $error = __('The table does not exist');
             $db->qdirect("unlock tables");
-            return false;
         }
-        $obj = $db->qobj("select max(ordr) as mx from $tbl_name $where");
-        $n2 = ($obj ? $obj->mx : 0) + 1;
-        $arr2['ordr'] = $n2;
-        if (!$db->insert($tbl_name, $arr2)) {
-            $this->tableObj->setErr('', __('Error modifying table'));
+        if ($error == '') {
+            $obj = $db->qobj("select max(ordr) as mx from $tbl_name $where");
+            $n2 = ($obj ? $obj->mx : 0) + 1;
+            $arr2['ordr'] = $n2;
+            if (($error = $db->insert($tbl_name, $arr2)) <> '') {
+                $db->qdirect("unlock tables");
+            }
+        }
+        if ($error == '') {
+            $id = $db->handle->lastInsertId();
             $db->qdirect("unlock tables");
-            return false;
+            return '';
+        } else {
+            return $error;
         }
-        $id = $db->handle->lastInsertId();
-        $db->qdirect("unlock tables");
-        return true;
     }
 }

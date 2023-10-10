@@ -16,6 +16,8 @@ $s = \Alxnv\Nesttab\core\Helper::table_types($tt);
 
 echo __('Table type') . ': ' . \yy::qs($s) . '</h1>';
 
+echo '</br /><p class="center"><a href="' . $yy->nurl . 'struct-table-show-settings/' . $tbl_id .'">'
+         . __('Table settings') . '</a></p>';
 
 echo '<br /><p class="center"><a class="addfield" href="' . $yy->nurl . 'struct-table-edit-field/index/' . $tbl_id . '/' . $prev_link . '">' . __('Add field') . '</a>'
         . '</p>';

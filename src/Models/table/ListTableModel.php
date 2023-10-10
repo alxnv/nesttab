@@ -9,6 +9,35 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
 
 class ListTableModel extends BasicTableModel {
+
+    /**
+     * Возвращает типы полей, которые можно использовать для отображения
+     *   таблицы записей в 'edit/'
+     * @return type
+     */
+    public function possibleFieldTypesToViewAsTable() {
+        return [1,2,3,6,7,8,9,10];
+    }
+    /**
+     * Show settings of particular table
+     *   this BasicTableModel method called for O, C
+     * @param array $tbl - table info data
+     * @param int $id - id of the table
+     */
+    public function showSettings(array $tbl, int $id) {
+        $recCnt = \Alxnv\Nesttab\Models\ArbitraryTableModel::getCount($tbl['name']);
+        return view('nesttab::table-settings.list', ['tbl' => $tbl, 'id' => $id,
+            'recCnt' => $recCnt,
+            'fieldModel' => $this]);
+    }
+    /**
+     *  получаем встроенные типы полей для данного типа таблицы
+     */
+    public function builtInFieldsForView() {
+        return [['id' => -1, 'name' => __('Ordinal number')],
+            ['id' => -2, 'name' => 'ID']];
+    }
+    
     /**
      * Перемещение записи (изменение ordr) для L
      * @param int $tableId - table id
@@ -32,16 +61,6 @@ class ListTableModel extends BasicTableModel {
         exit;
     }
     
-    /**
-     * 
-     * @param array $tbl - table data
-     * @param array $rec - current record data
-     * @param int $newOrdr - new value of 'ordr' field
-     * @param int $parentId - if it is 0, its a top level, otherwise its parent_id value
-     */
-    public function moveRecPhys(array $tbl, array $rec, int $newOrdr, int $parentId) {
-        
-    }
     
     /**
      * get the page to return for 'move' action
@@ -345,7 +364,7 @@ class ListTableModel extends BasicTableModel {
      */
     public function save(array &$columns, array $tbl, int $id, array &$r) {
         //$this->setErr('', 'fdsafd');
-        global $yy;
+        global $yy, $db;
         $yy->loadPhpScript(app_path() . '/Models/nesttab/tables/' 
             . ucfirst($tbl['name']) . '.php');
         // get old values for image and file field types
@@ -385,59 +404,17 @@ class ListTableModel extends BasicTableModel {
             // ошибок нет. записываем данные в БД
             $this->postProcess1($columns, $r); // постпроцессинг для всех типов данных
                // кроме image, file
-            $b = $this->saveToDB($tbl, $columns, $id);
-            if ($b) {
+            $yy->settings2['extended_db_messages'] = false; // short error messages
+            $error = $this->saveToDB($tbl, $columns, $id);
+            if ($error == '') {
                 // если основные поля сохранены без ошибок
                 $this->postProcess($columns, $r); // записываем загруженные документы и изображения
                 // ошибок нет. записываем данные в БД
                 $this->saveToDBFiles($tbl, $columns, $id);
-            } else {
-                // todo - в случае если было нарушение (дублирование) ключа, здесь обрабатываем
-                //  и возвращаем ошибку
             }
-            $this->afterDataSaved($b, $columns); // вызываем коллбэк после сохранения
+            $this->afterDataSaved($error, $id, $columns); // вызываем коллбэк после сохранения
               // данных или ошибки сохранения
         }
-    }
-    /**
-     * Записываем данные в БД
-     * @param array $tbl - массив с данными о таблице
-     * @param array $columns - массив с данными полей таблицы и их значениями
-     */
-    public function saveToDB(array $tbl, array $columns, int &$id) {
-        global $db;
-        $arr = [];
-        // определяем, какие данные записывать (кроме полей типа image и file
-        for ($i = 0; $i < count($columns); $i++) {
-            // $columns[$i]['name_field'] - тип поля
-            if (isset($columns[$i]['value']) 
-                    && !in_array($columns[$i]['name_field'], ['image', 'file'])) {
-                // if set $columns[$i]['value_for_db'], save it, or value
-                $arr[$columns[$i]['name']] = $columns[$i]['value'];
-            }
-            if (isset($columns[$i]['value_for_db']) 
-                    && !in_array($columns[$i]['name_field'], ['image', 'file'])) {
-                // if set $columns[$i]['value_for_db'], save it, or value
-                $arr[$columns[$i]['name']] = $columns[$i]['value_for_db'];
-            }
-        }
-        
-        if (count($arr) > 0) {
-            if ($id == 0) {
-                // new record
-                $parentTableRec = []; // todo: determine this record
-                $id5 = 0;
-                $res = $this->adapter->insert($tbl['name'], $arr, $parentTableRec, $id5);
-                if ($res) {
-                    $id = $id5;
-                }
-                return $res;
-            } else {
-                $db->update($tbl['name'], $arr, "where id=" . $id);
-                return ($db->errorCode == 0);
-            }
-        }
-        return true;
     }
 
     

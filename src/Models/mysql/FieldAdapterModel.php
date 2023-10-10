@@ -17,7 +17,7 @@ class FieldAdapterModel {
     }
     
     /**
-     * пытаемся сохранить данные о полях вывода поля типа select в yy_select
+     * пытаемся сохранить данные о полях вывода поля типа select в yy_ref
      * @param array $tbl - данные о текущей таблице которой принадлежит поле
      * @param array $fld - данные о типе текущего поля из yy_col_types
      * @param array $r - Request
@@ -28,7 +28,7 @@ class FieldAdapterModel {
             int $link_table_id) {
         // $r['id'] - id поля из yy_columns
         global $db, $yy;
-        $db->qdirect('lock tables yy_select write, yy_columns read');
+        $db->qdirect('lock tables yy_ref write, yy_columns read');
         $arr = [];
         foreach ($r['flds'] as $value) {
             $arr[] = intval($value);
@@ -40,16 +40,16 @@ class FieldAdapterModel {
         if (count($col_flds) == 0) {
             $this->fs->setErr('', __('Choose at least one field'));
         } else {
-            $db->qdirect('delete from yy_select where src_fld_id = $1',
+            $db->qdirect('delete from yy_ref where is_table = 0 and src_id = $1',
                     [$r['id']]);
             $ar3 = [];
             $i = 1;
             foreach ($arr as $value) {
-                $ar3[] = '(' . $r['id']. ', ' . $i . ', ' . $value . ')';
+                $ar3[] = '(0, ' . $r['id']. ', ' . $i . ', ' . $value . ')';
                 $i++;
             }
             $s2 = join(', ', $ar3);
-            $db->qdirect("insert into yy_select (src_fld_id, ordr, fld_id) values $s2");
+            $db->qdirect("insert into yy_ref (is_table, src_id, ordr, fld_id) values $s2");
         }
         
         $db->qdirectNoErrorMessage('unlock tables');

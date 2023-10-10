@@ -80,7 +80,7 @@ class SelectModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
         $err = parent::delete($column, $fld, $tbl, $r);
         
         if ($err == '') {
-            $db->qdirect("delete from yy_select where src_fld_id = $1", [$column['id']]);
+            $db->qdirect("delete from yy_ref where is_table = 0 and src_id = $1", [$column['id']]);
         }
         
         return $err;
@@ -112,7 +112,7 @@ class SelectModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
         echo '<br />';
         echo \yy::qs($rec['descr']);
         echo '<br />';
-        echo '<br />';
+        //echo '<br />';
         echo '<select class="select2" id="f_' . $rec['name'] . '"'
                 . ' name="' . $rec['name'] . '" >';
         echo '<option selected value="' . $value . '">' . \yy::qs($name);
@@ -161,7 +161,7 @@ class SelectModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
      */
     public function getSelectData($fld_id) {
         global $db, $yy;
-        $arr = $db->qlistArr("select * from yy_select where src_fld_id = $1 "
+        $arr = $db->qlistArr("select * from yy_ref where is_table = 0 and src_id = $1 "
                 . " order by ordr", [$fld_id]);
         $ar2 = [];
         foreach ($arr as $rec) {

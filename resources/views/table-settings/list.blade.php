@@ -1,0 +1,188 @@
+<?php
+global $yy;
+?>
+@extends(config('nesttab.layout'))
+@section('content')
+<?php
+
+echo '<div id="main_contents">'; // div с основным содержимым страницы
+echo  '<p><a href="' . $yy->baseurl . config('nesttab.nurl') . '/struct-change-table/edit/' . $tbl['id'] . '">Назад</a><br /><br /></p>';
+
+$e = new \Alxnv\Nesttab\Models\ErrorModel();
+$lnk_err = \yy::getErrorEditSession();
+if (Session::has($lnk_err)) {
+    $e->err = session($lnk_err);
+    //if (count($e->err) > 0 ) dd($e);
+}
+echo \yy::getSuccessOrErrorMessage([], $e);
+
+echo '<h1 class="center">' . __('Settings of the table') . ' "' . \yy::qs($tbl['descr']) . '" (' .
+        __('physical name') . ': ' . \yy::qs($tbl['name']) .')<br /><br />';
+$tt = $tbl['table_type'];
+$s = \Alxnv\Nesttab\core\Helper::table_types($tt);
+
+echo __('Table type') . ': ' . \yy::qs($s) . '</h1>';
+
+
+
+if (is_null($recCnt)) {
+    echo '<div class="error">' . __('Error accessing table') . '</div>';
+} else {
+    echo '<br />' . __('Number of records in the table') . ': ' . $recCnt;
+}
+
+/**
+ * редактирование набора отображаемых в виде таблицы полей
+ * 
+ * если isset($r['is_error']), то произошел возврат к редактированию с ошибкой
+ * $r['params'] отображаются в $r
+ * $r['id'] - id поля
+
+ *  */
+global $yy, $db;
+
+$sFldList = '';
+// редактируем существующую запись
+if ($e->hasErr()) {
+    $flds = (isset($r['flds']) ? $r['flds'] : []);
+} else {
+    $flds = $fieldModel->getViewAsTableData($tbl['id']);
+}
+$sFldList = $fieldModel->getPossibleFieldsToViewAsTable($tbl);
+
+//var_dump($sFldList);
+$visibleTable = true; //((count($flds) > 0) ? 1 : 0);
+?>
+<script>
+    var fld_list = <?=json_encode($sFldList)?>; // новая запись для параметров
+     // трансформации (добавляется по нажатию кнопки "+"
+    var _this;
+    var baseUrl = '<?=asset('/' . config('nesttab.nurl'))?>';
+</script>
+
+<?php
+$requires['need_confirm'] = 1;
+
+echo '<form method="post" action="' . $yy->baseurl . config('nesttab.nurl') . '/struct-table-settings/save/' . $tbl['id'] .
+        '"><div class="align-left">';
+//$controller->render_partial(['r' => $r], 'all', 'all-fields');
+?>
+@csrf
+<div id="app">
+<?php
+
+echo $e->getErr('');
+?>
+<br /><div v-show="visible">
+    <table class="table">
+        <tr><th><?=__('Fields to show')?></th></tr>
+        <tr><td>
+            <div class="plus_button_small"><input type="button" value="+" @click="add(-1)" /></div>
+            </td></tr>
+        <tr v-for="(field, index) in recs">
+                <td>
+                    <div v-html="field.err"></div>
+                    <div class="minus_button_small"><input type="button" value="-" @click="del(index)" /></div>
+                    <select v-model="field.vl" name="flds[]">
+                        <option v-for="fld in field.flds" :value="fld.id">@{{ fld.name }}
+                    </select>
+                    <div class="plus_button_small"><input type="button" value="+" @click="add(index)" /></div>
+                </td>
+            </tr>
+    </table>    
+<br />
+</div>
+    
+
+</div>
+<br />
+<p align="left">
+<input type="submit" value="<?=__('Save')?>" />
+</p>
+<?php
+echo '</div>';
+echo '</form>';
+?>
+<script>
+function confirm_del_param(index) {
+    $.confirm({
+        useBootstrap: false,
+        content: __lang('Do you really want to delete this element?'),
+        title: '',
+        backgroundDismiss: true,
+        index: index,
+     buttons: {
+            yes: {
+                text: __lang('Yes'),
+                action: function(){
+                    _this.delete2(this.index);
+                    return true;
+                    }               
+            },
+            no: {
+                text: __lang('No'),
+                action: function(){
+                    return true;
+                }
+            }
+        }
+    });
+}
+    
+const app = Vue.createApp({
+  data() {
+    return {
+      visible: <?=$visibleTable?>,  
+      recs: [
+<?php
+for ($i = 0; $i < count($flds); $i++) {
+    $id1 = $flds[$i];
+    echo "{
+        flds: fld_list,
+        vl: " . $id1 . ",
+        err: " . '"' . \yy::jsmstr($e->getErr('flds' . $id1)) . '"' .  "   },
+            "; 
+}
+?>
+    ],
+    }
+  },
+  methods: {
+    select_item() {
+      // alert(document.getElementById("hidden").value); - нормально отображается
+        /* _this = this;  
+        exec_ajax_json(baseUrl +'/ajax_flds_for_select/' + this.tables_index, {},
+          function (data) {
+              //alert(data[0].arr[0].name);
+              let v = (data[0].arr.length == 0 ? 0 : data[0].arr[0].id); 
+              fld_list = data[0].arr;
+              _this.recs.splice(0, 1000000, {vl:v, flds: data[0].arr, err:''});
+              _this.visible = 1;
+          });*/
+
+    },
+    add(index) {
+      if (true) {
+        let v = (fld_list.length == 0 ? 0 : fld_list[0].id);
+        this.recs.splice(index + 1, 0, {vl:v, flds: fld_list, err:''});
+      }
+    },  
+    del(index) {
+        _this = this;
+        confirm_del_param(index);
+    },
+    delete2(index) {
+        // called from del if confirmed
+        this.recs.splice(index, 1);
+    },
+  }
+});
+app.mount('#app');
+
+</script>
+<?php
+echo '</div>';
+?>
+<div id="error_div"></div>
+
+@endsection

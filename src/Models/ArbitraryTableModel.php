@@ -16,6 +16,22 @@ class ArbitraryTableModel {
         $this->adapter = new $s();
         $this->adapter->init($this);
     }
+
+    /**
+     * Returns count of records in the table, or null if there was an error
+     *   $tableName must be validated
+     * @param string $tableName - table name
+     */
+    public static function getCount(string $tableName) {
+        global $db;
+        $val = $db->qobj("select count(*) as cnt from $tableName", [], $db::ERROR_MODE_RETURN_ERROR);
+        if ($db->errorCode <> 0) {
+            $val = null;
+        } else {
+            $val = $val->cnt;
+        }
+        return $val;
+    }
     /**
      * Возвращает все таблицы верхнего уровня
      * @global type $yy

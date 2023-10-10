@@ -529,6 +529,7 @@ static function parsestrall(&$mtch,&$mtchto,$regex,$str1) {
      */
     public static function getSuccessOrErrorMessage(array $r, object $e) {
         if (Session::has('saved_successfully')) {
+            Session::remove('saved_successfully');
             return '<div class="success_message">' . __('Data has been saved') .
                     '</div><br /><br />';
         }

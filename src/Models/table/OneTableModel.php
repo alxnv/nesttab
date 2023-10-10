@@ -56,8 +56,9 @@ class OneTableModel extends BasicTableModel {
          * @return array - измененный $columns
          */
         $recs = $this->getRecAddObjects($columns, $rec, $requires, $r);
+        $errorMsg = '';
         // получаем текущие значения всех полей select данной записи
-        $selectsInitialValues = $columnsModel->getSelectsInitialValues($rec, $recs, $selectFldNames);
+        $selectsInitialValues = $columnsModel->getSelectsInitialValues($rec, $recs, $selectFldNames, $errorMsg);
 
         if (Session::has($lnk2)) {
             // проставить значения полей из сессии (бывший post) в $recs
@@ -65,6 +66,7 @@ class OneTableModel extends BasicTableModel {
         }
         return view('nesttab::edit-table.one_rec', ['tbl' => $tbl, 'recs' => $recs,
                 'extra' => ['selectsInitialValues' => $selectsInitialValues],
+                'errorMsg' => $errorMsg,
                 'r' => $r, 'requires' => $requires, 'table_id' => $id2, 'rec_id' => $rec_id]);
         
     }
@@ -117,50 +119,18 @@ class OneTableModel extends BasicTableModel {
             // ошибок нет. записываем данные в БД
             $this->postProcess1($columns, $r); // постпроцессинг для всех типов данных
                // кроме image, file
-            $b = $this->saveToDB($tbl, $columns, $id);
-            if ($b) {
+            $yy->settings2['extended_db_messages'] = false; // short error messages
+            $error = $this->saveToDB($tbl, $columns, $id);
+            if ($error == '') {
                 // если основные поля сохранены без ошибок
                 $this->postProcess($columns, $r); // записываем загруженные документы и изображения
                 // ошибок нет. записываем данные в БД
                 $this->saveToDBFiles($tbl, $columns, $id);
-            } else {
-                // todo - в случае если было нарушение (дублирование) ключа, здесь обрабатываем
-                //  и возвращаем ошибку
             }
-            $this->afterDataSaved($b, $columns); // вызываем коллбэк после сохранения
+            $this->afterDataSaved($error, $id, $columns); // вызываем коллбэк после сохранения
               // данных или ошибки сохранения
         }
     }
-    /**
-     * Записываем данные в БД
-     * @param array $tbl - массив с данными о таблице
-     * @param array $columns - массив с данными полей таблицы и их значениями
-     */
-    public function saveToDB(array $tbl, array $columns, int &$id) {
-        global $db;
-        $arr = [];
-        // определяем, какие данные записывать (кроме полей типа image и file
-        for ($i = 0; $i < count($columns); $i++) {
-            // $columns[$i]['name_field'] - тип поля
-            if (isset($columns[$i]['value']) 
-                    && !in_array($columns[$i]['name_field'], ['image', 'file'])) {
-                // if set $columns[$i]['value_for_db'], save it, or value
-                $arr[$columns[$i]['name']] = $columns[$i]['value'];
-            }
-            if (isset($columns[$i]['value_for_db']) 
-                    && !in_array($columns[$i]['name_field'], ['image', 'file'])) {
-                // if set $columns[$i]['value_for_db'], save it, or value
-                $arr[$columns[$i]['name']] = $columns[$i]['value_for_db'];
-            }
-        }
-        
-        if (count($arr) > 0) {
-            $db->update($tbl['name'], $arr, "where id=" . $id);
-            return ($db->errorCode == 0);
-        }
-        return true;
-    }
-
     /**
      * Save table data
      * @param array $tbl - table data

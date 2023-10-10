@@ -29,6 +29,73 @@ class BasicTableModel {
         $this->err = new \Alxnv\Nesttab\Models\ErrorModel();
     }
 
+
+    /**
+     * Show settings of particular table
+     *   this BasicTableModel method called for O, C
+     * @param array $tbl - table info data
+     * @param int $id - id of the table
+     */
+    public function showSettings(array $tbl, int $id) {
+        $recCnt = \Alxnv\Nesttab\Models\ArbitraryTableModel::getCount($tbl['name']);
+        return view('nesttab::table-settings.basic', ['tbl' => $tbl, 'id' => $id,
+            'recCnt' => $recCnt]);
+    }
+    
+    /**
+     * Save settings of particular table
+     *   this BasicTableModel method called for L, D
+     * @param array $tbl - table info data
+     * @param int $id - id of the table
+     */
+    public function saveSettings(array $tbl, int $id, object $request) {
+        global $yy;
+        $r = $request->all();
+        $this->adapter->saveTableRefs($r, $id);
+        session(['saved_successfully' => 1]);
+        \yy::redirectNow($yy->nurl . 'struct-table-show-settings/' . $id);
+        exit;
+    }
+    
+    
+    /**
+     * Получить список полей текущей таблицы, которые можно будет выводить
+     *   в edit/ в виде таблицы
+     * @param array $tbl - данные текущей таблицы
+     * @return type
+     */
+    public function getPossibleFieldsToViewAsTable(array $tbl) {
+        global $db;
+        $arr = $this->possibleFieldTypesToViewAsTable();
+        $s = join(', ', $arr);
+        $arr = $db->qlistArr("select id, descr, name from yy_columns where table_id = $1 "
+                . " and field_type in ($s) order by descr", [$tbl['id']]);
+        $ar2 = $this->builtInFieldsForView(); // получаем встроенные 
+          // типы полей для данного типа таблицы
+        foreach ($arr as $rec) {
+            $ar2[] = ['id' => $rec['id'], 'name' => \yy::qs($rec['descr']
+                    . '(' . $rec['name'] . ')')];
+        }
+        return $ar2;
+    }
+    
+    /**
+     * Получить список полей таблицы, которые отображаются при просмотре
+     *   списка записей в 'edit/' (L, D)
+     * @param int $table_id - table id
+     * @return type
+     */
+    public function getViewAsTableData(int $table_id) {
+        global $db;
+        $arr = $db->qlistArr("select fld_id from yy_ref where is_table = 1"
+                . " and src_id = $1 order by ordr", [$table_id]);
+        $ar2 = [];
+        foreach ($arr as $rec) {
+            $ar2[] = $rec['fld_id'];
+        }
+        return $ar2;
+    }
+
     /**
      * can the name of the field be changed
      * @param string $name
@@ -182,8 +249,8 @@ class BasicTableModel {
             'lvl1_tbl_id' => $topId,
             'id_bytes' => $idFieldSizeInBytes,
             'table_type' => $arr_table_names_short[$tbl_idx]];
-        if (!$db->insert('yy_tables', $arr2)) {
-            $message = $db->errorMessage;
+        if (($error = $db->insert('yy_tables', $arr2)) <> '') {
+            $message = $error;
             return false;
         }
         $tableId = $db->handle->lastInsertId();
@@ -331,17 +398,68 @@ class BasicTableModel {
     
 
     /**
-     * 
-     * @param bool $wasSaved - was the record saved or not
+     * Call callback 'onAfterDataSaved' if it exists
+     *   otherwise set error if there was error
+     * @param string $errorMessage - '', if no error, or error message otherwise
+     * @param int $id - id of the record (0 if it is the new record)
      * @param array $columns
      */
-    public function afterDataSaved(bool $wasSaved, array &$columns) {
+    public function afterDataSaved(string $errorMessage, int $id, array &$columns) {
         $isNewRec = false; // todo: change it to appropriate value
-        if (function_exists('\callbacks\onAfterDataSaved'))
-            \callbacks\onAfterDataSaved($wasSaved, $isNewRec, $columns);
-        
+        $errorField = '';
+        if (function_exists('\callbacks\onAfterSave')) {
+            \callbacks\onAfterSave($errorMessage, $errorField, $id, $columns);
+        }
+        if ($errorMessage <> '') {
+            // set error
+            $this->setErr($errorField, $errorMessage);
+        }
+    
     }
     
+    /**
+     * Записываем данные в БД
+     * @param array $tbl - массив с данными о таблице
+     * @param array $columns - массив с данными полей таблицы и их значениями
+     * @param int &$id - id записи, или при вставке новой записи
+     *     сюда возвращается id новой записи
+     * @return sting - '', если не было ошибки, иначе сообщение об ошибке
+     */
+    public function saveToDB(array $tbl, array $columns, int &$id) {
+        global $db;
+        $arr = [];
+        // определяем, какие данные записывать (кроме полей типа image и file
+        for ($i = 0; $i < count($columns); $i++) {
+            // $columns[$i]['name_field'] - тип поля
+            if (isset($columns[$i]['value']) 
+                    && !in_array($columns[$i]['name_field'], ['image', 'file'])) {
+                // if set $columns[$i]['value_for_db'], save it, or value
+                $arr[$columns[$i]['name']] = $columns[$i]['value'];
+            }
+            if (isset($columns[$i]['value_for_db']) 
+                    && !in_array($columns[$i]['name_field'], ['image', 'file'])) {
+                // if set $columns[$i]['value_for_db'], save it, or value
+                $arr[$columns[$i]['name']] = $columns[$i]['value_for_db'];
+            }
+        }
+        
+        if (count($arr) > 0) {
+            if ($id == 0) {
+                // new record
+                $parentTableRec = []; // todo: determine this record
+                $id5 = 0;
+                $error = $this->adapter->insert($tbl['name'], $arr, $parentTableRec, $id5);
+                if ($error == '') {
+                    $id = $id5;
+                }
+                return $error;
+            } else {
+                $error = $db->update($tbl['name'], $arr, "where id=" . $id);
+                return $error;
+            }
+        }
+        return true;
+    }
     /**
      * Записываем данные файлов и изображений в БД
      * @param array $tbl - массив с данными о таблице

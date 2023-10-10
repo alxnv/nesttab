@@ -1,6 +1,6 @@
 Удалить все таблицы:
 
  выполнить команды mysql:
- delete from yy_tables
- delete from yy_columns
- delete from yy_select
+ truncate yy_tables
+ truncate yy_columns
+ truncate yy_ref

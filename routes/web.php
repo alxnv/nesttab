@@ -73,6 +73,8 @@ Route::prefix(config('nesttab.nurl'))->group(function () {
     Route::get('/struct-change-table/delete/{id}', CP9 . 'StructChangeTableController@delete');
     Route::get('/struct-change-table/move/{tbl_id}/{id}/moveto/{pos}', CP9 . 'StructChangeTableController@move');
     Route::get('/change-struct-list', CP9 . 'ChangeStructListController');
+    Route::get('/struct-table-show-settings/{id}', CP9 . 'StructTableController@showSettings');
+    Route::post('/struct-table-settings/save/{id}', CP9 . 'StructTableController@saveSettings');
     Route::get('/ajax_flds_for_select/{id}', CP9 . 'AjaxController@selectFldGetFieldsForTable');
 
     //Route::get('/not-req/{id?}', 'NotReqParamsController');
