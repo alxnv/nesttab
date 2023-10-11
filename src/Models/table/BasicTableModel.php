@@ -379,17 +379,19 @@ class BasicTableModel {
     
     /**
      * Записываем и обрабатываем загруженные документы и изображения
-     * @param array $columns - массив колонок
-     * @param array $r - (array)Request
+     * @param array &$tbl - данные о таблице из yy_tables
+     * @param array &$columns - массив колонок
+     * @param array &$r - (array)Request
      */
-    public function postProcess1(array &$columns, array &$r) {
+    public function postProcess1(array &$tbl, array &$columns, array &$r) {
+        global $yy;
         $isNewRec = false; // todo: change it to appropriate value
         for ($i = 0; $i < count($columns); $i++) {
             // не обрабатываем поля типа image, file
             if (in_array($columns[$i]['name_field'], ['image', 'file'])) continue;
             $toContinue = true;
-            if (function_exists('\callbacks\onPostProcess'))
-                \callbacks\onPostProcess($this, $columns, $i, $r, $columns[$i]['name'], $isNewRec, $toContinue);
+            if ('' <> ($s77 = \yy::userFunctionIfExists($tbl['name'], 'onPostProcess'))) 
+                $s77($this, $columns, $i, $r, $columns[$i]['name'], $isNewRec, $toContinue);
 
             if ($toContinue) $columns[$i]['obj']->postProcess($this, $columns, $i, $r);
         }
@@ -397,17 +399,19 @@ class BasicTableModel {
 
     /**
      * Записываем и обрабатываем загруженные документы и изображения
+     * @param array $tbl - данные о таблице из yy_tables
      * @param array $columns - массив колонок
      * @param array $r - (array)Request
      */
-    public function postProcess(array &$columns, array &$r) {
+    public function postProcess(array &$tbl, array &$columns, array &$r) {
+        global $yy;
         $isNewRec = false; // todo: change it to appropriate value
         for ($i = 0; $i < count($columns); $i++) {
             // обрабатываем только поля типа image, file
             if (!in_array($columns[$i]['name_field'], ['image', 'file'])) continue;
             $toContinue = true;
-            if (function_exists('\callbacks\onPostProcess'))
-                \callbacks\onPostProcess($this, $columns, $i, $r, $columns[$i]['name'], $isNewRec, $toContinue);
+            if ('' <> ($s77 = \yy::userFunctionIfExists($tbl['name'], 'onPostProcess'))) 
+                $s77($this, $columns, $i, $r, $columns[$i]['name'], $isNewRec, $toContinue);
 
             if ($toContinue) $columns[$i]['obj']->postProcess($this, $columns, $i, $r);
         }
@@ -418,14 +422,15 @@ class BasicTableModel {
      * Call callback 'onAfterDataSaved' if it exists
      *   otherwise set error if there was error
      * @param string $errorMessage - '', if no error, or error message otherwise
+     * @param array &$tbl - даные о таблице
      * @param int $id - id of the record (0 if it is the new record)
      * @param array $columns
      */
-    public function afterDataSaved(string $errorMessage, int $id, array &$columns) {
+    public function afterDataSaved(array &$tbl, string $errorMessage, int $id, array &$columns) {
         $isNewRec = false; // todo: change it to appropriate value
         $errorField = '';
-        if (function_exists('\callbacks\onAfterSave')) {
-            \callbacks\onAfterSave($errorMessage, $errorField, $id, $columns);
+        if ('' <> ($s77 = \yy::userFunctionIfExists($tbl['name'], 'onAfterSave'))) {
+            $s77($errorMessage, $errorField, $id, $columns);
         }
         if ($errorMessage <> '') {
             // set error

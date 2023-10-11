@@ -326,6 +326,22 @@ class yy {
         return true;
 
     }
+    
+    /**
+     * Test if the user function for table is loaded from 'app/Models/nettab/tables'
+     *   and returns the full function name with namespace if this function is loaded
+     * @param string $tableName - name of the table
+     * @param string $functName - name of the function
+     * @return string
+     */
+    public static function userFunctionIfExists(string $tableName, string $functName) {
+        $s = '\callbacks\tables\\' . $tableName . '\\' . $functName;
+        if (function_exists($s)) {
+            return $s;
+        } else {
+            return '';
+        }
+    }
     /**
      * возвращает транслитерацию строки с русского на английский
      * @param <type> $s

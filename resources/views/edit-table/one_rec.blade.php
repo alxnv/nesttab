@@ -25,11 +25,11 @@ if ($errorMsg <> '') {
 
 echo \yy::getSuccessOrErrorMessage($r, $e);
 $title = '<h1>' . \yy::qs($tbl['descr']) . '</h1><br />';
-if (function_exists('\callbacks\onShow')) \callbacks\onShow($recs, -2, '', true, $title);
+if ('' <> ($s77 = \yy::userFunctionIfExists($tbl['name'], 'onShow'))) $s77($recs, -2, '', true, $title);
 echo $title;
 
 $err3 = $e->getErr('');
-if (function_exists('\callbacks\onShow')) \callbacks\onShow($recs, -2, '', false, $err3);
+if ('' <> ($s77 = \yy::userFunctionIfExists($tbl['name'], 'onShow'))) $s77($recs, -2, '', false, $err3);
 echo $err3;
 
 //dd($recs);
@@ -45,14 +45,14 @@ echo '<form enctype="multipart/form-data" method="post" action="' . $yy->baseurl
 $i = 0;
 foreach ($recs as $rec) {
     $err3 = $e->getErr($rec['name']);
-    if (function_exists('\callbacks\onShow')) \callbacks\onShow($recs, $i, $rec['name'], false, $err3);
+    if ('' <> ($s77 = \yy::userFunctionIfExists($tbl['name'], 'onShow'))) $s77($recs, $i, $rec['name'], false, $err3);
     echo $err3;
     
     ob_start();
     $rec['obj']->editField($rec, [], $table_id, $rec_id, $r, $extra);
     $out1 = ob_get_contents();
     ob_end_clean();
-    if (function_exists('\callbacks\onShow')) \callbacks\onShow($recs, $i, $rec['name'], true, $out1);
+    if ('' <> ($s77 = \yy::userFunctionIfExists($tbl['name'], 'onShow'))) $s77($recs, $i, $rec['name'], true, $out1);
     echo $out1;
     
     $i++;
@@ -61,7 +61,7 @@ $footer = '';
 if (count($recs) > 0) {
     $footer = '<input type="submit" value="' . __('Save') . '" />';
 }
-if (function_exists('\callbacks\onShow')) \callbacks\onShow($recs, -1, '$', true, $footer);
+if ('' <> ($s77 = \yy::userFunctionIfExists($tbl['name'], 'onShow'))) $s77($recs, -1, '$', true, $footer);
 echo $footer;
 
 echo '</form>';

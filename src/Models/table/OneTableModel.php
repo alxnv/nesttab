@@ -102,8 +102,8 @@ class OneTableModel extends BasicTableModel {
             $isNewRec = false; // todo: change it to appropriate value
             $value_old = (isset($columns[$i]['value_old']) ? $columns[$i]['value_old'] 
                     : null);
-            if (function_exists('\callbacks\onValidate'))
-                \callbacks\onValidate($value, $value_old, $columns, $i, $r, $this, $columns[$i]['name'], $isNewRec, $toContinue, $arFI);
+            if ('' <> ($s77 = \yy::userFunctionIfExists($tbl['name'], 'onValidate'))) 
+                $s77($value, $value_old, $columns, $i, $r, $this, $columns[$i]['name'], $isNewRec, $toContinue, $arFI);
 
             $columns[$i]['value'] = $value;
             
@@ -117,17 +117,17 @@ class OneTableModel extends BasicTableModel {
 
         if (!$this->hasErr()) {
             // ошибок нет. записываем данные в БД
-            $this->postProcess1($columns, $r); // постпроцессинг для всех типов данных
+            $this->postProcess1($tbl, $columns, $r); // постпроцессинг для всех типов данных
                // кроме image, file
             $yy->settings2['extended_db_messages'] = false; // short error messages
             $error = $this->saveToDB($tbl, $columns, $id);
             if ($error == '') {
                 // если основные поля сохранены без ошибок
-                $this->postProcess($columns, $r); // записываем загруженные документы и изображения
+                $this->postProcess($tbl, $columns, $r); // записываем загруженные документы и изображения
                 // ошибок нет. записываем данные в БД
                 $this->saveToDBFiles($tbl, $columns, $id);
             }
-            $this->afterDataSaved($error, $id, $columns); // вызываем коллбэк после сохранения
+            $this->afterDataSaved($tbl, $error, $id, $columns); // вызываем коллбэк после сохранения
               // данных или ошибки сохранения
         }
     }
