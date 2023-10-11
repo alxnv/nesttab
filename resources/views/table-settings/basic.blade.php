@@ -24,6 +24,7 @@ if (isset($r['is_error'])) {
     $e->err = session($lnk_err);
 }
 
+echo '<br />' . __("Size in bytes of 'id' field") . ': ' . $tbl['id_bytes'];
 
 if (is_null($recCnt)) {
     echo '<div class="error">' . __('Error accessing table') . '</div>';

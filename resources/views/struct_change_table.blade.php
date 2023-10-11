@@ -9,6 +9,9 @@ global $yy;
 <?php
 
 echo '<div id="main_contents">'; // div с основным содержимым страницы
+
+echo '<p><a href="' . $yy->baseurl . config('nesttab.nurl') . '/change-struct-list">' . __('All tables') . '</a></p><br />';
+
 echo '<h1 class="center">' . __('Edit table') . ' "' . \yy::qs($tbl['descr']) . '" (' .
         __('physical name') . ': ' . \yy::qs($tbl['name']) .')<br /><br />';
 $tt = $tbl['table_type'];

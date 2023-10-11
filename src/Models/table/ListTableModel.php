@@ -11,14 +11,6 @@ use Illuminate\Support\Facades\DB;
 class ListTableModel extends BasicTableModel {
 
     /**
-     * Возвращает типы полей, которые можно использовать для отображения
-     *   таблицы записей в 'edit/'
-     * @return type
-     */
-    public function possibleFieldTypesToViewAsTable() {
-        return [1,2,3,6,7,8,9,10];
-    }
-    /**
      * Show settings of particular table
      *   this BasicTableModel method called for O, C
      * @param array $tbl - table info data
@@ -34,8 +26,7 @@ class ListTableModel extends BasicTableModel {
      *  получаем встроенные типы полей для данного типа таблицы
      */
     public function builtInFieldsForView() {
-        return [['id' => -1, 'name' => __('Ordinal number')],
-            ['id' => -2, 'name' => 'ID']];
+        return $this->fieldsForView([-1, -2]);
     }
     
     /**

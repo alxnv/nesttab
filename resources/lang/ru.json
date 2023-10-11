@@ -17,6 +17,8 @@
     "Choose at least one field" : "Выберите хотя бы одно поле",
     "Choose a table to link to" : "Выберите таблицу, на которую будет создана ссылка",
     "Size in bytes of field" : "Размер в байтах поля",
+    "Size in bytes of 'id' field" : "Размер поля 'id' в байтах",
+    "All tables" : "Все таблицы",
     "results" : "записей",
     "Name " : "Название",
     "Add" : "Добавить",

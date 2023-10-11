@@ -8,6 +8,22 @@ namespace Alxnv\Nesttab\core;
 
 class Helper {
 
+ 
+    /**
+     * Returns data for built in field types
+     * @param int $id - id of built in field
+     * @return array - [<column_type_id>, '<column name>']
+     */
+    public static function getBuiltInFieldData(int $id) {
+        switch ($id) {
+            case -1:
+                return [2, __('Ordinal number')]; // int type
+            case -2:
+                return [2, 'ID']; // int type
+            default:
+                return [0, 'Unknown'];
+        }
+    }
     /**
      * Возвращает table_types, соответствующее заданному коду вида таблицы ('O','L','C','V')
      * @global type $yy

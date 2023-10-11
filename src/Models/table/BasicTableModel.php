@@ -29,7 +29,24 @@ class BasicTableModel {
         $this->err = new \Alxnv\Nesttab\Models\ErrorModel();
     }
 
+    /**
+     * Возвращает типы полей, которые можно использовать для отображения
+     *   таблицы записей в 'edit/'
+     * @return type
+     */
+    public function possibleFieldTypesToViewAsTable() {
+        // bool, int, str  6-datetime, file, image, float, select  
+        return [1,2,3,6,7,8,9,10];
+    }
 
+    public function fieldsForView(array $fldIds) {
+        $arr = [];
+        foreach ($fldIds as $fldId) {
+            $arr[] = ['id' => $fldId, 'name' => \Alxnv\Nesttab\core\Helper::getBuiltInFieldData($fldId)[1]];
+        }
+        return $arr;
+    }
+    
     /**
      * Show settings of particular table
      *   this BasicTableModel method called for O, C
