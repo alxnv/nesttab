@@ -42,7 +42,7 @@ class BasicTableModel {
     public function fieldsForView(array $fldIds) {
         $arr = [];
         foreach ($fldIds as $fldId) {
-            $arr[] = ['id' => $fldId, 'name' => \Alxnv\Nesttab\core\Helper::getBuiltInFieldData($fldId)[1]];
+            $arr[] = ['id' => '' . $fldId, 'name' => \Alxnv\Nesttab\core\Helper::getBuiltInFieldData($fldId)[1]];
         }
         return $arr;
     }
@@ -59,38 +59,26 @@ class BasicTableModel {
             'recCnt' => $recCnt]);
     }
     
-    /**
-     * Save settings of particular table
-     *   this BasicTableModel method called for L, D
-     * @param array $tbl - table info data
-     * @param int $id - id of the table
-     */
-    public function saveSettings(array $tbl, int $id, object $request) {
-        global $yy;
-        $r = $request->all();
-        $this->adapter->saveTableRefs($r, $id);
-        session(['saved_successfully' => 1]);
-        \yy::redirectNow($yy->nurl . 'struct-table-show-settings/' . $id);
-        exit;
-    }
     
     
     /**
      * Получить список полей текущей таблицы, которые можно будет выводить
      *   в edit/ в виде таблицы
      * @param array $tbl - данные текущей таблицы
-     * @return type
+     * @param array $canBeCur - соответствующий массиву '@return' массив 
+     *   с признаками, может ли по этому элементу быть сортировка
+     * @return array
      */
-    public function getPossibleFieldsToViewAsTable(array $tbl) {
+    public function getPossibleFieldsToViewAsTable(array $tbl, array &$canBeCur) {
         global $db;
         $arr = $this->possibleFieldTypesToViewAsTable();
         $s = join(', ', $arr);
-        $arr = $db->qlistArr("select id, descr, name from yy_columns where table_id = $1 "
+        $arr = $db->qlistArr("select id, descr, name, field_type from yy_columns where table_id = $1 "
                 . " and field_type in ($s) order by descr", [$tbl['id']]);
         $ar2 = $this->builtInFieldsForView(); // получаем встроенные 
           // типы полей для данного типа таблицы
         foreach ($arr as $rec) {
-            $ar2[] = ['id' => $rec['id'], 'name' => \yy::qs($rec['descr']
+            $ar2[] = ['id' => '' . $rec['id'], 'name' => \yy::qs($rec['descr']
                     . '(' . $rec['name'] . ')')];
         }
         return $ar2;
@@ -100,15 +88,47 @@ class BasicTableModel {
      * Получить список полей таблицы, которые отображаются при просмотре
      *   списка записей в 'edit/' (L, D)
      * @param int $table_id - table id
-     * @return type
+     * @param null|int &$currentItem - сюда возвращаем порядковый номер текущего элемента
+     *   в массиве @return, если смогли его определить, иначе null
+     * @param array &$canBeCur - в этот массив заносим соответствующие массиву
+     *   '@return' значения, определяющие, можно ли сортировать по этому полю: 0|1
+     *   
+     * @return array
      */
-    public function getViewAsTableData(int $table_id) {
+    public function getViewAsTableData(int $table_id, int &$currentItem, array &$canBeCur) {
         global $db;
-        $arr = $db->qlistArr("select fld_id from yy_ref where is_table = 1"
-                . " and src_id = $1 order by ordr", [$table_id]);
+        $currentItem = null;
+        $arr = $db->qlistArr("select a.fld_id, a.parameters, b.field_type from yy_ref a"
+                . " left join yy_columns b on a.fld_id = b.id"
+                . " where a.is_table = 1"
+                . " and a.src_id = $1 "
+                . "  order by a.ordr", [$table_id]);
         $ar2 = [];
-        foreach ($arr as $rec) {
-            $ar2[] = $rec['fld_id'];
+        $canBeCur = [];
+        for ($i = 0; $i < count($arr); $i++) {
+            $ar2[] = $arr[$i]['fld_id'];
+            $fldType = $arr[$i]['field_type'];
+            if (is_null($fldType)) {
+                // не найдено в yy_columns соответствующего столбца
+                //  пытаемся найти значение в наборе встроенных столбцов
+                $arr3 = \Alxnv\Nesttab\core\Helper::getBuiltInFieldData($arr[$i]['fld_id']);
+                if ($arr3[0] <> 0) {
+                    // если не ошибка
+                    $fldType = $arr3[0];
+                }
+            }
+            if (is_null($fldType)) {
+                $canBeCur[] = 0;
+            } else {
+                $canBeCur[] = (\Alxnv\Nesttab\core\db\BasicTableHelper::canSortByFieldOfType($fldType)
+                    ? 1 : 0);
+            }
+            if (is_null($currentItem)) {
+                $params = json_decode($arr[$i]['parameters']);
+                if (isset($params->d)) {
+                    $currentItem = $i;
+                }
+            }
         }
         return $ar2;
     }

@@ -42,17 +42,23 @@ if (is_null($recCnt)) {
  *  */
 global $yy, $db;
 
-$sFldList = '';
-// редактируем существующую запись
-if ($e->hasErr()) {
-    $flds = (isset($r['flds']) ? $r['flds'] : []);
-} else {
-    $flds = $fieldModel->getViewAsTableData($tbl['id']);
-}
-$sFldList = $fieldModel->getPossibleFieldsToViewAsTable($tbl);
 
+// редактируем существующую запись
+$currentItem = 0;
+if ($e->hasErr()) { // возврат ошибки здесь не предусматриваем, так что не проверено
+    $flds = (isset($r['flds']) ? $r['flds'] : []);
+    $canBeCur = (isset($r['canbecur']) ? $r['canbecur'] : []);
+    $currentItem = $r['selectedItem'];
+} else {
+    $canBeCur = [];
+    $flds = $fieldModel->getViewAsTableData($tbl['id'], $currentItem, $canBeCur);
+}
+//dd($canBeCur);
+// список всех полей данной таблицы, доступных для добавления 
+$sFldList = $fieldModel->getPossibleFieldsToViewAsTable($tbl);
 //var_dump($sFldList);
 $visibleTable = true; //((count($flds) > 0) ? 1 : 0);
+if (is_null($currentItem)) $currentItem = -10000000;
 ?>
 <script>
     var fld_list = <?=json_encode($sFldList)?>; // новая запись для параметров
@@ -82,15 +88,21 @@ echo $e->getErr('');
             </td></tr>
         <tr v-for="(field, index) in recs">
                 <td>
-                    <div v-html="field.err"></div>
+                    <input type="hidden" name="canbecur[]" v-model="field.can_be_cur" />
+                     <div v-html="field.err"></div>
                     <div class="minus_button_small"><input type="button" value="-" @click="del(index)" /></div>
                     <select v-model="field.vl" name="flds[]">
-                        <option v-for="fld in field.flds" :value="fld.id">@{{ fld.name }}
+                        <option v-for="fld in flds" :value="fld.id">@{{ fld.name }}
                     </select>
+                    <span v-if="field.canbecur">
+                        <input type="radio" :name="`radio-${index}`" :id="`radio-${index}`" v-bind:value="index" v-model="selectedItem">
+                        <label :for="`radio-${index}`"><?=__("Sort by this field")?></label>
+                    </span>
                     <div class="plus_button_small"><input type="button" value="+" @click="add(index)" /></div>
                 </td>
             </tr>
     </table>    
+    <input type="hidden" name="selectedItem" v-model="selectedItem" />
 <br />
 </div>
     
@@ -104,6 +116,7 @@ echo $e->getErr('');
 echo '</div>';
 echo '</form>';
 ?>
+    <div id="info" style="white-space: pre;"></div>
 <script>
 function confirm_del_param(index) {
     $.confirm({
@@ -134,13 +147,16 @@ const app = Vue.createApp({
   data() {
     return {
       visible: <?=$visibleTable?>,  
+      selectedItem: <?=$currentItem?>,
+      flds: <?=json_encode($sFldList)?>,
       recs: [
 <?php
 for ($i = 0; $i < count($flds); $i++) {
     $id1 = $flds[$i];
     echo "{
-        flds: fld_list,
-        vl: " . $id1 . ",
+        vl: '" . $id1 . "',
+        canbecur: " . $canBeCur[$i] . ", // can it be the current item   
+        cur: " . ((!is_null($currentItem) && ($currentItem == $i)) ? 1 : -1) . ",    
         err: " . '"' . \yy::jsmstr($e->getErr('flds' . $id1)) . '"' .  "   },
             "; 
 }
@@ -162,10 +178,20 @@ for ($i = 0; $i < count($flds); $i++) {
           });*/
 
     },
+    make_selected(index) {
+        //alert(index);
+        //s = JSON.stringify(this.recs);
+        //s = xlog(this.recs);
+        //$('#info').html(s);//
+        /*
+        for (i = 0; i < this.recs.length; i++) {
+            if (i != index) this.recs[i].cur = 0;
+        }*/
+    },
     add(index) {
       if (true) {
         let v = (fld_list.length == 0 ? 0 : fld_list[0].id);
-        this.recs.splice(index + 1, 0, {vl:v, flds: fld_list, err:''});
+        this.recs.splice(index + 1, 0, {cur:0, can_be_cur:1, vl:v, err:''});
       }
     },  
     del(index) {
@@ -183,6 +209,9 @@ app.mount('#app');
 </script>
 <?php
 echo '</div>';
+/*
+* 
+ */
 ?>
 <div id="error_div"></div>
 

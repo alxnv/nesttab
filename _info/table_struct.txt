@@ -41,3 +41,10 @@ col_names_nums: массив текущих номеров полей разны
 записи вида (int id, int table_id, int order, int id_col_type /* по списку из таблицы yy_id_col_types */, col_num_or_table_id)
    если id_col_type == 0, то col_num_or_table_id - id вложенной таблицы
 
+4) yy_ref
+
+is_table = 1, то здесь данные обо отображаемых в списке полях на edit/ для L,D
+  при этом src_id - id таблицы
+  поле parameters  isset('d'), если это поле для сортировки по умолчанию
+is_table = 0, то здесь данные о столбцах на которые ссылается колонка
+  при этом src_id - id колонки которая ссылается  

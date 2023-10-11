@@ -11,6 +11,27 @@ use Illuminate\Support\Facades\DB;
 class ListTableModel extends BasicTableModel {
 
     /**
+     * Save settings of particular table
+     *   this BasicTableModel method called for L, D
+     * @param array $tbl - table info data
+     * @param int $id - id of the table
+     */
+    public function saveSettings(array $tbl, int $id, object $request) {
+        global $yy;
+        $r = $request->all();
+        if (isset($r['selectedItem'])) {
+            $sI = intval($r['selectedItem']);
+        } else {
+            $sI = -1;
+        }
+        $arr =  (isset($r['flds']) ? $r['flds'] : []); 
+        $this->adapter->saveTableRefs($arr, $id, $sI);
+        $request ->session()->flash('saved_successfully', 1);
+        Session::save();
+        \yy::redirectNow($yy->nurl . 'struct-table-show-settings/' . $id);
+        //exit;
+    }
+    /**
      * Show settings of particular table
      *   this BasicTableModel method called for O, C
      * @param array $tbl - table info data

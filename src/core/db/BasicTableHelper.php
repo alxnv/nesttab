@@ -26,6 +26,15 @@ class BasicTableHelper {
     }
     
     /**
+     * can data set be sorted by field of type $fldType
+     * @param int $fldType - col type from yy_col_types
+     */
+    public static function canSortByFieldOfType(int $fldType) {
+        if (in_array($fldType, [1,2,3,6,9,10])) return true; // кроме file, image
+        return false;
+    }
+    
+    /**
      * 
      * @param string $typeId - enum('O', 'L', 'C', 'V') (тип таблицы БД)
      * @param string $fieldName - тестируемое имя таблицы, которое пытается

@@ -1,3 +1,5 @@
+BasicTableModel->getPossibleFieldsToViewAsTable()
+----
 is_table = 1 проверить на надежность систему присвоения struct-table-settings
 ----
 + !!!! размер поля select должен равняться размеру id таблицы на которую он ссылается
