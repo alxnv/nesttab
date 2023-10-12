@@ -65,11 +65,9 @@ class BasicTableModel {
      * Получить список полей текущей таблицы, которые можно будет выводить
      *   в edit/ в виде таблицы
      * @param array $tbl - данные текущей таблицы
-     * @param array $canBeCur - соответствующий массиву '@return' массив 
-     *   с признаками, может ли по этому элементу быть сортировка
      * @return array
      */
-    public function getPossibleFieldsToViewAsTable(array $tbl, array &$canBeCur) {
+    public function getPossibleFieldsToViewAsTable(array $tbl) {
         global $db;
         $arr = $this->possibleFieldTypesToViewAsTable();
         $s = join(', ', $arr);
@@ -79,7 +77,7 @@ class BasicTableModel {
           // типы полей для данного типа таблицы
         foreach ($arr as $rec) {
             $ar2[] = ['id' => '' . $rec['id'], 'name' => \yy::qs($rec['descr']
-                    . '(' . $rec['name'] . ')')];
+                    . '(' . $rec['name'] . ')'), 'can_be_cur' => 1];
         }
         return $ar2;
     }

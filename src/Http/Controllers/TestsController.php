@@ -24,4 +24,17 @@ class TestsController extends BasicController
         //Session::save();
         return view('nesttab::tests.index');
     }
+    
+    public function inputNullTest() {
+        return view('nesttab::tests.input-null-strings');
+    }
+    
+    public function saveInputNullTest(Request $request) {
+        $r = $request->all();
+        var_dump('$r["arr"][2]', $r['arr'][2]);
+        dd($r);
+        //return view('nesttab::tests.input-null-strings');
+    }
+    
+    
 }

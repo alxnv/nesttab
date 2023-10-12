@@ -24,6 +24,7 @@ $s = \Alxnv\Nesttab\core\Helper::table_types($tt);
 echo __('Table type') . ': ' . \yy::qs($s) . '</h1>';
 
 
+echo '<br />' . __("Table ID") . ': ' . $tbl['id'];
 echo '<br />' . __("Size in bytes of 'id' field") . ': ' . $tbl['id_bytes'];
 
 if (is_null($recCnt)) {

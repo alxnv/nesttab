@@ -161,6 +161,9 @@ maybe later or in this version:
   также эти пост валидаторы можно использовать в nesttab\tables\yz_xxxx :
      if (\PostValidator::validate('<form field name>', '<tags>')) { /* ошибки валидации не было */ }
 ---
+later:
+  создать поле 'data' (типа 'datetime')
+---
 maybe later in later versions:
   сделать planned jobs
   они должны действовать так:

@@ -21,6 +21,8 @@ class yy {
     public $format; // current locale's datetime format
     public $user_data;
     public $Engine_Path;
+    public $fieldObjectsPool = [];
+    public $tableObjectsPool = [];
     public $db_settings;
     public $phpScripts; // names of loaded php scripts
     public $whithout_layout = 0; // отображать сообщения об ошибках без включения layout

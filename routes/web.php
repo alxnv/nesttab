@@ -22,8 +22,15 @@ use Illuminate\Support\Facades\Route;
 });*/
 
 // Route for admin system. Maybe secret
-Route::prefix(config('nesttab.nurl'))->group(function () {
-    /*Route::get('/', function () {
+Route::middleware([\App\Http\Middleware\TrimStrings::class,
+    \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class])
+        ->prefix(config('nesttab.nurl'))->group(function () {
+
+     /**
+      * Route::withoutMiddleware([\Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class])
+      *  does not work
+      */
+            /*Route::get('/', function () {
             return 'Hello';
     });*/
     //Route::get('/ex', ['as' => 'ex',
@@ -63,6 +70,9 @@ Route::prefix(config('nesttab.nurl'))->group(function () {
     Route::get('/tests/ajax_infinite_sql_make_table', CP9 . 'TestsAjaxController@infiniteSqlMakeTable');
     Route::get('/tests/ajax_infinite', CP9 . 'TestsAjaxController@infinite');
     Route::get('/tests/ajax_infinite_run', CP9 . 'TestsAjaxController@infiniteRun');
+    Route::get('/tests/input-null-test', CP9 . 'TestsController@inputNullTest');
+    Route::post('/tests/save-input-null-test', CP9 . 'TestsController@saveInputNullTest');
+
     Route::get('/struct-add-table', CP9 . 'StructAddTableController@index');
     Route::get('/struct-add-table/step22', CP9 . 'StructAddTableController@step22');
     Route::post('/struct-table-edit-field/save/{id}', CP9 . 'StructTableEditFieldController@save');
@@ -80,4 +90,6 @@ Route::prefix(config('nesttab.nurl'))->group(function () {
     //Route::get('/not-req/{id?}', 'NotReqParamsController');
         //->whereNumber('id');
     //Route::resource('edit', 'EditController');
+    // включаем TrimStrings и ConvertEmptyStringsToNull,
+    //   на случай, если они выключены в глобальной конфигурации
 });
