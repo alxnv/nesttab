@@ -5,6 +5,8 @@
     "to" : "...",
     "of" : "из",
     "Selected" : "Выбрано",
+    "PHP extension '%s' has not been loaded" : "PHP расширение '%s' не было загружено",
+    "Image related functionality of Nesttab would be impossible" : "Будет невозможна работа с изображениями в Nesttab",
     "Sort by this field" : "Сортировать по этому полю",
     "Ordinal number" : "Порядковый номер",
     "Settings of the table" : "Настройки таблицы",

@@ -28,8 +28,7 @@ class FormatHelper {
      * @return boolean 
      */
     public static function validExt(string $a) {
-        if (strtolower($a) == 'py') return false;
-        if (strtolower($a) == 'pl') return false;
+        if (in_array(strtolower($a), ['py', 'pl', 'vb', 'js'])) return false;
         if (str_starts_with(strtolower($a), 'php')) return false;
         return true;
     }
