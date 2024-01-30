@@ -1,0 +1,7 @@
+drupal
+wordpress
+
+zope
+ez publish
+
+но вроде я глянул, нигде моего подхода или лучшего нет

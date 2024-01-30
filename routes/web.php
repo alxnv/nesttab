@@ -71,7 +71,9 @@ Route::middleware([\App\Http\Middleware\TrimStrings::class,
     Route::get('/tests/ajax_infinite', CP9 . 'TestsAjaxController@infinite');
     Route::get('/tests/ajax_infinite_run', CP9 . 'TestsAjaxController@infiniteRun');
     Route::get('/tests/input-null-test', CP9 . 'TestsController@inputNullTest');
+    Route::get('/tests/show-db-select-time', CP9 . 'TestsController@showDbSelectTime');
     Route::post('/tests/save-input-null-test', CP9 . 'TestsController@saveInputNullTest');
+    Route::get('/tests/double-click-test', CP9 . 'TestsController@doubleClickTest');
 
     Route::get('/struct-add-table', CP9 . 'StructAddTableController@index');
     Route::get('/struct-add-table/step22', CP9 . 'StructAddTableController@step22');

@@ -9,6 +9,37 @@ use Illuminate\Support\Facades\Session;
 
 class TestsController extends BasicController
 {
+    
+    public function doubleClickTest() {
+        return view('nesttab::tests.double-click');
+        
+    }
+    /**
+     * insert $num records into table temp_bench
+     * @global type $db
+     * @param type $num
+     */
+    public function populateDB($num) {
+        global $db;
+        $arr =[];
+        for ($i = 0; $i<$num; $i++) {
+            $arr[] = '(1, "jkjkljlkjlkjkljlkjkl")';
+        };
+        $s = join(', ', $arr);
+        $db->q("insert into temp_bench_i (id1, name) values " . $s);
+        echo 'db populated<br/>';
+    }
+    
+    public function showDbSelectTime() {
+        global $db;
+        //$this->populateDB(11000);
+        
+        $t = microtime(true);
+        $db->qlist("select * from temp_bench");
+        $time = (microtime(true) - $t);
+        echo 'Time: ' . $time;
+
+    }
     /**
      * Display the login view.
      *
