@@ -57,8 +57,12 @@ class DatetimeModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
      */
     public function convertDataForInput(array &$columns, int $index) {
         global $yy;
-        if (isset($columns[$index]['value'])) {
-            $s = (new Carbon($columns[$index]['value']))->format($yy->format);
+        if (array_key_exists('value', $columns[$index])) {
+            if (is_null($columns[$index]['value'])) {
+                $s = '';
+            } else {
+                $s = (new Carbon($columns[$index]['value']))->format($yy->format);
+            }
             $columns[$index]['value'] = $s;
         }
     }

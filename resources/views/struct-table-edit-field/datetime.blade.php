@@ -14,7 +14,9 @@ $requires = ['need_datetimepicker' => 1];
 $requires['need_confirm'] = 1;
 echo '<div id="main_contents">';
 
-if (!isset($r['default'])) {
+//var_dump($r['default']);
+
+if (!isset($r['default']) || ($r['default'] == '')) {
     $r['default'] = ''; //Carbon::now()->format($yy->format); // current datetime
 } else {
     $r['default'] = (new Carbon($r['default']))->format($yy->format);

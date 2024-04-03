@@ -637,6 +637,8 @@ class BasicTableModel {
             
             // проставляем в $columns данные из $r
             if (isset($r[$columns[$i]['name']])) {
+                //$val2 = (isset($r[$columns[$i]['name']]) ? $r[$columns[$i]['name']]
+                  //      : '');
                 $val2 = $r[$columns[$i]['name']];
                 if (in_array($columns[$i]['name_field'], ['image', 'file'])) {
                     $columns[$i]['value_old'] = $val2;
