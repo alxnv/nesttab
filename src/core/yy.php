@@ -52,7 +52,7 @@ class yy {
         //$this->register_autoload();
 	$this->settings2 = require('settings2.php');
         $mx = ini_get('max_execution_time');
-        if ($mx === false) {
+        if (($mx === false) || ($mx === 0)) {
             $mx = 200;
         }
         $this->settings2['max_exec'] = intval($mx);
