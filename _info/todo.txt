@@ -634,3 +634,7 @@ class UserFullTextSearch {
 block 'jquery_before'
 -----
 сделать компоненты search, news, catalogue  
+---
+todo in next versions:
+  сделать функцию получения пустой записи для указанной таблицы из системы nesttab 
+   (генерируется на основе значений по умолчанию, в него передается указатель на pdo handle, делается в отдельном от laravel системы модуле)
