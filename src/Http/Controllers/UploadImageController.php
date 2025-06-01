@@ -87,6 +87,7 @@ http://localhost/nesttab/public/nesttab/upload_image/load?tbl=73&rec=1&file=imag
         
     }
     /**
+     * Загрузка нового изображения на сервер
      * filepond передает $_POST['image'] - пустое значение
      * @return string
      */

@@ -202,7 +202,8 @@ class yy {
         $s = str_replace('..', '', $path);
         $s = str_replace('"', '', $s);
         $s = str_replace("'", '', $s);
-        return $s;
+        return ($path === $s ? $s : static::pathDefend($s)); // если нечего заменять, то возвращаем
+         // саму строку, иначе рекурсия
     }
     /**
      * Защита пути от использования '\..\'
@@ -212,7 +213,8 @@ class yy {
     
     public static function pathDefend2(string $path) {
         $s = str_replace('..', '', $path);
-        return $s;
+        return ($path === $s ? $s : static::pathDefend2($s)); // если нечего заменять, то возвращаем
+         // саму строку, иначе рекурсия
     }
     /*
 
@@ -457,6 +459,7 @@ static function parsestrall(&$mtch,&$mtchto,$regex,$str1) {
         return mb_strtoupper(mb_substr($string, 0, 1)).mb_substr($string, 1);
     }
      
+    
     /**
      * Преобразует многострочную строку к такому виду, чтобы ее можно было вывести
      *   в js заключенной в ""

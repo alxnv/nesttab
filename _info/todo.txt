@@ -11,10 +11,6 @@
 ---
 в vue.js закомментировать выдачу в консоль сообщения о development version
 ---
-strtr('..', '.') - сделать рекурсивную функцию, чтобы нельзя было подставить '....'
----
-'show_with_parent' - переименовать в 'sp' поле таблицы yy_tables бд
----
 таблица yy_search - primary key 'url' text протестировать replace with
 ---
 json_decode - error handling (например, когда запорото значение в бд) (возвращает Null если была ошибка)
