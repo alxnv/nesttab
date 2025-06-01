@@ -329,6 +329,23 @@ class ColumnsModel {
         return $flds;
     }
     
+    /**
+     * Получаем данные всех столбцов таблицы типа "файлы" (file,image) для указанной таблицы
+     * @global type $db
+     * @global type $yy
+     * @param int $table_id - id таблицы
+     * @return type
+     */
+    public static function getTableFileColumns($table_id) {
+        global $db, $yy;
+        $flds = $db->qlistArr("select a.*, b.name as name_field from yy_columns a "
+                . "left join yy_col_types b on a.field_type = b.id where a.table_id = $1 "
+                . " and a.field_type in (7,8)"
+                . " order by a.ordr",
+                [$table_id]);
+
+        return $flds;
+    }
     public static function delete($id) {
         global $db, $yy;
         $err = '';

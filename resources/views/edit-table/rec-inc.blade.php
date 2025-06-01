@@ -34,18 +34,8 @@ function confirm_it(id_passed) {
             yes: {
                 text: __lang('Yes'),
                 action: function(){
-              /*      $.alert({
-                        title: 'Alert!',
-                        useBootstrap: false,
-                        content: 'Simple alert!', }*/
-                    //alert(this.id_passed);
-                    exec_ajax_json(baseUrl +'/editrec/delete/<?=$tbl['id']?>/' + this.id_passed, {},
-                        function () {
-                            // refresh the page
-                            location.href=baseUrl + '/editrec/<?=$tbl['id']?>/0';
-                            
-                        });
-                        // возвращает {error: '<html of error>') если была ошибка удаления
+                    
+                    location.href = baseUrl +'/editrec/delete/<?=$parent_id?>/<?=$tbl['id']?>/' + this.id_passed;
                     return true;
                     }               
             },

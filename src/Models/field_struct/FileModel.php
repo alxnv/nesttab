@@ -39,9 +39,9 @@ class FileModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
     
     /**
      * Удаляем файлы в upload соответствующие $fn
-     * @param type $fn - имя файла для удаления
+     * @param string $fn - имя файла для удаления
      */
-    public function deleteFiles($fn) {
+    public function deleteFiles(string $fn) {
         @unlink(public_path() . '/upload/' . $fn);
     }
     

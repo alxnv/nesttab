@@ -13,6 +13,11 @@ class BasicTableModel {
     
     protected $adapter;
     /**
+     * объект для работы с БД, связанный с этим объектом
+     * @var type \MOdels\table\db_operations\BasicTableModel
+     */
+    public $dbObj = null;
+    /**
      * объект с массивом ошибок с индексом по наименованиям полей формы
      *  в которых ошибочные данные
      * @var type array
@@ -29,6 +34,21 @@ class BasicTableModel {
         $this->err = new \Alxnv\Nesttab\Models\ErrorModel();
     }
 
+    /**
+     * set db related object of this object type as the field of this object
+     * @param string $objectType - object type ('one', 'list', ...)
+     */
+    public function initDbObject(string $objectType) {
+        switch ($objectType) {
+            case 'list':
+                $this->dbObj = new \Alxnv\Nesttab\Models\table\db_operations\ListTableModel();
+                return;
+            default:
+                $this->dbObj = null;
+                return;
+        }
+    }
+    
     /**
      * Возвращает типы полей, которые можно использовать для отображения
      *   таблицы записей в 'edit/'

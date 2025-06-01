@@ -40,9 +40,9 @@ class ImageModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
     /**
      * Удаляем файлы в upload соответствующие $fn (нужно еще удалить файлы в подкаталогах
      *   1. 2. 3. 4)
-     * @param type $fn - имя файла для удаления
+     * @param string $fn - имя файла для удаления
      */
-    public function deleteFiles($fn) {
+    public function deleteFiles(string $fn) {
         @unlink(public_path() . '/upload/' . $fn);
         $pn = pathinfo($fn);
         for ($i = 1; $i < 5; $i++) {

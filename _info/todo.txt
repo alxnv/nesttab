@@ -1,4 +1,6 @@
 ---
+ListTableModel->beforeDelete Обработчик
+---
 сделать возможность foreign keys в таблицах mysql
  для этого сделать onBeforeDelete (там проверять связанные таблицы если нет foreign keys) и 
    onDeleteErrorMessage (там иметь возможность модифицировать сообщение об ошибке удаления)
@@ -22,6 +24,10 @@ UploadFileController, UploadImageController - добавить проверку 
   временного файла
 ---
 yy_columns - добавить поле admins_only (bool) - reserved (это поле могут видеть и редактировать только админы)
+---
+EditController->delete() :
+     delete table record (how is this function for 'one' table type?)
+
 ---
 возможно можно указать максимальную версию до которой можно проапгрейдить текущий nesttab (в composer.lock или 
   еще где нибудь, в проекте)

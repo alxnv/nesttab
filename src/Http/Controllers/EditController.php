@@ -1,12 +1,12 @@
 <?php
+/**
+ * Редактирование структуры - добавление поля к таблице
+ */
 namespace Alxnv\Nesttab\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
-/**
- * Редактирование структуры - добавление поля к таблице
- */
 
 class EditController extends BasicController {
     /**
@@ -102,8 +102,6 @@ class EditController extends BasicController {
      */
     public function save(int $id, int $id2, int $id3, Request $request) {
         global $db, $yy;
-        //dd($id, $id2, $id3);
-        //dd($r);
         $table_id = intval($id2);
         if ($table_id == 0) {
             \yy::gotoErrorPage('Zero id');
@@ -112,6 +110,30 @@ class EditController extends BasicController {
         $type = \Alxnv\Nesttab\core\TableHelper::getTableTypeByOneChar($tbl['table_type']);
         $recs = \Alxnv\Nesttab\Models\Factory::createTableModel($type); 
         $recs->saveTableRec($tbl, $id, $id2, $id3, $request);
+    }
+
+    /**
+     * delete table record (how is this function for 'one' table type?)
+     * @global \Alxnv\Nesttab\Http\Controllers\type $db
+     * @param int $id - id of the record of the parent table (0 for main level table)
+     * @param int $id2 -  the id of the table in yy_tables
+     * @param int $id3 - id of the record (0 for new record)
+     * @param Request $request
+     */
+    public function delete(int $id, int $id2, int $id3, Request $request) {
+        global $db, $yy;
+        $table_id = intval($id2);
+        if ($table_id == 0) {
+            \yy::gotoErrorPage('Zero id');
+        }
+        $tbl = \Alxnv\Nesttab\Models\TablesModel::getOne($table_id);
+        $type = \Alxnv\Nesttab\core\TableHelper::getTableTypeByOneChar($tbl['table_type']);
+        $recs = \Alxnv\Nesttab\Models\Factory::createTableModel($type); 
+        if ($type === 'one') {
+            throw new \Exception('not implemented');
+        }
+        $recs->deleteTableRec($tbl, $id, $id2, $id3, $request, $type);
+        
     }
     
 }

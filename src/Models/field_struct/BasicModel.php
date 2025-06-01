@@ -40,6 +40,14 @@ class BasicModel {
     }
    
     /**
+     * stub
+     * Удаляем файлы в upload соответствующие $fn
+     * @param string $fn - имя файла для удаления
+     */
+    public function deleteFiles(string $fn) {
+    }
+    
+    /**
      * Проверяет, что значения из массива разрешены (не 'py', 'pl', не 'php*')
      * @param array $allowed
      */

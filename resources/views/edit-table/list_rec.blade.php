@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Session;
 
 //$with_html_editor = 1;
 
+$requires['need_confirm'] = 1;
 
 //dd($recs);
 $yy->loadPhpScript(app_path() . '/Models/nesttab/tables/' 

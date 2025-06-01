@@ -55,6 +55,7 @@ Route::middleware([\App\Http\Middleware\TrimStrings::class,
     Route::get('/editrec/{id}/{id2}/{id3}', CP9 . 'EditController@editRec');
     Route::post('/editrec/save/{id}/{id2}/{id3}', CP9 . 'EditController@save');
     Route::get('/editrec/move/{id}/{id2}/{id3}/{id4}', CP9 . 'EditController@move');
+    Route::get('/editrec/delete/{id}/{id2}/{id3}', CP9 . 'EditController@delete');
     Route::post('/ajax_select_get/{id}', CP9 . 'AjaxController@getSelectListHtml');
     Route::get('/', CP9 . 'IndexController@index');
     

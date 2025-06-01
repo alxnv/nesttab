@@ -319,7 +319,7 @@ class ListTableModel extends BasicTableModel {
         
     }
     /**
-     * save table data for all table types (now for 'one' type)
+     * save table data for all table types
      *   it is called from saving main table data page
      * @global \Alxnv\Nesttab\Http\Controllers\type $db
      * @global \Alxnv\Nesttab\Http\Controllers\type $yy
@@ -429,6 +429,26 @@ class ListTableModel extends BasicTableModel {
         }
     }
 
-    
-
+    /**
+     * try to delete a table record
+     * @global \Alxnv\Nesttab\Http\Controllers\type $db
+     * @global \Alxnv\Nesttab\Http\Controllers\type $yy
+     * @param array $tbl - table data
+     * @param int $id - id of the record of the parent table (0 for main level table)
+     * @param int $id2 -  the id of the table in yy_tables
+     * @param int $id3 - id of the record (0 for new record)
+     * @param Request $request - request data
+     * @param string $type
+     */
+    public function deleteTableRec(array $tbl, int $id, int $id2, int $id3, object $request, string $type) {
+        global $yy;
+        // устанавливаем объект работы с БД для данного объекта $recs
+        $this->initDbObject($type);
+        if ($this->dbObj === null) {
+            \yy::gotoErrorPage('Null DB object');
+        }
+        $this->dbObj->deleteTableRec($tbl, $id, $id2, $id3, $request);
+        \yy::redirectNow($yy->nurl . 'edit/' . $id . '/' . $id2 . '?page=1');
+        exit;
+    }    
 }
