@@ -442,12 +442,7 @@ class ListTableModel extends BasicTableModel {
      */
     public function deleteTableRec(array $tbl, int $id, int $id2, int $id3, object $request, string $type) {
         global $yy;
-        // устанавливаем объект работы с БД для данного объекта $recs
-        $this->initDbObject($type);
-        if ($this->dbObj === null) {
-            \yy::gotoErrorPage('Null DB object');
-        }
-        $this->dbObj->deleteTableRec($tbl, $id, $id2, $id3, $request);
+        $this->adapter->deleteTableRec($tbl, $id, $id2, $id3, $request);
         \yy::redirectNow($yy->nurl . 'edit/' . $id . '/' . $id2 . '?page=1');
         exit;
     }    
