@@ -216,7 +216,8 @@ class BasicTableModel {
 
         $arr2 = $yy->settings2['table_types'];
         $arr_table_names_short = $yy->settings2['table_names_short'];
-	if (!isset($r['tbl_type']) || !isset($r['tbl_name']) || !isset($r['tbl_descr']))  die('Required parameter is not passed');
+        if (!isset($r['tbl_descr'])) \yy::gotoErrorPage(__('Set table name'));
+	if (!isset($r['tbl_type']) || !isset($r['tbl_name']))  \yy::gotoErrorPage(__('Required parameter is not passed'));
 	$tbl_idx = intval($r['tbl_type']);
 	if ($tbl_idx < 0 || $tbl_idx >= count($arr2)) {
             $message = 'Wrong index of table';
@@ -283,7 +284,7 @@ class BasicTableModel {
         $s3 = $db->escape($tbl_descr);
         $arr2 = ['name' => $tbl_name,
             'descr' => $tbl_descr,
-            'parent_tbl_id' => $parentTableId,
+            'p_id' => $parentTableId,
             'lvl1_tbl_id' => $topId,
             'id_bytes' => $idFieldSizeInBytes,
             'table_type' => $arr_table_names_short[$tbl_idx]];

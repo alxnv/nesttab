@@ -570,6 +570,20 @@ static function parsestrall(&$mtch,&$mtchto,$regex,$str1) {
         return date('d.m.Y H:i:s', $date);
     }
     
+    /**
+     * prevent session vars from saving
+     * !!! сейчас отключено
+     * !!!  пытался сделать отключение записи сессий в UploadImageController 
+     *    (не выводится сообщение об ошибке когда поле image required и не до конца загружено изобра-
+     *        жение в поле ввода)
+     */
+    public static function dontSaveSession() {
+        /**session_id( 'trash' ); // or call session_regenerate_id() as someone else suggested
+        $_SESSION = array(); // clear the session variables for 'trash'.
+        // 2-nd variant (for laravel)
+        Session::invalidate();**/
+    }
+    
 }
 
 global $yy;

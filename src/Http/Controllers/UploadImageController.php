@@ -15,6 +15,7 @@ class UploadImageController extends BasicController {
      */
     public function restore(Request $request) {
         $token = $_GET['token'];
+        \yy::dontSaveSession(); // prevent the session vars from saving
         if (!\Alxnv\Nesttab\Models\TokenUploadModel::isValidToken($token))  \App::abort(404);
         $obj = new \Alxnv\Nesttab\Models\TokenUploadModel();
         $fn = $obj->getFileName($token);
@@ -55,6 +56,7 @@ return response($img)->header('Content-type','image/jpeg');
     }
     public function load(Request $request) {
         global $db, $yy;
+        \yy::dontSaveSession(); // prevent the session vars from saving
         if (!isset($_GET['file928357'])) \App::abort(404);
         $r = \Alxnv\Nesttab\core\StringHelper::splitByFirst('|', $_GET['file928357']);
         /*if (!$request->has('tbl')) \App::abort(404);
@@ -93,6 +95,7 @@ http://localhost/nesttab/public/nesttab/upload_image/load?tbl=73&rec=1&file=imag
      */
     public function __invoke(Request $request) {
         global $yy, $db;
+        \yy::dontSaveSession(); // prevent the session vars from saving
         if (!isset($_GET['file928357'])) \App::abort(404);
         $index = $_GET['file928357'];
         if (!isset($_GET['tbl'])) \App::abort(404);
@@ -125,6 +128,7 @@ http://localhost/nesttab/public/nesttab/upload_image/load?tbl=73&rec=1&file=imag
     
     public function revert(Request $request) {
         //Log::debug('444 ' . print_r($request->all(), true));
+        \yy::dontSaveSession(); // prevent the session vars from saving
         $body  = file_get_contents('php://input'); // get id of download (token)
         //Log::debug('555 ' . print_r($body, true));
         if (!\Alxnv\Nesttab\Models\TokenUploadModel::isValidToken($body))  \App::abort(404);
