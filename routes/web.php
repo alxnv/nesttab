@@ -51,11 +51,11 @@ Route::middleware([\App\Http\Middleware\TrimStrings::class,
     Route::get('/upload_file/restore', CP9 . 'UploadFileController@restore');
     Route::post('/upload_file', CP9 . 'UploadFileController');
     Route::post('/edit/save_one/{id}', CP9 . 'EditController@saveOne');
-    Route::get('/edit/{id}/{id2}', CP9 . 'EditController@index');
-    Route::get('/editrec/{id}/{id2}/{id3}', CP9 . 'EditController@editRec');
-    Route::post('/editrec/save/{id}/{id2}/{id3}', CP9 . 'EditController@save');
+    Route::get('/edit/{id2}', CP9 . 'EditController@index');
+    Route::get('/editrec/{id2}/{id3}', CP9 . 'EditController@editRec');
+    Route::post('/editrec/save/{id2}/{id3}', CP9 . 'EditController@save');
     Route::get('/editrec/move/{id}/{id2}/{id3}/{id4}', CP9 . 'EditController@move');
-    Route::get('/editrec/delete/{id}/{id2}/{id3}', CP9 . 'EditController@delete');
+    Route::get('/editrec/delete/{id2}/{id3}', CP9 . 'EditController@delete');
     Route::post('/ajax_select_get/{id}', CP9 . 'AjaxController@getSelectListHtml');
     Route::get('/', CP9 . 'IndexController@index');
     

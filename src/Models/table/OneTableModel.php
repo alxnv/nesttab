@@ -24,7 +24,7 @@ class OneTableModel extends BasicTableModel {
         // получаем имена полей участвующих в отображении всех полей типа select данной таблицы
         $selectFldNames = \Alxnv\Nesttab\Models\ColumnsModel::getSelectFldNames($tbl['id'], $columns);
         $requires = [];
-        $parent_table_id = $tbl['parent_tbl_id'];
+        $parent_table_id = $tbl['p_id'];
         if ($parent_table_id == 0) {
             // top level table
             $parent_table_rec = [];
@@ -150,7 +150,7 @@ class OneTableModel extends BasicTableModel {
         if (!$this->hasErr()) {
             $request ->session()->flash('saved_successfully', 1);
             Session::save();
-            \yy::redirectNow($yy->nurl . 'edit/0/' . $tbl['id']);
+            \yy::redirectNow($yy->nurl . 'edit/' . $tbl['id']);
             exit;
         } else {
             //\yy::gotoErrorPage($s);
@@ -162,7 +162,7 @@ class OneTableModel extends BasicTableModel {
             //session([$lnk2 => $r]);
             $request->session()->flash($lnk2, $r);
             Session::save();
-            \yy::redirectNow($yy->nurl . 'edit/0/' . $tbl['id']);
+            \yy::redirectNow($yy->nurl . 'edit/' . $tbl['id']);
             exit;
         }
         

@@ -37,7 +37,7 @@ class TablesModel {
         // выбираем из таблиц типов 'list','tree' и 'ord'
         $allowed_types = \Alxnv\Nesttab\core\db\BasicTableHelper::getSelectTablesTypes(); 
         $list = $db->qlistArr("select id, table_type, name, descr from yy_tables"
-                . " where parent_tbl_id = 0 and table_type in $allowed_types"
+                . " where p_id = 0 and table_type in $allowed_types"
                 . " order by descr, id");
                 
         return $list;
@@ -54,7 +54,7 @@ class TablesModel {
         global $yy, $db;
         
         $list = $db->qlistArr("select id, table_type, name, descr from yy_tables"
-                . " where parent_tbl_id=0 order by table_type, descr, id");
+                . " where p_id=0 order by table_type, descr, id");
                 
         return $list;
     }
@@ -69,7 +69,7 @@ class TablesModel {
         global $yy, $db;
         
         $list = $db->qlistArr("select id, table_type, name, descr from yy_tables"
-                . " where parent_tbl_id=0 order by descr, table_type, id");
+                . " where p_id=0 order by descr, table_type, id");
                 
         return $list;
     }

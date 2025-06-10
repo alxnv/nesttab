@@ -16,12 +16,11 @@ class ListTableAdapterModel  extends BasicTableAdapterModel {
      * @global \Alxnv\Nesttab\Http\Controllers\type $db
      * @global \Alxnv\Nesttab\Http\Controllers\type $yy
      * @param array $tbl - table data
-     * @param int $id - id of the record of the parent table (0 for main level table)
      * @param int $id2 -  the id of the table in yy_tables
      * @param int $id3 - id of the record (0 for new record)
      * @param Request $request - request data
      */
-    public function deleteTableRec(array $tbl, int $id, int $id2, int $id3, object $request) {
+    public function deleteTableRec(array $tbl, int $id2, int $id3, object $request) {
         global $db, $yy;
         $r = $request->all();
         // get columns data for all file columns of the table

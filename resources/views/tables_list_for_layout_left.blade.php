@@ -16,7 +16,7 @@ $list = \Alxnv\Nesttab\Models\TablesModel::getAllByDescr();
 echo '<ul>';
 
 foreach ($list as $tbl) {
-    echo '<li><a href="' . $yy->nurl . 'edit/0/' . $tbl['id'] . '">' .
+    echo '<li><a href="' . $yy->nurl . 'edit/' . $tbl['id'] . '">' .
             \yy::qs($tbl['descr']) . '</a></li>';
 }
 

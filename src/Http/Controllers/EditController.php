@@ -30,7 +30,7 @@ class EditController extends BasicController {
      * @param int $id2 - id of the table
      * @param type $request
      */
-    public function index(int $id, int $id2, Request $request) {
+    public function index(int $id2, Request $request) {
         
         global $db, $yy;
 
@@ -41,7 +41,7 @@ class EditController extends BasicController {
         $tbl = \Alxnv\Nesttab\Models\TablesModel::getOne($id2);
         $type = \Alxnv\Nesttab\core\TableHelper::getTableTypeByOneChar($tbl['table_type']);
         $tableModel = \Alxnv\Nesttab\Models\Factory::createTableModel($type); 
-        return $tableModel->editTable($tbl, $r, $id, $id2);
+        return $tableModel->editTable($tbl, $r, $tbl['p_id'], $id2);
     }
     
     /**
@@ -52,7 +52,7 @@ class EditController extends BasicController {
      * @param int $id2 - id of the table
      * @param type $request
      */
-    public function editRec(int $id, int $id2, int $id3, Request $request) {
+    public function editRec(int $id2, int $id3, Request $request) {
         
         global $db, $yy;
 
@@ -63,7 +63,7 @@ class EditController extends BasicController {
         $tbl = \Alxnv\Nesttab\Models\TablesModel::getOne($id2);
         $type = \Alxnv\Nesttab\core\TableHelper::getTableTypeByOneChar($tbl['table_type']);
         $tableModel = \Alxnv\Nesttab\Models\Factory::createTableModel($type); 
-        return $tableModel->editTableRec($tbl, $r, $id, $id2, $id3);
+        return $tableModel->editTableRec($tbl, $r, $tbl['p_id'], $id2, $id3);
     }
 
     
@@ -100,7 +100,7 @@ class EditController extends BasicController {
      * @param int $id3 - id of the record (0 for new record)
      * @param Request $request
      */
-    public function save(int $id, int $id2, int $id3, Request $request) {
+    public function save(int $id2, int $id3, Request $request) {
         global $db, $yy;
         $table_id = intval($id2);
         if ($table_id == 0) {
@@ -109,7 +109,7 @@ class EditController extends BasicController {
         $tbl = \Alxnv\Nesttab\Models\TablesModel::getOne($table_id);
         $type = \Alxnv\Nesttab\core\TableHelper::getTableTypeByOneChar($tbl['table_type']);
         $recs = \Alxnv\Nesttab\Models\Factory::createTableModel($type); 
-        $recs->saveTableRec($tbl, $id, $id2, $id3, $request);
+        $recs->saveTableRec($tbl, $id2, $id3, $request);
     }
 
     /**
@@ -120,7 +120,7 @@ class EditController extends BasicController {
      * @param int $id3 - id of the record (0 for new record)
      * @param Request $request
      */
-    public function delete(int $id, int $id2, int $id3, Request $request) {
+    public function delete(int $id2, int $id3, Request $request) {
         global $db, $yy;
         $table_id = intval($id2);
         if ($table_id == 0) {
@@ -132,7 +132,7 @@ class EditController extends BasicController {
         if ($type === 'one') {
             throw new \Exception('not implemented');
         }
-        $recs->deleteTableRec($tbl, $id, $id2, $id3, $request, $type);
+        $recs->deleteTableRec($tbl, $id2, $id3, $request, $type);
         
     }
     

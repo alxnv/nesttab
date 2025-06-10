@@ -68,7 +68,7 @@ class ListTableModel extends BasicTableModel {
         $aModel = new \Alxnv\Nesttab\Models\ArbitraryTableModel();
         $aModel->adapter->move($tbl['name'], $rec, $newOrdr, $parentId);
         $page2 = $this->getMovePage($page);
-        \yy::redirectNow($yy->nurl . 'edit/' . $parentId . '/' . $tbl['id'] 
+        \yy::redirectNow($yy->nurl . 'edit/' . $tbl['id'] 
                     . '?page=' . $page2);
         exit;
     }
@@ -174,7 +174,7 @@ class ListTableModel extends BasicTableModel {
         // получаем имена полей участвующих в отображении всех полей типа select данной таблицы
         $selectFldNames = \Alxnv\Nesttab\Models\ColumnsModel::getSelectFldNames($tbl['id'], $columns);
         $requires = [];
-        $parent_table_id = $tbl['parent_tbl_id'];
+        $parent_table_id = $tbl['p_id'];
         if ($parent_table_id == 0) {
             // top level table
             $parent_table_rec = [];
@@ -283,7 +283,7 @@ class ListTableModel extends BasicTableModel {
         global $yy;
         //$columns = \Alxnv\Nesttab\Models\ColumnsModel::getTableColumnsWithNames($tbl['id']);
         $requires = [];
-        $parent_table_id = $tbl['parent_tbl_id'];
+        $parent_table_id = $tbl['p_id'];
         $errorMsg = '';
         if ($parent_table_id == 0) {
             // top level table
@@ -324,12 +324,11 @@ class ListTableModel extends BasicTableModel {
      * @global \Alxnv\Nesttab\Http\Controllers\type $db
      * @global \Alxnv\Nesttab\Http\Controllers\type $yy
      * @param array $tbl - table data
-     * @param int $id - id of the record of the parent table (0 for main level table)
      * @param int $id2 -  the id of the table in yy_tables
      * @param int $id3 - id of the record (0 for new record)
      * @param Request $request - request data
      */
-    public function saveTableRec(array $tbl, int $id, int $id2, int $id3, object $request) {
+    public function saveTableRec(array $tbl, int $id2, int $id3, object $request) {
         global $yy;
         $r = $request->all();
         $columns = \Alxnv\Nesttab\Models\ColumnsModel::getTableColumnsWithNames($tbl['id']);
@@ -347,7 +346,7 @@ class ListTableModel extends BasicTableModel {
         if (!$this->hasErr()) {
             $request ->session()->flash('saved_successfully', 1);
             Session::save();
-            \yy::redirectNow($yy->nurl . 'edit/' . $id . '/' . $tbl['id'] 
+            \yy::redirectNow($yy->nurl . 'edit/' . $tbl['id'] 
                     . '?page=' . $retPage);
             exit;
         } else {
@@ -360,7 +359,7 @@ class ListTableModel extends BasicTableModel {
             //session([$lnk2 => $r]);
             $request->session()->flash($lnk2, $r);
             Session::save();
-            \yy::redirectNow($yy->nurl . 'editrec/' . $id . '/' . $tbl['id'] . '/' . $id3);
+            \yy::redirectNow($yy->nurl . 'editrec/' . $tbl['id'] . '/' . $id3);
             exit;
         }
         
@@ -434,16 +433,15 @@ class ListTableModel extends BasicTableModel {
      * @global \Alxnv\Nesttab\Http\Controllers\type $db
      * @global \Alxnv\Nesttab\Http\Controllers\type $yy
      * @param array $tbl - table data
-     * @param int $id - id of the record of the parent table (0 for main level table)
      * @param int $id2 -  the id of the table in yy_tables
      * @param int $id3 - id of the record (0 for new record)
      * @param Request $request - request data
      * @param string $type
      */
-    public function deleteTableRec(array $tbl, int $id, int $id2, int $id3, object $request, string $type) {
+    public function deleteTableRec(array $tbl, int $id2, int $id3, object $request, string $type) {
         global $yy;
-        $this->adapter->deleteTableRec($tbl, $id, $id2, $id3, $request);
-        \yy::redirectNow($yy->nurl . 'edit/' . $id . '/' . $id2 . '?page=1');
+        $this->adapter->deleteTableRec($tbl, $id2, $id3, $request);
+        \yy::redirectNow($yy->nurl . 'edit/' . $id2 . '?page=1');
         exit;
     }    
 }

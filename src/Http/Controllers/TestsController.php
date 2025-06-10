@@ -35,7 +35,7 @@ class TestsController extends BasicController
         //$this->populateDB(11000);
         
         $t = microtime(true);
-        $db->qlist("select * from temp_bench");
+        $db->qlist("select * from temp_bench_i");
         $time = (microtime(true) - $t);
         echo 'Time: ' . $time;
 
