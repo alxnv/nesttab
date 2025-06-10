@@ -3,6 +3,18 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Cache;
 
+    /**
+     * Superglobals:
+     * @global array $td 
+     *   Все данные из таблицы yy_tables в суперглобальной переменной $td
+     *    $td['dat'] - данные таблицы [][id,p_id,name,descr]
+     *    $td['ind'] - индексы айдишников данных в 'dat'
+     *    $td['cat'] - массив [p_id][id]
+     * @global type $db - объект для работы с БД
+     * @global object $yy - синглтон с вспомогательными функциями
+     */
+
+
 class yy { 
 /**
 	суперглобальный класс с основными функциями для работы

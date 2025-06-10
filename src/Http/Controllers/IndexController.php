@@ -18,10 +18,7 @@ class IndexController extends BasicController
     {
         //dd(6);
         global $db;
-        //$arr = $db->qlist("select * from yy_columns");
-        //dd($arr);
-        //session(['rr' => 55]);
-        //Session::save();
+        $db->loadAllTablesData();
         return view('nesttab::index');
     }
 }

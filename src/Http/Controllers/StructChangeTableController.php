@@ -10,7 +10,8 @@ class StructChangeTableController extends BasicController {
     public function edit($id, Request $request) {
         
         global $db, $yy;
-        
+
+        $db->loadAllTablesData();
         $prev_link = ($request->has('prev') ? substr($request->input('prev'), 0, 500) : '');
 
         if (!isset($id) || (intval($id) == 0)) {

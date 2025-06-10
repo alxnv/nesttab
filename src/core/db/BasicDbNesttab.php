@@ -485,6 +485,38 @@ class BasicDbNesttab {
             return $this->errorMessage;
         }
     }
+    
+    /**
+     * Загружает все данные из таблицы yy_tables в суперглобальную переменную $td
+     * @global type $td 
+     *    $td['dat'] - данные таблицы
+     *    $td['ind'] - индексы айдишников данных в 'dat'
+     *    $td['cat'] - массив [p_id][id]
+     * @global type $db
+     */
+    public function loadAllTablesData() {
+        global $td, $db;
+        $td = [];
+        $td['dat'] = [];
+        $td['ind'] = [];
+        $td['cat'] = [];
+        DB::table('yy_tables')->select('id','p_id','name','descr')->orderBy('p_id', 'asc')
+                ->orderBy('descr', 'asc')->chunk(100,
+                function($rows) {
+                    $rows->each(function (object $item) {
+                        global $td;
+                        $td['ind'][$item->id] = count($td['dat']);
+                        $td['dat'][] = [$item->id, $item->p_id, $item->name, $item->descr];
+                        if (!isset($td['cat'][$item->p_id])) {
+                            $td['cat'][$item->p_id] = [];
+                        }
+                        $td['cat'][$item->p_id][] = $item->id;
+                    });
+                });
+        //while (false) {};
+    }
+    
+
 /*
     function getkrohi($tab,$uid2) {
         $sth=$this->q("select a.uid as uid1,a.ordr as ord1,a.naim as naim1,a.topid as top1,

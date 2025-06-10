@@ -35,6 +35,7 @@ class EditController extends BasicController {
         global $db, $yy;
 
         $this->maintain(); // поддержка работоспособности сервера
+        $db->loadAllTablesData();
         $r = $request->all();
         //$table_id = \yy::testExistsNotZero($r, 'id');
         
@@ -57,6 +58,7 @@ class EditController extends BasicController {
         global $db, $yy;
 
         $this->maintain(); // поддержка работоспособности сервера
+        $db->loadAllTablesData();
         $r = $request->all();
         //$table_id = \yy::testExistsNotZero($r, 'id');
         

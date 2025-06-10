@@ -5,6 +5,8 @@ use Illuminate\Http\Request;
 
 class StructAddTableController extends BasicController {
     public function index() {
+        global $db;
+        $db->loadAllTablesData();
         return view('nesttab::struct_add_table');
     }
     

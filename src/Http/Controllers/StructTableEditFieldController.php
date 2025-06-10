@@ -19,6 +19,7 @@ class StructTableEditFieldController extends BasicController {
     public function index($id, Request $request) {
         
         global $db, $yy;
+        $db->loadAllTablesData();
         /*$s = session('trw', '8888');
 Session::put('trw', '777');
 Session::save();
@@ -55,6 +56,7 @@ dd($s);*/
         //$b = $request->has('field_type_id');
         //dd($request->parm);
         $r = $request->all();
+        $db->loadAllTablesData();
         if (intval($parm) <> 0) $r['id']=intval($request->parm);
         if (!isset($id) || (intval($id) == 0)) {
             \yy::gotoErrorPage('Not valid table id as an argument');
