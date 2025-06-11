@@ -35,14 +35,16 @@ echo '<p class="center"><a href="' . $yy->nurl . 'struct-add-table/' . $tbl_id .
          . __('Add nested table') . '</a></p>';
 
 // вывести список всех таблиц следующего уровня, вложенных в данную
-if (isset($td['cat'][$tbl_id])) {
-    echo '<p class="center">';
-    foreach ($td['cat'][$tbl_id] as $ind) {
-        $row = $td['dat'][$td['ind'][$ind]];
-        echo '<a href="' . $yy->nurl .  'struct-change-table/edit/' . $row[0] . '">' . \yy::qs($row[3]) . '</a><br />';
-    }
-    echo '</p>';
-}
+echo \Alxnv\Nesttab\core\TableHelper::childTables($tbl_id, ' class="center"', 
+        function ($ind, $ap) {
+            global $td, $yy;
+            if (isset($td['ind'][$ind]) && isset($td['dat'][$td['ind'][$ind]])) {
+                $row = $td['dat'][$td['ind'][$ind]];
+                return '<a href="' . $yy->nurl .  'struct-change-table/edit/' . $row[0] . '">' . \yy::qs($row[3]) . '</a><br />';
+            } else {
+                return '';
+            }
+        }, []);
 echo '<hr />';
 
 echo '<br /><p class="center"><a class="addfield" href="' . $yy->nurl . 'struct-table-edit-field/index/' . $tbl_id . '/' . $prev_link . '">' . __('Add field') . '</a>'

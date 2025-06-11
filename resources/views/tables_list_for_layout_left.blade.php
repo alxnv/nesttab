@@ -22,7 +22,7 @@ var_dump($td);*/
 if (isset($td['cat'][0])) {
     foreach ($td['cat'][0] as $ind) {
         $tbl = $td['dat'][$td['ind'][$ind]];
-        echo '<li><a href="' . $yy->nurl . 'edit/' . $tbl[0] . '">' .
+        echo '<li><a href="' . $yy->nurl . 'edit/0/' . $tbl[0] . '">' .
             \yy::qs($tbl[3]) . '</a></li>';
         
     }

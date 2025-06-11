@@ -31,8 +31,8 @@ $title = '<h1>' . \yy::qs($tbl['descr']) . '</h1><br />';
 echo $title;
 
 //dd($recs);
-if ($errorMsg == '') echo '<br /><p class="center"><a class="addfield" href="' . $yy->nurl . 'editrec/' 
-        . $tbl['id'] . '/0">' . __('Add record') . '</a>'
+if ($errorMsg == '') echo '<br /><p class="center"><a class="addfield" href="' . $yy->nurl . 'editrec/' .
+        $parent_id . '/' . $tbl['id'] . '/0">' . __('Add record') . '</a>'
         . '</p>';
 echo '<br /><div id="idt" class="table center2 div-table">';
 echo '<div class="div-th"><span>№</span><span>' . __('Name') . '</span>'
@@ -50,7 +50,7 @@ foreach ($recs as $rec) {
     echo '<div><span><a class="addfield" href="' . $yy->nurl . 'editrec/' 
         . $tbl['id'] . '/' . $rec->id . '?page=' . $page . '">' . $rec->ordr;
     echo '</a></span><span><a class="addfield" href="' . $yy->nurl . 'editrec/' 
-        . $tbl['id'] . '/' . $rec->id . '?page=' . $page . '">' . \yy::qs($rec->name);
+        . $parent_id. '/' . $tbl['id'] . '/' . $rec->id . '?page=' . $page . '">' . \yy::qs($rec->name);
     echo '</a></span></div>';
     $i++;
 }

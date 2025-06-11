@@ -152,7 +152,7 @@ class OneTableModel extends BasicTableModel {
             //$request ->session()->flash('saved_successfully', 1);
             session(['saved_successfully' => 1]);
             Session::save();
-            \yy::redirectNow($yy->nurl . 'edit/' . $tbl['id']);
+            \yy::redirectNow($yy->nurl . 'edit/0/' . $tbl['id']);
             exit;
         } else {
             //\yy::gotoErrorPage($s);
@@ -164,7 +164,7 @@ class OneTableModel extends BasicTableModel {
             session([$lnk2 => $r]);
             //$request->session()->flash($lnk2, $r);
             Session::save();
-            \yy::redirectNow($yy->nurl . 'edit/' . $tbl['id']);
+            \yy::redirectNow($yy->nurl . 'edit/0/' . $tbl['id']);
             exit;
         }
         

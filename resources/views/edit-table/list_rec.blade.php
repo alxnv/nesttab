@@ -51,7 +51,7 @@ if ('' <> ($s77 = \yy::userFunctionIfExists($tbl['name'], 'onShow'))) $s77($recs
 echo $err3;
 
 echo '<p><a href="' . $yy->baseurl . config('nesttab.nurl') . '/edit/' .
-        $table_id . '?page=' . ($rec_id == 0 ? 1 : $returnToPage) . '">' . __('Back') . '</a></p>';
+        $parent_id . '/' . $table_id . '?page=' . ($rec_id == 0 ? 1 : $returnToPage) . '">' . __('Back') . '</a></p>';
 $title = '<h1>' . \yy::qs($tbl['descr']) . ' - ' 
         . ($rec_id == 0 ? __('add record') : __('edit record')) . '</h1><br />';
 if ('' <> ($s77 = \yy::userFunctionIfExists($tbl['name'], 'onShow'))) $s77($recs, -2, '', true, $title);
@@ -63,7 +63,7 @@ echo $title;
 <?php
 
 if (!$formNoSubmit) echo '<form enctype="multipart/form-data" method="post" action="' . $yy->baseurl . config('nesttab.nurl') . '/editrec/save/' . 
-        $table_id. '/' . $rec_id . '" >';
+        $parent_id . '/' . $table_id. '/' . $rec_id . '" >';
 ?>
 @csrf
 <input type="hidden" name="return_to_page5871" value="<?=$returnToPage?>" />

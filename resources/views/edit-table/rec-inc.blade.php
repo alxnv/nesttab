@@ -35,7 +35,7 @@ function confirm_it(id_passed) {
                 text: __lang('Yes'),
                 action: function(){
                     
-                    location.href = baseUrl +'/editrec/delete/<?=$tbl['id']?>/' + this.id_passed;
+                    location.href = baseUrl +'/editrec/delete/<?=$parent_id?>/<?=$tbl['id']?>/' + this.id_passed;
                     return true;
                     }               
             },

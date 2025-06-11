@@ -34,6 +34,18 @@ if ('' <> ($s77 = \yy::userFunctionIfExists($tbl['name'], 'onShow'))) $s77($recs
 echo $err3;
 
 //dd($recs);
+// вывести список всех таблиц следующего уровня, вложенных в данную
+echo \Alxnv\Nesttab\core\TableHelper::childTables($tbl['id'], ' class="center"', 
+        function ($ind, $ap) {
+            global $td, $yy;
+            if (isset($td['ind'][$ind]) && isset($td['dat'][$td['ind'][$ind]])) {
+                $row = $td['dat'][$td['ind'][$ind]];
+                return '<a href="' . $yy->nurl .  'struct-change-table/edit/' . $row[0] . '">' . \yy::qs($row[3]) . '</a><br />';
+            } else {
+                return '';
+            }
+        },
+        ['parent_id' => 0]);
 
 echo '<form enctype="multipart/form-data" method="post" action="' . $yy->baseurl . config('nesttab.nurl') . '/edit/save_one/' . $tbl['id'] . '" >';
 ?>
