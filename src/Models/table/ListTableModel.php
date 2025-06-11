@@ -221,6 +221,7 @@ class ListTableModel extends BasicTableModel {
         if (Session::has($lnk2)) {
             // проставить значения полей из сессии (бывший post) в $recs
             $recs = $this->setValues($recs, $r);
+            Session::forget($lnk2);
         }
         return view('nesttab::edit-table.list_rec', ['tbl' => $tbl, 'recs' => $recs,
                 'r' => $r, 'requires' => $requires, 'table_id' => $id2, 'rec_id' => $rec_id,
@@ -344,7 +345,8 @@ class ListTableModel extends BasicTableModel {
         $retPage = (isset($r['return_to_page5871']) 
                 ? intval($r['return_to_page5871']) : 1);
         if (!$this->hasErr()) {
-            $request ->session()->flash('saved_successfully', 1);
+            session(['saved_successfully' => 1]);
+            //$request ->session()->flash('saved_successfully', 1);
             Session::save();
             \yy::redirectNow($yy->nurl . 'edit/' . $tbl['id'] 
                     . '?page=' . $retPage);
@@ -352,12 +354,15 @@ class ListTableModel extends BasicTableModel {
         } else {
             //\yy::gotoErrorPage($s);
             $lnk = \yy::getErrorEditSession();
-            //session([$lnk => $recs->err->err]);
-            $request->session()->flash($lnk, $this->err->err);
+
+            // не делать session()->flash(), так как при обращении к загрузке изображения флеш удаляется
+            session([$lnk => $this->err->err]);
+
+            //$request->session()->flash($lnk, $this->err->err);
             //dd($recs->err->err);
             $lnk2 = \yy::getEditSession();
-            //session([$lnk2 => $r]);
-            $request->session()->flash($lnk2, $r);
+            session([$lnk2 => $r]);
+            //$request->session()->flash($lnk2, $r);
             Session::save();
             \yy::redirectNow($yy->nurl . 'editrec/' . $tbl['id'] . '/' . $id3);
             exit;

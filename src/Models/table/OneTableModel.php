@@ -63,6 +63,7 @@ class OneTableModel extends BasicTableModel {
         if (Session::has($lnk2)) {
             // проставить значения полей из сессии (бывший post) в $recs
             $recs = $this->setValues($recs, $r);
+            Session::forget($lnk2);
         }
         return view('nesttab::edit-table.one_rec', ['tbl' => $tbl, 'recs' => $recs,
                 'extra' => ['selectsInitialValues' => $selectsInitialValues],
@@ -148,19 +149,20 @@ class OneTableModel extends BasicTableModel {
         $this->getRecAddObjects($columns, $rec, $requires_stub);
         $this->save($columns, $tbl, 1, $r); // сохраняем запись с id=1
         if (!$this->hasErr()) {
-            $request ->session()->flash('saved_successfully', 1);
+            //$request ->session()->flash('saved_successfully', 1);
+            session(['saved_successfully' => 1]);
             Session::save();
             \yy::redirectNow($yy->nurl . 'edit/' . $tbl['id']);
             exit;
         } else {
             //\yy::gotoErrorPage($s);
             $lnk = \yy::getErrorEditSession();
-            //session([$lnk => $recs->err->err]);
-            $request->session()->flash($lnk, $this->err->err);
+            session([$lnk => $this->err->err]);
+            //$request->session()->flash($lnk, $this->err->err);
             //dd($recs->err->err);
             $lnk2 = \yy::getEditSession();
-            //session([$lnk2 => $r]);
-            $request->session()->flash($lnk2, $r);
+            session([$lnk2 => $r]);
+            //$request->session()->flash($lnk2, $r);
             Session::save();
             \yy::redirectNow($yy->nurl . 'edit/' . $tbl['id']);
             exit;
