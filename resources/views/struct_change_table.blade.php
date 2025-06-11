@@ -12,11 +12,12 @@ echo '<div id="main_contents">'; // div с основным содержимым
 
 
 if ($tbl['p_id'] == 0) {
-    echo '<h2><a href="' . $yy->baseurl . config('nesttab.nurl') . '/change-struct-list">' . __('All tables') . '</a></h2><br />';
+    echo '<p><a href="' . $yy->baseurl . config('nesttab.nurl') . '/change-struct-list">' . __('All tables') . '</a></p><br />';
 } else {
-    echo '<h2><a href="' . $yy->nurl . 'change-struct-list">' . __('All tables') . '</a> -&gt; ';
+    echo '<p><a href="' . $yy->nurl . 'change-struct-list">' . __('All tables') . '</a> -&gt; ';
     $ar3 = \Alxnv\Nesttab\core\FormatHelper::breadcrumbs($yy->nurl . 'struct-change-table/edit/', $tbl['p_id']);
     echo \Alxnv\Nesttab\core\FormatHelper::breadcrumbsShow($ar3);
+    echo '</p>';
 }
 
 echo '<br /><br /><h1 class="center">' . __('Edit table') . ' "' . \yy::qs($tbl['descr']) . '" (' .

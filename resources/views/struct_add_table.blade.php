@@ -47,10 +47,10 @@ $s = \Alxnv\Nesttab\core\HtmlHelper::makeselect($arFieldSizes, $int4Bytes);
 if ($tbl['id'] == 0) {
     echo '<h2 class="center">' . __('Add table') . '</h2>';
 } else {
-    echo '<h2><a href="' . $yy->nurl . 'change-struct-list">' . __('All tables') . '</a> -&gt; ';
+    echo '<p><a href="' . $yy->nurl . 'change-struct-list">' . __('All tables') . '</a> -&gt; ';
     $ar3 = \Alxnv\Nesttab\core\FormatHelper::breadcrumbs($yy->nurl . 'struct-change-table/edit/', $tbl['id']);
     echo \Alxnv\Nesttab\core\FormatHelper::breadcrumbsShow($ar3);
-    echo ' -&gt; ' . __("Add nested table") . '</h2>';
+    echo ' -&gt; ' . __("Add nested table") . '</p>';
 }
 ?>
 <br />
