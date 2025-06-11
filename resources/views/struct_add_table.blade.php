@@ -29,15 +29,30 @@ foreach ($yy->settings2['table_names'] as $s2) {
 $s = '\\Alxnv\\Nesttab\\core\\db\\' . config('nesttab.db_driver') . '\\TableHelper';
 $th = new $s();
 // получаем возможное количество байтов в поле типа int (tinyint и т.д.)
-$arFieldSizes = \Alxnv\Nesttab\core\ArrayHelper::keyLikeValue($th->arrayOfIntFieldSizes()); 
-$int4Bytes = 4;
+if ($tbl['id'] == 0) {
+    $arFieldSizes = \Alxnv\Nesttab\core\ArrayHelper::keyLikeValue($th->arrayOfIntFieldSizes()); 
+    $int4Bytes = 4;
+} else {
+    $int4Bytes = $tbl['id_bytes'];
+    $arFieldSizes = \Alxnv\Nesttab\core\ArrayHelper::keyLikeValue(
+            $th->arrayOfIntFieldSizes($int4Bytes)); 
+}
 $s = \Alxnv\Nesttab\core\HtmlHelper::makeselect($arFieldSizes, $int4Bytes);
 ?>
 <script type="text/javascript">
     var table_names =[<?=join(', ', $arr8)?>];
 </script>
-<form method="get" action="<?=$yy->nurl?>struct-add-table/step22">
-<h2 class="center"><?=__('Add table')?></h2>
+<form method="get" action="<?=$yy->nurl?>struct-add-table/step22/<?=$tbl['id']?>">
+<?php
+if ($tbl['id'] == 0) {
+    echo '<h2 class="center">' . __('Add table') . '</h2>';
+} else {
+    echo '<h2><a href="' . $yy->nurl . 'change-struct-list">' . __('All tables') . '</a> -&gt; ';
+    $ar3 = \Alxnv\Nesttab\core\FormatHelper::breadcrumbs($yy->nurl . 'struct-change-table/edit/', $tbl['id']);
+    echo \Alxnv\Nesttab\core\FormatHelper::breadcrumbsShow($ar3);
+    echo ' -&gt; ' . __("Add nested table") . '</h2>';
+}
+?>
 <br />
 <p>
 <?=__('Table type')?>: <select name="tbl_type" class="tbl_choose"><?=\Alxnv\Nesttab\core\HtmlHelper::makeselsimp($arr2)?></select><br />

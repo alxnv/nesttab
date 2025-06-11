@@ -25,4 +25,5 @@ class TableHelper {
         }
         return $yy->settings2['table_names'][$key];
     }
+    
 }

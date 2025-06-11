@@ -3,7 +3,7 @@
     <a href="<?=asset('/' . config('nesttab.nurl') . '/change-struct-list')?>"><?=__('Tables')?></a><br />
     </li>
     <li>
-    <a href="<?=asset('/' . config('nesttab.nurl') . '/struct-add-table')?>"><?=__('Add table')?></a><br />
+    <a href="<?=asset('/' . config('nesttab.nurl') . '/struct-add-table/0')?>"><?=__('Add table')?></a><br />
     </li>
 <?php
 global $yy;

@@ -115,17 +115,18 @@ class ListTableModel extends BasicTableModel {
      *   returns it)
      * @param int $parentTableId - id of parent table for this table, or
      *    0, if its a top level table
-     * @param int $idFieldSizeInBytes - size of field 'id' in bytes
+     * @param array $parent_tbl - данные родительской таблицы (либо ['id' => 0] для таблицы
+     *    верхнего уровня)
      * @return boolean - if table creation was successful
      */
     public function createTable(array $r, &$message, &$tableId, int $parentTableId, 
-            int $idFieldSizeInBytes) {
+            int $idFieldSizeInBytes, array $parent_tbl) {
 
         global $yy, $db;
         
         $tableId = 0;
         $b = parent::createTable($r, $message, $tableId, $parentTableId, 
-               $idFieldSizeInBytes);
+               $idFieldSizeInBytes, $parent_tbl);
         if ($b) {
             // таблица создана, добавляем поле 'name' типа 'string'
             $dummy = 0;

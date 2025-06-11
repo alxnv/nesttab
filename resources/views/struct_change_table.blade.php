@@ -1,5 +1,5 @@
 <?php
-global $yy;
+global $yy, $td;
 ?>
 @extends(config('nesttab.layout'))
 @section('content')
@@ -10,9 +10,16 @@ global $yy;
 
 echo '<div id="main_contents">'; // div с основным содержимым страницы
 
-echo '<p><a href="' . $yy->baseurl . config('nesttab.nurl') . '/change-struct-list">' . __('All tables') . '</a></p><br />';
 
-echo '<h1 class="center">' . __('Edit table') . ' "' . \yy::qs($tbl['descr']) . '" (' .
+if ($tbl['p_id'] == 0) {
+    echo '<h2><a href="' . $yy->baseurl . config('nesttab.nurl') . '/change-struct-list">' . __('All tables') . '</a></h2><br />';
+} else {
+    echo '<h2><a href="' . $yy->nurl . 'change-struct-list">' . __('All tables') . '</a> -&gt; ';
+    $ar3 = \Alxnv\Nesttab\core\FormatHelper::breadcrumbs($yy->nurl . 'struct-change-table/edit/', $tbl['p_id']);
+    echo \Alxnv\Nesttab\core\FormatHelper::breadcrumbsShow($ar3);
+}
+
+echo '<br /><br /><h1 class="center">' . __('Edit table') . ' "' . \yy::qs($tbl['descr']) . '" (' .
         __('physical name') . ': ' . \yy::qs($tbl['name']) .')<br /><br />';
 $tt = $tbl['table_type'];
 $s = \Alxnv\Nesttab\core\Helper::table_types($tt);
@@ -21,6 +28,21 @@ echo __('Table type') . ': ' . \yy::qs($s) . '</h1>';
 
 echo '</br /><p class="center"><a href="' . $yy->nurl . 'struct-table-show-settings/' . $tbl_id .'">'
          . __('Table settings') . '</a></p>';
+
+echo '<hr />';
+echo '<p class="center"><a href="' . $yy->nurl . 'struct-add-table/' . $tbl_id .'">'
+         . __('Add nested table') . '</a></p>';
+
+// вывести список всех таблиц следующего уровня, вложенных в данную
+if (isset($td['cat'][$tbl_id])) {
+    echo '<p class="center">';
+    foreach ($td['cat'][$tbl_id] as $ind) {
+        $row = $td['dat'][$td['ind'][$ind]];
+        echo '<a href="' . $yy->nurl .  'struct-change-table/edit/' . $row[0] . '">' . \yy::qs($row[3]) . '</a><br />';
+    }
+    echo '</p>';
+}
+echo '<hr />';
 
 echo '<br /><p class="center"><a class="addfield" href="' . $yy->nurl . 'struct-table-edit-field/index/' . $tbl_id . '/' . $prev_link . '">' . __('Add field') . '</a>'
         . '</p>';

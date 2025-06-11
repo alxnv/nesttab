@@ -53,10 +53,18 @@ class TableHelper extends \Alxnv\Nesttab\core\db\BasicTableHelper {
     
     /**
      * returns array of possible sizes of integer db fields for mysql
+     *  values starting from $from
      * @return array
      */
-    public function arrayOfIntFieldSizes() {
-        return [1, 2, 3, 4, 8];
+    public function arrayOfIntFieldSizes(int $from = 1) {
+        $arr = [1, 2, 3, 4, 8];
+        $arr2 = [];
+        foreach ($arr as $value) {
+            if ($value >= $from) {
+                $arr2[] = $value;
+            }
+        }
+        return $arr2;
     }
     
     /**

@@ -500,13 +500,14 @@ class BasicDbNesttab {
         $td['dat'] = [];
         $td['ind'] = [];
         $td['cat'] = [];
-        DB::table('yy_tables')->select('id','p_id','name','descr')->orderBy('p_id', 'asc')
+        DB::table('yy_tables')->select('id','p_id','name','descr', 'table_type')->orderBy('p_id', 'asc')
                 ->orderBy('descr', 'asc')->chunk(100,
                 function($rows) {
                     $rows->each(function (object $item) {
                         global $td;
                         $td['ind'][$item->id] = count($td['dat']);
-                        $td['dat'][] = [$item->id, $item->p_id, $item->name, $item->descr];
+                        $td['dat'][] = [$item->id, $item->p_id, $item->name, $item->descr,
+                            $item->table_type];
                         if (!isset($td['cat'][$item->p_id])) {
                             $td['cat'][$item->p_id] = [];
                         }

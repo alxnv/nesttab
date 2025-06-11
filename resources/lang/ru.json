@@ -5,6 +5,8 @@
     "to" : "...",
     "of" : "из",
     "Selected" : "Выбрано",
+    "All tables list" : "Список всех таблиц",
+    "Add nested table" : "Добавить вложенную таблицу",
     "PHP extension '%s' has not been loaded" : "PHP расширение '%s' не было загружено",
     "Image related functionality of Nesttab would be impossible" : "Будет невозможна работа с изображениями в Nesttab",
     "Sort by this field" : "Сортировать по этому полю",
