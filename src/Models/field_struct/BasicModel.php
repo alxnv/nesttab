@@ -245,6 +245,11 @@ class BasicModel {
             $tbl_id= $tbl['id'];
             $params2 = json_encode($params);
             if ($is_newrec) {
+                if (!$this->hasErr() && !$this->addField($tblname_2, $name_2, $tbl['id'], 
+                        $tbl['table_type'], $defForPhys, $fld_type_id, $definition,
+                        $saveParams)) {
+                    return;
+                }
                 if (!$this->hasErr()) {
                     if (!$db->qdirectNoErrorMessage("lock tables yy_columns write")){
                         $this->setErr('', __('The table does not exist'));
@@ -264,11 +269,6 @@ class BasicModel {
 
                     $db->qdirectNoErrorMessage("unlock tables");
                     
-                }
-                if (!$this->hasErr() && !$this->addField($tblname_2, $name_2, $tbl['id'], 
-                        $tbl['table_type'], $defForPhys, $fld_type_id, $definition,
-                        $saveParams)) {
-                    return;
                 }
             } else {
                 // its existing record
