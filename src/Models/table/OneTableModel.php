@@ -8,7 +8,39 @@ namespace Alxnv\Nesttab\Models\table;
 use Illuminate\Support\Facades\Session;
 
 class OneTableModel extends BasicTableModel {
+    // create table structure, step 2, write to the tables
+    // пытаемся создать таблицу указанного типа и с указанным именем
     /**
+     * 
+     * @global \Alxnv\Nesttab\Http\Controllers\type $yy
+     * @global \Alxnv\Nesttab\Http\Controllers\type $db
+     * @param array $r - request
+     * @param type $message - message here returned (ok or error)
+     * @param type $tableId - id of created table in yy_tables (no input value,
+     *   returns it)
+     * @param int $parentTableId - id of parent table for this table, or
+     *    0, if its a top level table
+     * @param int $idFieldSizeInBytes - size of field 'id' in bytes
+     * @param array $parent_tbl - данные родительской таблицы (либо ['id' => 0] для таблицы
+     *    верхнего уровня)
+     * @param array $options : key 'toAddRec' - значит добавлять запись после создания таблицы
+     *   (только для таблицы типа 'one')
+     * @return boolean - if table creation was successful
+     */
+    public function createTable(array $r, &$message, &$tableId, int $parentTableId, 
+            int $idFieldSizeInBytes, array $parent_tbl, array $options = []) {
+
+        global $yy, $db;
+        if ($parentTableId == 0) {
+            $options = ['toAddRec' => 1];
+        } else {
+            $options = [];
+        }
+        return parent::createTable($r, $message, $tableId, $parentTableId, 
+                $idFieldSizeInBytes, $parent_tbl, $options);
+
+    }
+     /**
      * Редактирование таблицы типа One Record - точка входа
      * @param array $tbl - данные таблицы
      * @param array $r - Request в виде массива

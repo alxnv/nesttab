@@ -210,10 +210,12 @@ class BasicTableModel {
      * @param int $idFieldSizeInBytes - size of field 'id' in bytes
      * @param array $parent_tbl - данные родительской таблицы (либо ['id' => 0] для таблицы
      *    верхнего уровня)
+     * @param array $options : key 'toAddRec' - значит добавлять запись после создания таблицы
+     *   (только для таблицы типа 'one')
      * @return boolean - if table creation was successful
      */
     public function createTable(array $r, &$message, &$tableId, int $parentTableId, 
-            int $idFieldSizeInBytes, array $parent_tbl) {
+            int $idFieldSizeInBytes, array $parent_tbl, array $options = []) {
 
         global $yy, $db;
 
@@ -272,7 +274,8 @@ class BasicTableModel {
         //$th = new $s();
 
         $message = '';
-        if (!$this->adapter->createTableDbCommands($tbl_name, $message, $idFieldDef, $parentTableId, $parentTbl)) {
+        if (!$this->adapter->createTableDbCommands($tbl_name, $message, $idFieldDef, $parentTableId, $parentTbl,
+                $options)) {
             return false;
         }
 

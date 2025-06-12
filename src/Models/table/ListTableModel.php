@@ -115,12 +115,12 @@ class ListTableModel extends BasicTableModel {
      *   returns it)
      * @param int $parentTableId - id of parent table for this table, or
      *    0, if its a top level table
-     * @param array $parent_tbl - данные родительской таблицы (либо ['id' => 0] для таблицы
-     *    верхнего уровня)
+     * @param array $options : key 'toAddRec' - значит добавлять запись после создания таблицы
+     *   (только для таблицы типа 'one')
      * @return boolean - if table creation was successful
      */
     public function createTable(array $r, &$message, &$tableId, int $parentTableId, 
-            int $idFieldSizeInBytes, array $parent_tbl) {
+            int $idFieldSizeInBytes, array $parent_tbl, array $options = []) {
 
         global $yy, $db;
         
@@ -142,9 +142,15 @@ class ListTableModel extends BasicTableModel {
                 return false;
             } else {
             // добавляем индексы с полем 'name'
-            $arr_commands = [
-                        "alter table " . $tbl['name'] . " add key(name(40))",
-                        ];
+                if ($parentTableId == 0) {
+                    $arr_commands = [
+                            "alter table " . $tbl['name'] . " add key(name(40))",
+                            ];
+                } else {
+                    $arr_commands = [
+                            "alter table " . $tbl['name'] . " add key(parent_id,name(40))",
+                            ];
+                }    
                 foreach ($arr_commands as $command) {
                         $sth = $db->qdirectNoErrorMessage($command);
                         if (!$sth) { # table already exists 

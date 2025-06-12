@@ -60,17 +60,33 @@ class ListTableAdapterModel  extends BasicTableAdapterModel {
      *   0, if there is no parent table (top level table creation)
      * @param array|null $parentTbl - record of parent table from yy_tables,
      *    or null if there is no parent table (top level table creation)
+     * @param array $options : key 'toAddRec' - значит добавлять запись после создания таблицы
+     *   (только для таблицы типа 'one')
      * @return bool - was the creation successfull
      */
     public function createTableDbCommands(string $table_name, string &$message,
-            string $idFieldDef, int $parentTableId, $parentTbl) {
+            string $idFieldDef, int $parentTableId, $parentTbl, array $options) {
         global $yy, $db;
         //var_dump($arr_commands);exit;
 
         // выполняем команду создания таблицы
-        $command = "create table $table_name (id " . $idFieldDef . " unsigned NOT NULL AUTO_INCREMENT,"
+        if ($parentTableId == 0) {
+            $command = "create table $table_name (id " . $idFieldDef . " unsigned NOT NULL AUTO_INCREMENT,"
                         . " ordr int not null,"
                         . " primary key (id))";                
+        } else {
+            $k = $parentTbl['id_bytes'];
+            $s = '\\Alxnv\\Nesttab\\core\\db\\' . config('nesttab.db_driver') . '\\TableHelper';
+            $th = new $s();
+            if (($parentFieldDef = $th->getIntTypeDef($k)) === false) {
+                $message = 'No int types of this size';
+                return false;
+            }
+            $command = "create table $table_name (id " . $idFieldDef . " unsigned NOT NULL AUTO_INCREMENT,"
+                        . " parent_id " . $parentFieldDef . " unsigned not null,"
+                        . " ordr int not null,"
+                        . " primary key (id))";                
+        }
         $sth = $db->qdirectNoErrorMessage($command);
         if (!$sth) {
             if ($db->errorCode == '42S01') { # table already exists 
@@ -86,9 +102,15 @@ class ListTableAdapterModel  extends BasicTableAdapterModel {
         // выполняем дополнительные команды
         // todo: если есть parent table, то вместо этого
         //   делать индекс по parent_id, ordr
-        $arr_commands = [
+        if ($parentTableId == 0) {
+            $arr_commands = [
                     "alter table $table_name add key(ordr)",
                     ];
+        } else {
+            $arr_commands = [
+                    "alter table $table_name add key(parent_id,ordr)",
+                    ];
+        }
         foreach ($arr_commands as $command) {
                 $sth = $db->qdirectNoErrorMessage($command);
                 if (!$sth) { # table already exists 
