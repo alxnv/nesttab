@@ -114,7 +114,8 @@ if ($user['can_modify_structure']) {
         <div id="footer">&copy; 2022-2023 by Alexander Vorobyov
 		<br />
 		Powered by <a href="https://laravel.com">Laravel</a>, <a href="https://vuejs.org">Vue</a>,
-		<a href="https://jquery.com">JQuery</a> and <a href="https://pqina.nl">PQINA</a>
+		<a href="https://jquery.com">JQuery</a>, <a href="https://pqina.nl">PQINA</a>
+                and <a href="https://select2.org/">Select2</a>
 		</div>
       </div>
     <script type="text/javascript">

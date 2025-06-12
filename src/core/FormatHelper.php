@@ -96,5 +96,38 @@ class FormatHelper {
         }
         return join($delimeter, $ar2);
     }
-            
+          
+    public static function breadacrumbsEdit(int $id) {
+        global $td, $yy;
+        // получаем цепочку родительских таблиц
+        $id2 = $id;
+        $arr = [];
+        $b = false;
+        while ($id2 <> 0) {
+            if (isset($td['ind'][$id2])) {
+                $ind = $td['ind'][$id2];
+                if (!isset($td['dat'][$ind])) {
+                    return '';
+                }
+            } else {
+                return '';
+            }
+            $row = $td['dat'][$ind];
+            if ($row[4] <> 'O') $b = true;
+            $arr[] = $row;
+            $id2 = $row[1];
+        }
+        $s = '';
+        $ar2 = [];
+        if (!$b) { // все родительские элементы - типа 'one'
+            for ($i = 0; $i<count($arr);$i++) {
+                $row = $arr[$i];
+                $k = ($row[1] == 0 ? 0 : 1);
+                $ar2[] = [$yy->nurl . 'edit/' . $k . '/' . $row[0], $row[3]];
+            }
+        }
+        $s = static::breadcrumbsShow($ar2);
+        return $s;
+        
+    }
 }
