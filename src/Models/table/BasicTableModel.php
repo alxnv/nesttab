@@ -530,6 +530,7 @@ class BasicTableModel {
                 $id5 = 0;
                 if ($tbl['p_id'] <> 0) { // таблица ненулевого уровня
                     $arr['parent_id'] = $id;
+                    $arr['id'] = $id;
                 }
                 $error = $this->adapter->insert($tbl['name'], $arr, $parentTableRec, $id5);
                 if ($error == '') {

@@ -41,7 +41,7 @@ echo $err3;
 
 //dd($recs);
 // вывести список всех таблиц следующего уровня, вложенных в данную
-echo \Alxnv\Nesttab\core\TableHelper::childTables($tbl['id'], '', 
+$s =  \Alxnv\Nesttab\core\TableHelper::childTables($tbl['id'], '', 
         function ($ind, $ap) {
             global $td, $yy;
             if (isset($td['ind'][$ind]) && isset($td['dat'][$td['ind'][$ind]])) {
@@ -52,7 +52,8 @@ echo \Alxnv\Nesttab\core\TableHelper::childTables($tbl['id'], '',
             }
         },
         ['parent_id' => $rec_id]); // id текущей записи типа 'one'
-echo '<br />';
+echo $s;        
+if ($s <> '') echo '<br />';
 /*if ($tbl['p_id'] == 0) {
     $k = 0;
 } else {

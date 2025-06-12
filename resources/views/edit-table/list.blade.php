@@ -30,6 +30,7 @@ if ($parent_id <> 0) echo '<p><a href="#" onClick="history.back()">' . __('Back'
 $title = '<h1>' . \yy::qs($tbl['descr']) . '</h1><br />';
 echo $title;
 
+
 //dd($recs);
 if ($errorMsg == '') echo '<br /><p class="center"><a class="addfield" href="' . $yy->nurl . 'editrec/' .
         $parent_id . '/' . $tbl['id'] . '/0">' . __('Add record') . '</a>'

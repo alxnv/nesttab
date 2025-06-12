@@ -57,6 +57,19 @@ $title = '<h1>' . \yy::qs($tbl['descr']) . ' - '
 if ('' <> ($s77 = \yy::userFunctionIfExists($tbl['name'], 'onShow'))) $s77($recs, -2, '', true, $title);
 echo $title;
 
+// вывести список всех таблиц следующего уровня, вложенных в данную
+echo \Alxnv\Nesttab\core\TableHelper::childTables($tbl['id'], '', 
+        function ($ind, $ap) {
+            global $td, $yy;
+            if (isset($td['ind'][$ind]) && isset($td['dat'][$td['ind'][$ind]])) {
+                $row = $td['dat'][$td['ind'][$ind]];
+                return '<a href="' . $yy->nurl .  'edit/' . $ap['parent_id'] . '/' . $row[0] . '">' . \yy::qs($row[3]) . '</a><br />';
+            } else {
+                return '';
+            }
+        },
+        ['parent_id' => $rec_id]); // id текущей записи типа 'one'
+echo '<br />';
 //dd($recs);
 ?>
 @include('nesttab::edit-table.rec-inc')
