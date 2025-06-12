@@ -69,13 +69,14 @@ class ArbitraryTableModel {
      *  в случае ошибки перейти на страницу с ошибкой
      * @param string $table - имя таблицы
      * @param int $id - идентификатор таблицы
+     * @param bool $ifNoError - выдавать ли ошибку, если не найдена запись
      * @return array - строку из бд с информацией об этой бд
      */
-    public static function getOne(string $table, int $id) {
+    public static function getOne(string $table, int $id, bool $ifNoError = true) {
         global $db;
         $tableName = $db->nameEscape($table);
         $tbl = $db->q("select * from $tableName where id=$1", [$id]);
-        if (is_null($tbl)) \yy::gotoErrorPage('Record not found');
+        if (is_null($tbl) && $ifNoError) \yy::gotoErrorPage('Record not found');
         return $tbl;
     }
     /**

@@ -49,7 +49,6 @@ class OneTableModel extends BasicTableModel {
      */
     public function editTable(array $tbl, array $r, int $id, int $id2) {
         // получаем строку с id=1 для one rec table (это единственная строка там)
-        if ($id <> 0) die('This table must be on the top level');
 
         $columnsModel = new \Alxnv\Nesttab\Models\ColumnsModel();
         $columns = \Alxnv\Nesttab\Models\ColumnsModel::getTableColumnsWithNames($tbl['id']);
@@ -63,7 +62,7 @@ class OneTableModel extends BasicTableModel {
         } else {
             // nested table
         }
-        $id3 = 1;
+        $id3 = ($id == 0 ? 1 : $id); // Id записи таблицы типа 'one'
         //$tbl = \Alxnv\Nesttab\Models\TablesModel::getOne($id2);
         $rec_id = $id3; // record 'id' field value !!! todo: replace
         //$recs = \Alxnv\Nesttab\Models\TableRecsModel::getRecAddObjects($columns, $tbl['name'], 1, $requires);
@@ -76,10 +75,10 @@ class OneTableModel extends BasicTableModel {
             $r_edited = session($lnk2);
             $r = $r_edited; //\yy::addKeys($r, $r_edited);
         }
-        if ($id3 == 0) {
+        $rec = \Alxnv\Nesttab\Models\ArbitraryTableModel::getOne($tbl['name'], $id3, false);
+        $hasRec = (!is_null($rec)); // найдена ли запись
+        if (!$hasRec) {
             $rec = [];
-        } else {
-            $rec = \Alxnv\Nesttab\Models\ArbitraryTableModel::getOne($tbl['name'], $id3);
         }
         /**
          * Добавляем к $columns данные из БД $rec 
@@ -87,7 +86,11 @@ class OneTableModel extends BasicTableModel {
          *  преобразуем данные в формат для отображения на странице редактирования
          * @return array - измененный $columns
          */
-        $recs = $this->getRecAddObjects($columns, $rec, $requires, $r);
+        if ($hasRec) {
+            $recs = $this->getRecAddObjects($columns, $rec, $requires, $r);
+        } else {
+            $recs = $this->getDefaults($columns, $requires); // получаем значения по умолчанию для новой записи
+        }
         $errorMsg = '';
         // получаем текущие значения всех полей select данной записи
         $selectsInitialValues = $columnsModel->getSelectsInitialValues($rec, $recs, $selectFldNames, $errorMsg);
@@ -99,7 +102,7 @@ class OneTableModel extends BasicTableModel {
         }
         return view('nesttab::edit-table.one_rec', ['tbl' => $tbl, 'recs' => $recs,
                 'extra' => ['selectsInitialValues' => $selectsInitialValues],
-                'errorMsg' => $errorMsg,
+                'errorMsg' => $errorMsg, 'hasRec' => $hasRec, 'rec' => $rec, 'parent_id' => $id,
                 'r' => $r, 'requires' => $requires, 'table_id' => $id2, 'rec_id' => $rec_id]);
         
     }
@@ -109,8 +112,9 @@ class OneTableModel extends BasicTableModel {
      * @param array $tbl - массив данных о таблице
      * @param int $id - идентификатор записи
      * @param array $r - (array)Request
+     * @param bool $isNewRec - false если данная запись еще не существует
      */
-    public function save(array &$columns, array $tbl, int $id, array &$r) {
+    public function save(array &$columns, array $tbl, int $id, array &$r, bool $isNewRec) {
         //$this->setErr('', 'fdsafd');
         global $yy;
         $yy->loadPhpScript(app_path() . '/Models/nesttab/tables/' 
@@ -132,7 +136,6 @@ class OneTableModel extends BasicTableModel {
             }
                 // устанавливает сообщения об ошибках для $this
             $toContinue = true;
-            $isNewRec = false; // todo: change it to appropriate value
             $value_old = (isset($columns[$i]['value_old']) ? $columns[$i]['value_old'] 
                     : null);
             if ('' <> ($s77 = \yy::userFunctionIfExists($tbl['name'], 'onValidate'))) 
@@ -153,7 +156,7 @@ class OneTableModel extends BasicTableModel {
             $this->postProcess1($tbl, $columns, $r); // постпроцессинг для всех типов данных
                // кроме image, file
             $yy->settings2['extended_db_messages'] = false; // short error messages
-            $error = $this->saveToDB($tbl, $columns, $id);
+            $error = $this->saveToDB($tbl, $columns, $id, $isNewRec);
             if ($error == '') {
                 // если основные поля сохранены без ошибок
                 $this->postProcess($tbl, $columns, $r); // записываем загруженные документы и изображения
@@ -167,24 +170,32 @@ class OneTableModel extends BasicTableModel {
     /**
      * Save table data
      * @param array $tbl - table data
-     * @param int $id - id of the table
+     * @param int $id - parent id for record
+     * @param int $id2 - id of the table
      * @param Request $request
      */
     
-    public function saveTable(array $tbl, int $id, object $request) {
+    public function saveTable(array $tbl, int $id, int $id2, object $request) {
         global $yy;
         $r = $request->all();
         $columns = \Alxnv\Nesttab\Models\ColumnsModel::getTableColumnsWithNames($tbl['id']);
         $requires_stub = [];
         // get data from db
-        $rec = \Alxnv\Nesttab\Models\ArbitraryTableModel::getOne($tbl['name'], 1);
+        $k = ($id == 0 ? 1 : $id); // id записи равен 1, если $id = 0
+        $rec = \Alxnv\Nesttab\Models\ArbitraryTableModel::getOne($tbl['name'], $k, false);
+        if (is_null($rec)) {
+            $isNewRec = true;
+            $rec = [];
+        } else {
+            $isNewRec = false;
+        }
         $this->getRecAddObjects($columns, $rec, $requires_stub);
-        $this->save($columns, $tbl, 1, $r); // сохраняем запись с id=1
+        $this->save($columns, $tbl, $k, $r, $isNewRec); // сохраняем запись с id=$k
         if (!$this->hasErr()) {
             //$request ->session()->flash('saved_successfully', 1);
             session(['saved_successfully' => 1]);
             Session::save();
-            \yy::redirectNow($yy->nurl . 'edit/0/' . $tbl['id']);
+            \yy::redirectNow($yy->nurl . 'edit/' . $id . '/' . $tbl['id']);
             exit;
         } else {
             //\yy::gotoErrorPage($s);
@@ -196,7 +207,7 @@ class OneTableModel extends BasicTableModel {
             session([$lnk2 => $r]);
             //$request->session()->flash($lnk2, $r);
             Session::save();
-            \yy::redirectNow($yy->nurl . 'edit/0/' . $tbl['id']);
+            \yy::redirectNow($yy->nurl . 'edit/' . $id . '/' . $tbl['id']);
             exit;
         }
         

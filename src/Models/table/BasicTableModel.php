@@ -42,7 +42,36 @@ class BasicTableModel {
         // bool, int, str  6-datetime, file, image, float, select  
         return [1,2,3,6,7,8,9,10];
     }
-
+    /**
+     * получить значения по умолчанию для новой записи
+     * @param array $columns - массив колонок полей записи
+     * @param array $requires - массив для задания параметров подключаемых модулей
+     * @return type
+     */
+    public function getDefaults(array &$columns, array &$requires) {
+        for ($i = 0; $i < count($columns); $i++) {
+            if ($columns[$i]['name_field'] == 'html') {
+                $requires['need_html_editor'] = 1;
+            }
+            if ($columns[$i]['name_field'] == 'datetime') {
+                $requires['need_datetimepicker'] = 1;
+            }
+            if ($columns[$i]['name_field'] == 'select') {
+                $requires['need_select2'] = 1;
+            }
+            if (in_array($columns[$i]['name_field'], ['image', 'file'])) {
+                $requires['need_filepond'] = 1;
+            }
+            $columns[$i]['params'] = (array)json_decode($columns[$i]['parameters']);
+            $columns[$i]['obj'] = \Alxnv\Nesttab\Models\Factory::createFieldModel($columns[$i]['field_type'], $columns[$i]['name_field']);
+            // проставляем в $columns defaults
+            $columns[$i]['value'] = $columns[$i]['obj']->getDefaults($columns, $i);
+            $columns[$i]['obj']->convertDataForInput($columns, $i); // если нужно, то
+               // преобразовываем данные из БД в данном поле
+        }
+        return $columns;
+        
+    }
     public function fieldsForView(array $fldIds) {
         $arr = [];
         foreach ($fldIds as $fldId) {
@@ -473,9 +502,10 @@ class BasicTableModel {
      * @param array $columns - массив с данными полей таблицы и их значениями
      * @param int &$id - id записи, или при вставке новой записи
      *     сюда возвращается id новой записи
+     * @param bool $isNewRec - признак новой записи (также таким признаком является $id == 0)
      * @return sting - '', если не было ошибки, иначе сообщение об ошибке
      */
-    public function saveToDB(array $tbl, array $columns, int &$id) {
+    public function saveToDB(array $tbl, array $columns, int &$id, bool $isNewRec = false) {
         global $db;
         $arr = [];
         // определяем, какие данные записывать (кроме полей типа image и file
@@ -494,10 +524,13 @@ class BasicTableModel {
         }
         
         if (count($arr) > 0) {
-            if ($id == 0) {
+            if (($id == 0) || $isNewRec) {
                 // new record
                 $parentTableRec = []; // todo: determine this record
                 $id5 = 0;
+                if ($tbl['p_id'] <> 0) { // таблица ненулевого уровня
+                    $arr['parent_id'] = $id;
+                }
                 $error = $this->adapter->insert($tbl['name'], $arr, $parentTableRec, $id5);
                 if ($error == '') {
                     $id = $id5;

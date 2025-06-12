@@ -50,7 +50,7 @@ Route::middleware([\App\Http\Middleware\TrimStrings::class,
     Route::get('/upload_file/load', CP9 . 'UploadFileController@load');
     Route::get('/upload_file/restore', CP9 . 'UploadFileController@restore');
     Route::post('/upload_file', CP9 . 'UploadFileController');
-    Route::post('/edit/save_one/{id}', CP9 . 'EditController@saveOne');
+    Route::post('/edit/save_one/{id}/{id2}', CP9 . 'EditController@saveOne');
     Route::get('/edit/{id}/{id2}', CP9 . 'EditController@index');
     Route::get('/editrec/{id}/{id2}/{id3}', CP9 . 'EditController@editRec');
     Route::post('/editrec/save/{id}/{id2}/{id3}', CP9 . 'EditController@save');

@@ -385,7 +385,7 @@ maybe later in later versions:
 search - в индекс могут сохраняться данные только этой таблицы (в след. версии определенного, плюс следующего уровня таблиц)
 yy_search - url, url_parts(адрес, где находится в url тот или иной элемент), txt, txt_parts
 ----
-if id == 0 && !hasErr() { getDefaults() }
+if id == 0 && !hasErr() { setDefaults() }
 ---
 !!! таблицы типа "one" могут быть на любом уровне
          для таблицы типа one можно устанавливать yy_tables->make_with_parents (установленный флаг значит,

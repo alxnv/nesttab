@@ -204,16 +204,17 @@ class ListTableModel extends BasicTableModel {
         }
         if ($id3 == 0) {
             $rec = [];
+            $recs = $this->getDefaults($columns, $requires); // получаем значения по умолчанию для новой записи
         } else {
             $rec = \Alxnv\Nesttab\Models\ArbitraryTableModel::getOne($tbl['name'], $id3);
+            /**
+             * Добавляем к $columns данные из БД $rec 
+             *  также добавляем соответствующие объекты типов полей к полям $columns,
+             *  преобразуем данные в формат для отображения на странице редактирования
+             * @return array - измененный $columns
+             */
+            $recs = $this->getRecAddObjects($columns, $rec, $requires, $r);
         }
-        /**
-         * Добавляем к $columns данные из БД $rec 
-         *  также добавляем соответствующие объекты типов полей к полям $columns,
-         *  преобразуем данные в формат для отображения на странице редактирования
-         * @return array - измененный $columns
-         */
-        $recs = $this->getRecAddObjects($columns, $rec, $requires, $r);
         $errorMsg = '';
         // получаем текущие значения всех полей select данной записи
         $selectsInitialValues = $columnsModel->getSelectsInitialValues($rec, $recs, $selectFldNames, $errorMsg);

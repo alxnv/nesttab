@@ -87,4 +87,22 @@ class OneTableAdapterModel  extends BasicTableAdapterModel {
         return true;
         
     }
+    /**
+     * Try to insert value into database of list type
+     * @param string $tbl_name - name of the table
+     * @param array $arrValues - values to insert into db
+     * @param array $parentTableRec - parent table record (or empty array if
+     *    its a top level table)
+     * @return string - '' if there is no error, or error message otherwise
+     */
+    public function insert(string $tbl_name, array $arrValues, array $parentTableRec, &$id) {
+
+        global $db;
+        $where = ''; // todo: устанвить его в другое значение для таблиц с parent_id
+        $arr2 = $arrValues;
+        
+        $error = $db->insert($tbl_name, $arr2);
+        return $error;
+        
+    }
 }

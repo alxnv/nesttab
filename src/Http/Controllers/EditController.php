@@ -82,17 +82,17 @@ class EditController extends BasicController {
      * @param int $id
      * @param Request $request
      */
-    public function saveOne($id, Request $request) {
+    public function saveOne(int $id, int $id2, Request $request) {
         global $db, $yy;
         //dd($r);
-        $table_id = intval($id);
+        $table_id = intval($id2);
         if ($table_id == 0) {
             \yy::gotoErrorPage('Zero id');
         }
         $tbl = \Alxnv\Nesttab\Models\TablesModel::getOne($table_id);
         $type = \Alxnv\Nesttab\core\TableHelper::getTableTypeByOneChar($tbl['table_type']);
         $recs = \Alxnv\Nesttab\Models\Factory::createTableModel($type); 
-        $recs->saveTable($tbl, $id, $request);
+        $recs->saveTable($tbl, $id, $id2, $request);
         
         //dd($id);
     }

@@ -38,7 +38,14 @@ class BasicModel {
         $this->adapter = $fa;
         $fa->init($this);
     }
-   
+
+    public function getDefaults(array &$columns, int $i) {
+        if (isset($columns[$i]['params']['default'])) {
+            return $columns[$i]['params']['default'];
+        } else {
+            return '';
+        }
+    }
     /**
      * stub
      * Удаляем файлы в upload соответствующие $fn
