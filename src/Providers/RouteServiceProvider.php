@@ -56,6 +56,7 @@ class RouteServiceProvider extends ServiceProvider
         Route::pattern('id2', '[0-9]+');
         Route::pattern('id3', '[0-9]+');
         Route::pattern('id4', '[0-9]+');
+        Route::pattern('id5', '[0-9]+');
     }
 	/**
      * Register the package routes.

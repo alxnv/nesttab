@@ -110,7 +110,7 @@ class FormatHelper {
         // получаем цепочку родительских таблиц
         $arr = [];
         $b = false;
-        // получаем родительский элемент $id
+        /*// получаем родительский элемент $id
         if (isset($td['ind'][$id])) {
             $ind = $td['ind'][$id];
             if (!isset($td['dat'][$ind])) {
@@ -119,7 +119,8 @@ class FormatHelper {
             $id2 = $td['dat'][$ind][1];
         } else {
             return '';
-        }
+        }*/
+        $id2 = $id;
 
         while ($id2 <> 0) {
             if (isset($td['ind'][$id2])) {
@@ -138,7 +139,7 @@ class FormatHelper {
         $s = '';
         $ar2 = [];
         if (!$b) { // все родительские элементы - типа 'one'
-            for ($i = 0; $i<count($arr);$i++) {
+            for ($i = 1; $i<count($arr);$i++) {
                 $row = $arr[$i];
                 $k = ($row[1] == 0 ? 0 : 1);
                 $ar2[] = [$yy->nurl . 'edit/' . $k . '/' . $row[0], $row[3]];
@@ -181,12 +182,19 @@ class FormatHelper {
      */
     public static function getBread(int $id, int $rec_id, array $arr) {
         global $db;
-        if (count($arr) == 0) return [''];
+        if (count($arr) < 2) return [];
         $arV = []; // "s1.id, s1.name, s2.id, s2.name"
         $arJ =[]; // left join
         for ($i = 0; $i < count($arr); $i++) {
+            if ($i == 0) {
+                $ss = 's1';
+                $s1 = " left join " . $arr[$i+1][2] . " " . $ss . " on s0.parent_id = "
+                        . $ss . ".id ";
+                $arJ[] = $s1;
+                continue;
+            }
             $s8 = $db->escape($arr[$i][3]); // descr
-            $ss = 's' . ($i + 1);
+            $ss = 's' . $i;
             $s1 = " " . $ss . ".id as " . $ss . "_id, '" . $arr[$i][4] . "' as " . $ss . "_type, "
                     .  $s8 . " as " . $ss . "_tbln, "
                     . $arr[$i][0] . " as " . $ss . "_tid";
@@ -196,9 +204,9 @@ class FormatHelper {
                 $s1 .= ", " . $ss . ".name as " . $ss . "_name";
             }
             $arV[] = $s1;
-            if ($i <> 0) {
+            if ($i <> 1) {
                 // все кроме первой записи
-                $ss0 = 's' . $i;
+                $ss0 = 's' . ($i -1);
                 $s1 = " left join " . $arr[$i][2] . " " . $ss . " on " . $ss0 . ".parent_id = "
                         . $ss . ".id ";
                 $arJ[] = $s1;
@@ -206,7 +214,7 @@ class FormatHelper {
         }
         $s3 = join(', ', $arV);
         $s4 = join('', $arJ);
-        $s = "select " . $s3 . " from " . $arr[0][2] . " s1 " . $s4 . " where s1.id = $rec_id";
+        $s = "select " . $s3 . " from " . $arr[0][2] . " s0 " . $s4 . " where s0.id = $rec_id";
         $row = $db->q($s);
         //$s .= print_r($row,true);
         // select from s1 left join s2 on s1.parent_id=s2.id, left join s3 on ...

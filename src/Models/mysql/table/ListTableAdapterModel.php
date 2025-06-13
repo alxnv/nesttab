@@ -16,21 +16,23 @@ class ListTableAdapterModel  extends BasicTableAdapterModel {
      * @global \Alxnv\Nesttab\Http\Controllers\type $db
      * @global \Alxnv\Nesttab\Http\Controllers\type $yy
      * @param array $tbl - table data
+     * @param int $id - id of the parent record in parent table (0 if first level table)
      * @param int $id2 -  the id of the table in yy_tables
      * @param int $id3 - id of the record (0 for new record)
      * @param Request $request - request data
      */
-    public function deleteTableRec(array $tbl, int $id2, int $id3, object $request) {
+    public function deleteTableRec(array $tbl, int $id, int $id2, int $id3, object $request) {
         global $db, $yy;
         $r = $request->all();
         // get columns data for all file columns of the table
         if ($id3 == 0) {
             \yy::gotoErrorPage('New record can not be deleted');
         } else {
+            // получить список колонок таблицы типа "файл" и "изображение"
+            $fileColumns = \Alxnv\Nesttab\Models\ColumnsModel::getTableFileColumns($tbl['id']);
+            $db->qdirect("lock tables " . $tbl['name'] . " write");
             $rec = \Alxnv\Nesttab\Models\ArbitraryTableModel::getOne($tbl['name'], $id3);
         }
-        // получить список колонок таблицы типа "файл" и "изображение"
-        $fileColumns = \Alxnv\Nesttab\Models\ColumnsModel::getTableFileColumns($tbl['id']);
         foreach ($fileColumns as $fileColumn) {
             $fldName = $fileColumn['name'];
             // если есть поле с таким именем в записи
@@ -46,9 +48,13 @@ class ListTableAdapterModel  extends BasicTableAdapterModel {
             }
         }
 
-        $db->qdirect("lock tables " . $tbl['name'] . " write");
+        if ($id == 0) {
+            $s = 'ordr>$1';
+        } else {
+            $s = 'parent_id = ' . $id . ' and ordr>$1';
+        }
         $db->q("delete from " . $tbl['name'] . " where id = $1", [$id3]);
-        $db->q("update " . $tbl['name'] . " set ordr=ordr-1 where ordr>$1", [$rec['ordr']]);
+        $db->q("update " . $tbl['name'] . " set ordr=ordr-1 where " . $s, [$rec['ordr']]);
         $db->qdirect("unlock tables");
     }    
     /**
@@ -141,13 +147,20 @@ class ListTableAdapterModel  extends BasicTableAdapterModel {
      * @param array $arrValues - values to insert into db
      * @param array $parentTableRec - parent table record (or empty array if
      *    its a top level table)
+     * @param int $parentId - id of the parent record (0 if it is the first level table)
+     * @return param $id - id of the saved record
      * @return string - '' if there is no error, or error message otherwise
      */
-    public function insert(string $tbl_name, array $arrValues, array $parentTableRec, &$id) {
+    public function insert(string $tbl_name, array $arrValues, array $parentTableRec, &$id,
+            int $parentId) {
 
         global $db;
-        $where = ''; // todo: устанвить его в другое значение для таблиц с parent_id
-        $arr2 = $this->addSaveValues($arrValues, $parentTableRec, $where);
+        if ($parentId == 0) {
+            $where = ''; // todo: устанвить его в другое значение для таблиц с parent_id
+        } else {
+            $where = " where parent_id = " . $parentId;
+        }
+        $arr2 = $arrValues; //$this->addSaveValues($arrValues, $parentTableRec, $where);
         
         $error = '';
         

@@ -56,19 +56,22 @@ class ListTableModel extends BasicTableModel {
      * @param int $recId - record id
      * @param int $newOrdr - new ordr value
      * @param int $page - page to return to (maybe)
+     * @param int $parentId - id of the parent record in the parent table
+     *  (0 if it is a top level table)
      */
-    public function moveRec(int $tableId, int $recId, int $newOrdr, int $page) {
+    public function moveRec(int $tableId, int $recId, int $newOrdr, int $page,
+            int $parentId) {
         global $yy;
         if ($recId == 0) {
             die('can not move record with id 0');
         }
         $tbl = \Alxnv\Nesttab\Models\TablesModel::getOne($tableId);
         $rec = \Alxnv\Nesttab\Models\ArbitraryTableModel::getOne($tbl['name'], $recId);
-        $parentId = (isset($rec['parent_id']) ? $rec['parent_id'] : 0);
+        //$parentId = (isset($rec['parent_id']) ? $rec['parent_id'] : 0);
         $aModel = new \Alxnv\Nesttab\Models\ArbitraryTableModel();
         $aModel->adapter->move($tbl['name'], $rec, $newOrdr, $parentId);
         $page2 = $this->getMovePage($page);
-        \yy::redirectNow($yy->nurl . 'edit/0/' . $tbl['id'] 
+        \yy::redirectNow($yy->nurl . 'edit/' . $parentId . '/' . $tbl['id'] 
                     . '?page=' . $page2);
         exit;
     }
@@ -182,9 +185,9 @@ class ListTableModel extends BasicTableModel {
         $selectFldNames = \Alxnv\Nesttab\Models\ColumnsModel::getSelectFldNames($tbl['id'], $columns);
         $requires = [];
         $parent_table_id = $tbl['p_id'];
+        $parent_table_rec = [];
         if ($parent_table_id == 0) {
             // top level table
-            $parent_table_rec = [];
         } else {
             // nested table
         }
@@ -235,7 +238,7 @@ class ListTableModel extends BasicTableModel {
                 'r' => $r, 'requires' => $requires, 'table_id' => $id2, 'rec_id' => $rec_id,
                 'parent_id' => $id, 'returnToPage' => $returnToPage, 'rec' => $rec,
                 'extra' => ['selectsInitialValues' => $selectsInitialValues],
-                'errorMsg' => $errorMsg, 'id2' => $id2, 'id3' => $id3,
+                'errorMsg' => $errorMsg, 'id2' => $id2, 'id3' => $id3, 'id' => $id,
                 'parent_table_id' => $parent_table_id, 'parent_table_rec' => $parent_table_rec]);
         
     }
@@ -288,23 +291,28 @@ class ListTableModel extends BasicTableModel {
      * @param int $id2 -  the id of the table in yy_tables
      */
     public function editTable(array $tbl, array $r, int $id, int $id2) {
-        // получаем строку с id=1 для one rec table (это единственная строка там)
         global $yy;
         //$columns = \Alxnv\Nesttab\Models\ColumnsModel::getTableColumnsWithNames($tbl['id']);
         $requires = [];
         $parent_table_id = $tbl['p_id'];
         $errorMsg = '';
+        $parent_table_rec = [];
         if ($parent_table_id == 0) {
             // top level table
-            $parent_table_rec = [];
             try {
                 $recs = DB::table($tbl['name'])->orderBy('ordr')->paginate($yy->settings2['recs_per_page']);
             } catch (\Exception $e) {
-                $recs = [];
                 $errorMsg = sprintf(__('Table %s does not exist'), $tbl['name']);
+                \yy::gotoErrorPagePage($errorMsg);
             }
         } else {
             // nested table
+            try {
+                $recs = DB::table($tbl['name'])->where('parent_id', '=', $id)->orderBy('ordr')->paginate($yy->settings2['recs_per_page']);
+            } catch (\Exception $e) {
+                $errorMsg = sprintf(__('Table %s does not exist'), $tbl['name']);
+                \yy::gotoErrorPagePage($errorMsg);
+            }
         }
         //$tbl = \Alxnv\Nesttab\Models\TablesModel::getOne($id2);
         $rec_id = 1; // record 'id' field value !!! todo: replace
@@ -349,7 +357,7 @@ class ListTableModel extends BasicTableModel {
             $rec = \Alxnv\Nesttab\Models\ArbitraryTableModel::getOne($tbl['name'], $id3);
         }
         $this->getRecAddObjects($columns, $rec, $requires_stub);
-        $this->save($columns, $tbl, $id3, $r); // сохраняем запись
+        $this->save($columns, $tbl, $id3, $id, $r); // сохраняем запись
         // на какую страницу списка записей возвращаемся
         $retPage = (isset($r['return_to_page5871']) 
                 ? intval($r['return_to_page5871']) : 1);
@@ -385,9 +393,10 @@ class ListTableModel extends BasicTableModel {
      * @param array &$columns 
      * @param array $tbl - массив данных о таблице
      * @param int $id - идентификатор записи
+     * @param int $parentId - идентификатор родительской записи
      * @param array $r - (array)Request
      */
-    public function save(array &$columns, array $tbl, int $id, array &$r) {
+    public function save(array &$columns, array $tbl, int $id, int $parentId, array &$r) {
         //$this->setErr('', 'fdsafd');
         global $yy, $db;
         $yy->loadPhpScript(app_path() . '/Models/nesttab/tables/' 
@@ -430,7 +439,7 @@ class ListTableModel extends BasicTableModel {
             $this->postProcess1($tbl, $columns, $r); // постпроцессинг для всех типов данных
                // кроме image, file
             $yy->settings2['extended_db_messages'] = false; // short error messages
-            $error = $this->saveToDB($tbl, $columns, $id);
+            $error = $this->saveToDB2($tbl, $columns, $id, $parentId);
             if ($error == '') {
                 // если основные поля сохранены без ошибок
                 $this->postProcess($tbl, $columns, $r); // записываем загруженные документы и изображения
@@ -442,6 +451,54 @@ class ListTableModel extends BasicTableModel {
         }
     }
 
+    /**
+     * Записываем данные в БД
+     * @param array $tbl - массив с данными о таблице
+     * @param array $columns - массив с данными полей таблицы и их значениями
+     * @param int &$id - id записи, или при вставке новой записи
+     *     сюда возвращается id новой записи
+     * @param bool $isNewRec - признак новой записи (также таким признаком является $id == 0)
+     * @return sting - '', если не было ошибки, иначе сообщение об ошибке
+     */
+    public function saveToDB2(array $tbl, array $columns, int &$id, int $parentId) {
+        global $db;
+        $arr = [];
+        // определяем, какие данные записывать (кроме полей типа image и file
+        for ($i = 0; $i < count($columns); $i++) {
+            // $columns[$i]['name_field'] - тип поля
+            if (isset($columns[$i]['value']) 
+                    && !in_array($columns[$i]['name_field'], ['image', 'file'])) {
+                // if set $columns[$i]['value_for_db'], save it, or value
+                $arr[$columns[$i]['name']] = $columns[$i]['value'];
+            }
+            if (isset($columns[$i]['value_for_db']) 
+                    && !in_array($columns[$i]['name_field'], ['image', 'file'])) {
+                // if set $columns[$i]['value_for_db'], save it, or value
+                $arr[$columns[$i]['name']] = $columns[$i]['value_for_db'];
+            }
+        }
+        
+        if (count($arr) > 0) {
+            if ($id == 0) {
+                // new record
+                $parentTableRec = []; // todo: determine this record
+                $id5 = 0;
+                if ($tbl['p_id'] <> 0) { // таблица ненулевого уровня
+                    $arr['parent_id'] = $parentId;
+                    $arr['id'] = $id;
+                }
+                $error = $this->adapter->insert($tbl['name'], $arr, $parentTableRec, $id5, $parentId);
+                if ($error == '') {
+                    $id = $id5;
+                }
+                return $error;
+            } else {
+                $error = $db->update($tbl['name'], $arr, "where id=" . $id);
+                return $error;
+            }
+        }
+        return true;
+    }
     /**
      * try to delete a table record
      * @global \Alxnv\Nesttab\Http\Controllers\type $db
@@ -455,7 +512,7 @@ class ListTableModel extends BasicTableModel {
      */
     public function deleteTableRec(array $tbl, int $id, int $id2, int $id3, object $request, string $type) {
         global $yy;
-        $this->adapter->deleteTableRec($tbl, $id2, $id3, $request);
+        $this->adapter->deleteTableRec($tbl, $id, $id2, $id3, $request);
         \yy::redirectNow($yy->nurl . 'edit/' . $id . '/' . $id2 . '?page=1');
         exit;
     }    

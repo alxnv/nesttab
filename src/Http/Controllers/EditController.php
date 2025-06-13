@@ -15,12 +15,13 @@ class EditController extends BasicController {
      * @param int $id2 - record id
      * @param int $id3 - new ordr value
      * @param int $id4 - page to return to (maybe)
+     * @param int $id5 - parent record id (0 if it is top level table)
      */
-    public function move(int $id, int $id2, int $id3, int $id4) {
+    public function move(int $id, int $id2, int $id3, int $id4, int $id5) {
         // вызываем модель тип L, moveRec()
         $type = \Alxnv\Nesttab\core\TableHelper::getTableTypeByOneChar('L');
         $tableModel = \Alxnv\Nesttab\Models\Factory::createTableModel($type);
-        return $tableModel->moveRec($id, $id2, $id3, $id4);
+        return $tableModel->moveRec($id, $id2, $id3, $id4, $id5);
     }
     /**
      * Редактриование содержимого таблицы с идентификатором id
@@ -69,7 +70,7 @@ class EditController extends BasicController {
         //$tbl = \Alxnv\Nesttab\Models\TablesModel::getOne($id2);
         $type = \Alxnv\Nesttab\core\TableHelper::getTableTypeByOneChar($tbl['table_type']);
         $tableModel = \Alxnv\Nesttab\Models\Factory::createTableModel($type); 
-        return $tableModel->editTableRec($tbl, $r, $tbl['p_id'], $id2, $id3);
+        return $tableModel->editTableRec($tbl, $r, $id, $id2, $id3);
     }
 
     

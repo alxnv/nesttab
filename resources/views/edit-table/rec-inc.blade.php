@@ -64,7 +64,7 @@ const TableElt = {
         },
         onMove: function() {
             location.href=baseUrl + '/editrec/move/<?=$tbl['id']?>/'
-                + this.id + '/' + this.moveto + '/<?=$returnToPage?>';
+                + this.id + '/' + this.moveto + '/<?=$returnToPage?>/<?=$parent_id?>';
             
         },
   },

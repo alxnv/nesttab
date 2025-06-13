@@ -72,7 +72,7 @@ if ($rec_id <> 0) { // если не новая запись
                     return '';
                 }
             },
-            ['parent_id' => $rec_id]); // id текущей записи типа 'one'
+            ['parent_id' => $id3]); // id текущей записи типа 'one'
     echo '<br />';
 }
 //dd($recs);
