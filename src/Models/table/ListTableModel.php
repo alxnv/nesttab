@@ -235,7 +235,7 @@ class ListTableModel extends BasicTableModel {
                 'r' => $r, 'requires' => $requires, 'table_id' => $id2, 'rec_id' => $rec_id,
                 'parent_id' => $id, 'returnToPage' => $returnToPage, 'rec' => $rec,
                 'extra' => ['selectsInitialValues' => $selectsInitialValues],
-                'errorMsg' => $errorMsg,
+                'errorMsg' => $errorMsg, 'id2' => $id2, 'id3' => $id3,
                 'parent_table_id' => $parent_table_id, 'parent_table_rec' => $parent_table_rec]);
         
     }

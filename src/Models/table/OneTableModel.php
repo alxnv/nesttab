@@ -102,6 +102,7 @@ class OneTableModel extends BasicTableModel {
         }
         return view('nesttab::edit-table.one_rec', ['tbl' => $tbl, 'recs' => $recs,
                 'extra' => ['selectsInitialValues' => $selectsInitialValues],
+                'id2' => $id2, 
                 'errorMsg' => $errorMsg, 'hasRec' => $hasRec, 'rec' => $rec, 'parent_id' => $id,
                 'r' => $r, 'requires' => $requires, 'table_id' => $id2, 'rec_id' => $rec_id]);
         
@@ -182,6 +183,9 @@ class OneTableModel extends BasicTableModel {
         $requires_stub = [];
         // get data from db
         $k = ($id == 0 ? 1 : $id); // id записи равен 1, если $id = 0
+        $this->adapter->beginTransaction($tbl['name']); // делаем lock tables $tbl['name']
+        /* чтобы не добавилась за это время в таблицу запись 
+        которую сейчас будем добавлять (в случае новой записи)*/
         $rec = \Alxnv\Nesttab\Models\ArbitraryTableModel::getOne($tbl['name'], $k, false);
         if (is_null($rec)) {
             $isNewRec = true;

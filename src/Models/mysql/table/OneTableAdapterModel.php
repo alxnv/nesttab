@@ -105,4 +105,15 @@ class OneTableAdapterModel  extends BasicTableAdapterModel {
         return $error;
         
     }
+    
+    /**
+     * Начало транзакции (lock tables) - чтобы не добавилась за это время в таблицу запись 
+     *   которую сейчас будем добавлять (в случае новой записи)
+     * @global type $db
+     * @param String $tableName - имя таблицы
+     */
+    public function beginTransaction(String $tableName) {
+        global $db;
+        $db->qdirect('lock tables ' . $tableName . ' write');
+    }
 }

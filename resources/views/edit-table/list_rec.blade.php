@@ -50,6 +50,9 @@ $err3 = $e->getErr('');
 if ('' <> ($s77 = \yy::userFunctionIfExists($tbl['name'], 'onShow'))) $s77($recs, -2, '', false, $err3);
 echo $err3;
 
+$s = \Alxnv\Nesttab\core\FormatHelper::breadcrumbsEdit($id2, $id3);
+echo $s;
+
 echo '<p><a href="' . $yy->baseurl . config('nesttab.nurl') . '/edit/' .
         $parent_id . '/' . $table_id . '?page=' . ($rec_id == 0 ? 1 : $returnToPage) . '">' . __('Back') . '</a></p>';
 $title = '<h1>' . \yy::qs($tbl['descr']) . ' - ' 

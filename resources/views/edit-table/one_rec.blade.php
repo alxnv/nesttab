@@ -25,9 +25,8 @@ if ($errorMsg <> '') {
 }
 echo \yy::getSuccessOrErrorMessage($r, $e);
 
-$s = \Alxnv\Nesttab\core\FormatHelper::breadacrumbsEdit($tbl['p_id']);
+$s = \Alxnv\Nesttab\core\FormatHelper::breadcrumbsEdit($id2, $parent_id);
 echo $s;
-if ($s <> '') echo ' -&gt; ';
 $title = \yy::qs($tbl['descr']);
 if ('' <> ($s77 = \yy::userFunctionIfExists($tbl['name'], 'onShow'))) $s77($recs, -2, '', true, $title);
 echo $title;
