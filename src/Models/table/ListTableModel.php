@@ -330,7 +330,7 @@ class ListTableModel extends BasicTableModel {
         //dd($r);
         return view('nesttab::edit-table.list', ['tbl' => $tbl, 'recs' => $recs,
                 'r' => $r, 'requires' => $requires, 'table_id' => $id2, 'rec_id' => $rec_id,
-                'parent_id' => $id,
+                'parent_id' => $id, 'id2' => $id2, 'id' => $id,
                 'errorMsg' => $errorMsg,
                 'parent_table_id' => $parent_table_id, 'parent_table_rec' => $parent_table_rec]);
         

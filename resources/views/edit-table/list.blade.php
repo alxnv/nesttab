@@ -26,8 +26,10 @@ if ($errorMsg <>'') $e->setErr('', $errorMsg);
 $err3 = $e->getErr('');
 echo $err3;
 
-if ($parent_id <> 0) echo '<p><a href="#" onClick="history.back()">' . __('Back') . '</a></p>';
-$title = '<h1>' . \yy::qs($tbl['descr']) . '</h1><br />';
+$s = \Alxnv\Nesttab\core\FormatHelper::breadcrumbsEdit($id2, $id);
+echo $s;
+//if ($parent_id <> 0) echo '<p><a href="#" onClick="history.back()">' . __('Back') . '</a></p>';
+$title = '' . \yy::qs($tbl['descr']) . '<br />';
 echo $title;
 
 

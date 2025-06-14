@@ -50,19 +50,20 @@ $err3 = $e->getErr('');
 if ('' <> ($s77 = \yy::userFunctionIfExists($tbl['name'], 'onShow'))) $s77($recs, -2, '', false, $err3);
 echo $err3;
 
-$s = \Alxnv\Nesttab\core\FormatHelper::breadcrumbsEdit($id2, $id3);
+$s = \Alxnv\Nesttab\core\FormatHelper::breadcrumbsEdit($id2, $id);
 echo $s;
 
-echo '<p><a href="' . $yy->baseurl . config('nesttab.nurl') . '/edit/' .
-        $parent_id . '/' . $table_id . '?page=' . ($rec_id == 0 ? 1 : $returnToPage) . '">' . __('Back') . '</a></p>';
-$title = '<h1>' . \yy::qs($tbl['descr']) . ' - ' 
-        . ($rec_id == 0 ? __('add record') : __('edit record')) . '</h1><br />';
+/*echo '<p><a href="' . $yy->baseurl . config('nesttab.nurl') . '/edit/' .
+        $parent_id . '/' . $table_id . '?page=' . ($rec_id == 0 ? 1 : $returnToPage) . '">' . __('Back') . '</a></p>';*/
+$title = \yy::qs($tbl['descr']) . ' - ' 
+        . ($rec_id == 0 ? __('add record') : __('edit record'));
 if ('' <> ($s77 = \yy::userFunctionIfExists($tbl['name'], 'onShow'))) $s77($recs, -2, '', true, $title);
 echo $title;
+echo '<br />';
 
 if ($rec_id <> 0) { // если не новая запись
     // вывести список всех таблиц следующего уровня, вложенных в данную
-    echo \Alxnv\Nesttab\core\TableHelper::childTables($tbl['id'], '', 
+    $s = \Alxnv\Nesttab\core\TableHelper::childTables($tbl['id'], '', 
             function ($ind, $ap) {
                 global $td, $yy;
                 if (isset($td['ind'][$ind]) && isset($td['dat'][$td['ind'][$ind]])) {
@@ -73,8 +74,11 @@ if ($rec_id <> 0) { // если не новая запись
                 }
             },
             ['parent_id' => $id3]); // id текущей записи типа 'one'
-    echo '<br />';
+    if ($s <> '') {
+        echo '<br />' . $s;        
+    }
 }
+echo '<br />';
 //dd($recs);
 ?>
 @include('nesttab::edit-table.rec-inc')
