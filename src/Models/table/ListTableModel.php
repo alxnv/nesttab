@@ -15,6 +15,7 @@ class ListTableModel extends BasicTableModel {
      *   this BasicTableModel method called for L, D
      * @param array $tbl - table info data
      * @param int $id - id of the table
+     * @param array $r - массив для редактирования (нас интересует $r['descr'])
      */
     public function saveSettings(array $tbl, int $id, object $request) {
         global $yy;
@@ -24,8 +25,10 @@ class ListTableModel extends BasicTableModel {
         } else {
             $sI = -1;
         }
+        $descr1 = ($request->has('descr') ? $request->descr : ''); 
         $arr =  (isset($r['flds']) ? $r['flds'] : []); 
         $this->adapter->saveTableRefs($arr, $id, $sI);
+        $this->adapter->saveDescr($tbl, $id, $descr1); // сохранить название таблицы
         $request ->session()->flash('saved_successfully', 1);
         Session::save();
         \yy::redirectNow($yy->nurl . 'struct-table-show-settings/' . $id);
@@ -36,11 +39,12 @@ class ListTableModel extends BasicTableModel {
      *   this BasicTableModel method called for O, C
      * @param array $tbl - table info data
      * @param int $id - id of the table
+     * @param type $r
      */
-    public function showSettings(array $tbl, int $id) {
+    public function showSettings(array $tbl, int $id, $r) {
         $recCnt = \Alxnv\Nesttab\Models\ArbitraryTableModel::getCount($tbl['name']);
         return view('nesttab::table-settings.list', ['tbl' => $tbl, 'id' => $id,
-            'recCnt' => $recCnt,
+            'recCnt' => $recCnt, 'r' => $r,
             'fieldModel' => $this]);
     }
     /**

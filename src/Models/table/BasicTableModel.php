@@ -86,12 +86,28 @@ class BasicTableModel {
      * @param array $tbl - table info data
      * @param int $id - id of the table
      */
-    public function showSettings(array $tbl, int $id) {
+    public function showSettings(array $tbl, int $id, $r) {
         $recCnt = \Alxnv\Nesttab\Models\ArbitraryTableModel::getCount($tbl['name']);
-        return view('nesttab::table-settings.basic', ['tbl' => $tbl, 'id' => $id,
+        return view('nesttab::table-settings.basic', ['tbl' => $tbl, 'id' => $id, 'r' => $r,
             'recCnt' => $recCnt]);
     }
     
+    /**
+     * Save settings of particular table
+     *   this BasicTableModel method called for L, D
+     * @param array $tbl - table info data
+     * @param int $id - id of the table
+     * @param array $r - массив для редактирования (нас интересует $r['descr'])
+     */
+    public function saveSettings(array $tbl, int $id, object $request) {
+        global $yy;
+        $descr1 = ($request->has('descr') ? $request->descr : ''); 
+        $this->adapter->saveDescr($tbl, $id, $descr1); // сохранить название таблицы
+        $request ->session()->flash('saved_successfully', 1);
+        Session::save();
+        \yy::redirectNow($yy->nurl . 'struct-table-show-settings/' . $id);
+        //exit;
+    }
     
     
     /**

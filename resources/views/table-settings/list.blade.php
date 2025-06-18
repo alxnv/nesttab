@@ -76,6 +76,8 @@ echo '<form method="post" action="' . $yy->baseurl . config('nesttab.nurl') . '/
 //$controller->render_partial(['r' => $r], 'all', 'all-fields');
 ?>
 @csrf
+<br />
+<?=__('Table name') . ":" ?> <input type="text" size="60" name="descr" value="<?=\yy::qs($r['descr'])?>" /><br />
 <div id="app">
 <?php
 

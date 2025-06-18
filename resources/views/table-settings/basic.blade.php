@@ -10,6 +10,13 @@ global $yy;
 
 echo '<div id="main_contents">'; // div с основным содержимым страницы
 echo  '<p><a href="javascript:history.back(1)">Назад</a><br /><br /></p>';
+$e = new \Alxnv\Nesttab\Models\ErrorModel();
+$lnk_err = \yy::getErrorEditSession();
+if (Session::has($lnk_err)) {
+    $e->err = session($lnk_err);
+    //if (count($e->err) > 0 ) dd($e);
+}
+echo \yy::getSuccessOrErrorMessage([], $e);
 
 echo '<h1 class="center">' . __('Settings of the table') . ' "' . \yy::qs($tbl['descr']) . '" (' .
         __('physical name') . ': ' . \yy::qs($tbl['name']) .')<br /><br />';
@@ -35,5 +42,20 @@ if (is_null($recCnt)) {
 echo '</div>'; // main_contents
 ?>
 <div id="error_div"></div>
+<?php
+echo '<form method="post" action="' . $yy->baseurl . config('nesttab.nurl') . '/struct-table-settings/save/' . $tbl['id'] .
+        '">';
+
+?>
+@csrf
+<br />
+<?=__('Table name') . ":" ?> <input type="text" size="60" name="descr" value="<?=\yy::qs($r['descr'])?>" /><br />
+<p align="left">
+<input type="submit" value="<?=__('Save')?>" />
+</p>
+<?php
+echo '</div>';
+echo '</form>';
+?>
 
 @endsection

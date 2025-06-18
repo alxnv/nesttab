@@ -15,6 +15,16 @@ class BasicTableAdapterModel {
     // main table object for which the adapter was applied
     protected $tableObj;
     
+    /**
+     * сохранить название таблицы (descr)
+     * @param array $tbl - данные таблицы
+     * @param int $id - id таблицы
+     * @param $descr - описание таблицы
+     */
+    public function saveDescr(array $tbl, int $id, $descr1) {
+        global $db;
+        $db->q("update yy_tables set descr = $1 where id = $2", [$descr1, $id]);
+    }
     
     public function init(object $tableObj) {
         $this->tableObj = $tableObj;
