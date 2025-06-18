@@ -25,7 +25,7 @@ class ListTableModel extends BasicTableModel {
         } else {
             $sI = -1;
         }
-        $descr1 = ($request->has('descr') ? $request->descr : ''); 
+        $descr1 = ($request->has('descr') ? mb_substr($request->descr,0,250) : ''); 
         $arr =  (isset($r['flds']) ? $r['flds'] : []); 
         $this->adapter->saveTableRefs($arr, $id, $sI);
         $this->adapter->saveDescr($tbl, $id, $descr1); // сохранить название таблицы

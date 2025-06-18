@@ -101,7 +101,7 @@ class BasicTableModel {
      */
     public function saveSettings(array $tbl, int $id, object $request) {
         global $yy;
-        $descr1 = ($request->has('descr') ? $request->descr : ''); 
+        $descr1 = ($request->has('descr') ? mb_substr($request->descr,0,250) : ''); 
         $this->adapter->saveDescr($tbl, $id, $descr1); // сохранить название таблицы
         $request ->session()->flash('saved_successfully', 1);
         Session::save();
