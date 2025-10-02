@@ -53,7 +53,8 @@ class BasicTableModel {
             if ($columns[$i]['name_field'] == 'html') {
                 $requires['need_html_editor'] = 1;
             }
-            if ($columns[$i]['name_field'] == 'datetime') {
+            if (($columns[$i]['name_field'] == 'datetime')
+                    || ($columns[$i]['name_field'] == 'date')) {
                 $requires['need_datetimepicker'] = 1;
             }
             if ($columns[$i]['name_field'] == 'select') {
@@ -673,7 +674,8 @@ class BasicTableModel {
             if ($columns[$i]['name_field'] == 'html') {
                 $requires['need_html_editor'] = 1;
             }
-            if ($columns[$i]['name_field'] == 'datetime') {
+            if (($columns[$i]['name_field'] == 'datetime')
+                    || ($columns[$i]['name_field'] == 'date')) {
                 $requires['need_datetimepicker'] = 1;
             }
             if ($columns[$i]['name_field'] == 'select') {

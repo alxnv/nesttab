@@ -4,3 +4,6 @@
  truncate yy_tables
  truncate yy_columns
  truncate yy_ref
+ 
+ 
+ 

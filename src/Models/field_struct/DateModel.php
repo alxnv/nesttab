@@ -12,7 +12,7 @@ namespace Alxnv\Nesttab\Models\field_struct;
 
 use Carbon\Carbon;
 
-class DatetimeModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
+class DateModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
 
     
     /**
@@ -32,16 +32,16 @@ class DatetimeModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
         
         $value = trim($value);
         if (($value == '') || is_null($value)) {
-            $value = Carbon::now()->format($yy->format); // current datetime
-            $vdb = Carbon::createFromFormat($yy->format, $value)->toDateTimeString();
+            $value = Carbon::now()->format($yy->formatDate); // current datetime
+            $vdb = Carbon::createFromFormat($yy->formatDate, $value)->toDateString();
             $columns[$i]['value_for_db'] = $vdb;
         } else {
-            if (!$yy->localeObj->isValidValue($value)) {
+            if (!$yy->localeObj->isValidDate($value)) {
                 $table_recs->setErr($index, __('Not valid value'));
             } else {
                 // get string in format 'YYYY-MM-DD HH:ii:ss' and tell to save $vdb 
                 //  value to database, not $value
-                $vdb = Carbon::createFromFormat($yy->format, $value)->toDateTimeString();
+                $vdb = Carbon::createFromFormat($yy->formatDate, $value)->toDateString();
 
                 $columns[$i]['value_for_db'] = $vdb;
                 
@@ -61,7 +61,7 @@ class DatetimeModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
             if (is_null($columns[$index]['value'])) {
                 $s = '';
             } else {
-                $s = (new Carbon($columns[$index]['value']))->format($yy->format);
+                $s = (new Carbon($columns[$index]['value']))->format($yy->formatDate);
             }
             $columns[$index]['value'] = $s;
         }
@@ -81,9 +81,15 @@ class DatetimeModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
         //echo $e->getErr('default');
         echo \yy::qs($rec['descr']);
         echo '<br />';
+/*        echo '<input type="text" size="20" '
+        . '  data-role="datebox" '
+            . ' name="' . $rec['name'] . '"  data-options=' . "'" . '{"mode":"datebox"}' . "'" . ' />';*/
+//echo '<input data-role="datebox" data-options=' . "'" . '{"mode":"slidebox"}' . "'" . ' />';
         echo '<input type="text" size="20" '
-        . '  data-role="datebox" data-options=' . "'" . '{"mode":"datetimebox", "displayDropdownPosition" : "topRight"}' . "'"
+        . '  data-role="datebox" data-options=' . "'" . '{"mode":"datebox", "displayDropdownPosition" : "topRight"}' . "'"
+//        . '  data-role="datebox" data-options=' . "'" . '{"mode":"calbox", "maxDays": 10, "minDays": 10, "displayDropdownPosition" : "topRight"}' . "'"
             . ' name="' . $rec['name'] . '" value="' . (!is_null($rec['value']) ? \yy::qs($rec['value']) : '') . '" />';
+
         echo '<br />';
     }
     /**
@@ -97,11 +103,11 @@ class DatetimeModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
         if (isset($r['default']) && (trim($r['default']) <> '')) {
             $r['default'] = mb_substr(trim($r['default']), 0, 255);
             $default = $r['default'];
-            if (!$yy->localeObj->isValidValue($default)) {
+            if (!$yy->localeObj->isValidDate($default)) {
                 $this->setErr('default', __('Not valid value'));
             } else {
-                $default = Carbon::createFromFormat($yy->format, $default)
-                        ->toDateTimeString();
+                $default = Carbon::createFromFormat($yy->formatDate, $default)
+                        ->toDateString();
             }
         } else {
             $default = '';

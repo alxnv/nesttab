@@ -19,6 +19,7 @@ class BasicDbNesttab {
     const IMAGE_TYPE = 8;
     const FLOAT_TYPE = 9;
     const SELECT_TYPE = 10;
+    const DATE_TYPE = 11;
 
     const BAD_DBESCAPE_PARAMS = 44333; // error code
     const ERROR_MODE_GOTO_PAGE = 0; // переход на страница вывода ошибки в случае ошибки

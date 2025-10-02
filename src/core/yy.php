@@ -31,6 +31,7 @@ class yy {
     //private $locale;
     public $localeObj; // object for current locale from Models\locales
     public $format; // current locale's datetime format
+    public $formatDate; // current locale's date format
     public $user_data;
     public $Engine_Path;
     public $fieldObjectsPool = [];
@@ -58,6 +59,7 @@ class yy {
         $s = '\\Alxnv\\Nesttab\\Models\locales\\' . config('app.locale');
         $this->localeObj = new $s();
         $this->format = $this->localeObj->format;
+        $this->formatDate = $this->localeObj->formatDate;
     }
 
     function init() {
