@@ -213,7 +213,14 @@ class ListTableModel extends BasicTableModel {
             $rec = [];
             $recs = $this->getDefaults($columns, $requires); // получаем значения по умолчанию для новой записи
         } else {
-            $rec = \Alxnv\Nesttab\Models\ArbitraryTableModel::getOne($tbl['name'], $id3);
+            // получаем запись таблицы
+            $rec = \Alxnv\Nesttab\Models\ArbitraryTableModel::getOne($tbl['name'], $id3, false);
+            if (is_null($rec)) { 
+                // если такой записи нет
+                \yy::redirectNow($yy->nurl . 'edit/' . $id . '/' . $id2);
+                exit;
+                //  в дальнейшем передавать редиректом так же fake table links
+            }
             /**
              * Добавляем к $columns данные из БД $rec 
              *  также добавляем соответствующие объекты типов полей к полям $columns,
