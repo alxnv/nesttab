@@ -5,10 +5,25 @@
  */
 
 namespace Alxnv\Nesttab\core;
+use Illuminate\Support\Facades\Session;
 
 class Helper {
 
  
+    /**
+     * removes editor's session if it is set
+     */
+    public static function removeSessIf() {
+        global $yy;
+        $lnk2 = \yy::getEditSession();
+        if (session::has($lnk2)) {
+            session::remove($lnk2);
+        }
+        $lnk2 = \yy::getErrorEditSession();
+        if (session::has($lnk2)) {
+            session::remove($lnk2);
+        }
+    }
     /**
      * Returns data for built in field types
      * @param int $id - id of built in field

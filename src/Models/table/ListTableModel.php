@@ -304,6 +304,7 @@ class ListTableModel extends BasicTableModel {
     public function editTable(array $tbl, array $r, int $id, int $id2) {
         global $yy;
         //$columns = \Alxnv\Nesttab\Models\ColumnsModel::getTableColumnsWithNames($tbl['id']);
+        \Alxnv\Nesttab\core\Helper::removeSessIf(); // removes editor's session if it is set
         $requires = [];
         $parent_table_id = $tbl['p_id'];
         $errorMsg = '';
