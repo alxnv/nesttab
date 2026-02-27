@@ -18,7 +18,7 @@ class StructChangeTableController extends BasicController {
             \yy::gotoErrorPage('Not valid table id as an argument');
         }
         $n = intval($id);
-        $tbl = \Alxnv\Nesttab\Models\TablesModel::getOne($n);
+        $tbl = \Alxnv\Nesttab\Models\TablesModel::getOneTakePId($n);
 
         $flds = \Alxnv\Nesttab\Models\ColumnsModel::getTableColumns($n);
         

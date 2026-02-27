@@ -12,7 +12,7 @@ class StructTableController extends BasicController
      * @param int $id - id таблицы
      */
     public function showSettings(int $id) {
-        $tbl = \Alxnv\Nesttab\Models\TablesModel::getOne($id);
+        $tbl = \Alxnv\Nesttab\Models\TablesModel::getOneAndPId($id);
         $type = \Alxnv\Nesttab\core\TableHelper::getTableTypeByOneChar($tbl['table_type']);
         $tableModel = \Alxnv\Nesttab\Models\Factory::createTableModel($type); 
         $lnk2 = \yy::getEditSession();

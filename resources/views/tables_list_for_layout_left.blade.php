@@ -20,10 +20,13 @@ echo '<ul>';
 /*echo '<pre>';
 var_dump($td);*/
 if (isset($td['cat'][0])) {
+    \Alxnv\Nesttab\core\ArrayHelper::sortGlobalTd(0); // сортируем по алфавиту список таблиц 
+        // верхнего уровня
     foreach ($td['cat'][0] as $ind) {
-        $tbl = $td['dat'][$td['ind'][$ind]];
+        if (is_array($ind)) continue; // пропускаем тип 2
+        $tbl = $td['tbl'][$ind];
         echo '<li><a href="' . $yy->nurl . 'edit/0/' . $tbl[0] . '">' .
-            \yy::qs($tbl[3]) . '</a></li>';
+            \yy::qs($tbl[2]) . '</a></li>';
         
     }
 }

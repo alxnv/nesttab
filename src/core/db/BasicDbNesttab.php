@@ -488,7 +488,7 @@ class BasicDbNesttab {
     }
     
     /**
-     * Загружает все данные из таблицы yy_tables в суперглобальную переменную $td
+     * Загружает все данные из таблицы yy_tables и $yy_tables_ref в суперглобальную переменную $td
      * @global type $td 
      *    $td['dat'] - данные таблицы
      *    $td['ind'] - индексы айдишников данных в 'dat'
@@ -496,29 +496,67 @@ class BasicDbNesttab {
      * @global type $db
      */
     public function loadAllTablesData() {
-        global $td, $db;
         $td = [];
-        $td['dat'] = [];
+        $td['tbl'] = [];
         $td['ind'] = [];
         $td['cat'] = [];
-        DB::table('yy_tables')->select('id','p_id','name','descr', 'table_type')->orderBy('p_id', 'asc')
+        $this->loadTblTableData(); // загружаем данные в global $td из таблицы yy_tables
+        $this->loadTblRefTableData(); // загружаем данные в global $td из таблицы yy_tables_ref
+    }
+    
+    /**
+     * загружаем данные в global $td из таблицы yy_tables
+     */
+    private function loadTblTableData() {
+        global $td, $db;
+        DB::table('yy_tables')->select('id','name','descr', 'table_type')
                 ->orderBy('descr', 'asc')->chunk(100,
                 function($rows) {
                     $rows->each(function (object $item) {
                         global $td;
-                        $td['ind'][$item->id] = count($td['dat']);
-                        $td['dat'][] = [$item->id, $item->p_id, $item->name, $item->descr,
+                        //$td['ind'][$item->id] = count($td['dat']);
+                        $td['tbl'][$item->id] = [$item->id, $item->name, $item->descr,
                             $item->table_type];
-                        if (!isset($td['cat'][$item->p_id])) {
+                        /*if (!isset($td['cat'][$item->p_id])) {
                             $td['cat'][$item->p_id] = [];
                         }
-                        $td['cat'][$item->p_id][] = $item->id;
+                        $td['cat'][$item->p_id][] = $item->id;*/
                     });
                 });
-        //while (false) {};
+        
     }
-    
 
+    /**
+     * загружаем данные в global $td из таблицы yy_tables_ref (связи между таблицами,
+     *  например родительские)
+     */
+    private function loadTblRefTableData() {
+        global $td, $db;
+        DB::table('yy_tables_ref')->select('*')
+                ->orderBy('parent_table_id')
+                ->orderBy('id_col_type')
+                ->orderBy('table_id')
+                ->chunk(100,
+                function($rows) {
+                    $rows->each(function (object $item) {
+                        global $td;
+                        if (!isset($td['cat'][$item->parent_table_id])) {
+                            $td['cat'][$item->parent_table_id] = [];
+                        }
+                        if ($item->id_col_type == 1) {
+                            $td['ind'][$item->table_id] = [$item->parent_table_id,
+                                count($td['cat'][$item->parent_table_id])];
+                            $td['cat'][$item->parent_table_id][] = $item->table_id;
+                        } else {
+                            // $item->id_col_type == 2
+                            $td['cat'][$item->parent_table_id][] = [$item->table_id,
+                                true, $item->col_id];
+                            
+                        }
+                    });
+                });
+        
+    }
 /*
     function getkrohi($tab,$uid2) {
         $sth=$this->q("select a.uid as uid1,a.ordr as ord1,a.naim as naim1,a.topid as top1,

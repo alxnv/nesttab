@@ -336,15 +336,18 @@ class BasicTableModel {
         $s3 = $db->escape($tbl_descr);
         $arr2 = ['name' => $tbl_name,
             'descr' => $tbl_descr,
-            'p_id' => $parentTableId,
             'lvl1_tbl_id' => $topId,
             'id_bytes' => $idFieldSizeInBytes,
             'table_type' => $arr_table_names_short[$tbl_idx]];
         if (($error = $db->insert('yy_tables', $arr2)) <> '') {
             $message = $error;
             return false;
+        } else {
+            $tableId = $db->handle->lastInsertId();
+            $arr22= ['table_id' => $tableId, 'parent_table_id' => $parentTableId,
+                'id_col_type' => 1, 'col_id' => 0];
+            $db->replace('yy_tables_ref', $arr22);
         }
-        $tableId = $db->handle->lastInsertId();
         
         // если получилась таблица верхнего уровня, то присваиваем lvl1_tbl_id
         //   равный id

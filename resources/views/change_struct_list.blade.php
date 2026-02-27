@@ -23,10 +23,10 @@ $s = \Alxnv\Nesttab\core\FormatHelper::getTree($td['cat'], 0,
         // функция возвращает гиперссылку с данными таблицы по элементу массива $td['cat']
         function ($id) {
             global $td, $yy;
-            if (isset($td['ind'][$id]) && isset($td['dat'][$td['ind'][$id]])) {
-                $row = $td['dat'][$td['ind'][$id]];
+            if (isset($td['tbl'][$id])) {
+                $row = $td['tbl'][$id];
                 return '<a href="' . $yy->nurl . 'struct-change-table/edit/' . $row[0] . '">' .
-                        \yy::qs($row[3] . ' (' . $row[2] . ') (' . $row[4] . ')') . '</a>';
+                        \yy::qs($row[2] . ' (' . $row[1] . ') (' . $row[3] . ')') . '</a>';
             } else {
                 return '';
             }
@@ -34,14 +34,21 @@ $s = \Alxnv\Nesttab\core\FormatHelper::getTree($td['cat'], 0,
         // функция возвращает айди элемента по элементу массива $td['cat'], или -1, если элемент не найден        
         function ($id) {
             global $td;
-            if (isset($td['ind'][$id]) && isset($td['dat'][$td['ind'][$id]])) {
-                $row = $td['dat'][$td['ind'][$id]];
+            if (isset($td['tbl'][$id])) {
+                $row = $td['tbl'][$id];
                 return $row[0];
             } else {
                 return -1;
             }
             
-        });
+        },
+        function ($id) { // skip condition
+            return (is_array($id)); // type 2
+        },
+        function (&$arr, $id) { // sort funct
+            \Alxnv\Nesttab\core\ArrayHelper::sortGlobalTd($id);
+        }
+        );
 
 echo $s;
 echo '<br /><p><span class="red">*</span> O - таблица с одной записью, L - список, C - каталог, D - таблица общего вида</p>'

@@ -75,6 +75,32 @@ class TablesModel {
     }
     
     /**
+     * получить содержимое таблицы и проставить p_id из global $td
+     *  в случае ошибки перейти на страницу с ошибкой
+     * @param int $id - идентификатор таблицы
+     * @return array - строку из бд с информацией об этой бд
+     */
+    public static function getOneTakePId(int $id) {
+        global $db, $td;
+        if (!isset($td['ind'][$id])) \yy::gotoErrorPage('Table not found (2)');
+        $tbl = self::getOne($id);
+        $tbl['p_id'] = $td['ind'][$id][0];
+        return $tbl;
+    }
+    /**
+     * получить содержимое таблицы и p_id из yy_tables_ref
+     *  в случае ошибки перейти на страницу с ошибкой
+     * @param int $id - идентификатор таблицы
+     * @return array - строку из бд с информацией об этой бд
+     */
+    public static function getOneAndPId(int $id) {
+        global $db;
+        $tbl = $db->q("select a.*, b.parent_table_id as p_id from yy_tables a, yy_tables_ref b"
+                . " where id=$1 and b.table_id = a.id and b.id_col_type=1", [$id]);
+        if (is_null($tbl)) \yy::gotoErrorPage('Table not found');
+        return $tbl;
+    }
+    /**
      * получить содержимое таблицы
      *  в случае ошибки перейти на страницу с ошибкой
      * @param int $id - идентификатор таблицы

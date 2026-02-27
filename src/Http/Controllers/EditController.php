@@ -90,7 +90,7 @@ class EditController extends BasicController {
         if ($table_id == 0) {
             \yy::gotoErrorPage('Zero id');
         }
-        $tbl = \Alxnv\Nesttab\Models\TablesModel::getOne($table_id);
+        $tbl = \Alxnv\Nesttab\Models\TablesModel::getOneAndPId($table_id);
         $type = \Alxnv\Nesttab\core\TableHelper::getTableTypeByOneChar($tbl['table_type']);
         $recs = \Alxnv\Nesttab\Models\Factory::createTableModel($type); 
         $recs->saveTable($tbl, $id, $id2, $request);
@@ -113,7 +113,7 @@ class EditController extends BasicController {
         if ($table_id == 0) {
             \yy::gotoErrorPage('Zero id');
         }
-        $tbl = \Alxnv\Nesttab\Models\TablesModel::getOne($table_id);
+        $tbl = \Alxnv\Nesttab\Models\TablesModel::getOneAndPId($table_id);
         $type = \Alxnv\Nesttab\core\TableHelper::getTableTypeByOneChar($tbl['table_type']);
         $recs = \Alxnv\Nesttab\Models\Factory::createTableModel($type); 
         $recs->saveTableRec($tbl, $id, $id2, $id3, $request);

@@ -15,19 +15,30 @@ class FormatHelper {
      * @param int $i - с какого $parent_id начинать обход
      * @param callable $getValue - функция, возвращающая выводимое значение в строке по значению элемента
      * @param callable $getId - функция, возвращающая айди элемента по значению элемента массива
+     * @param callable||null $skipCondition - если не null, то возвращает true если элемент массива
+     *   нужно пропустить
+     * @param callable||null $sortFunct - если не null, то сортирует каждый 
+     *   раздел массива перед выводом
      * @return string
      */
-    public static function getTree(array &$arr, int $i, callable $getValue, callable $getId) {
+    public static function getTree(array &$arr, int $i, callable $getValue, callable $getId, 
+            mixed $skipCondition, mixed $sortFunct) {
         $s = '<ul>';
         if (!isset($arr[$i])) {
             return '';
         }
+        if (!is_null($sortFunct)) {
+            $sortFunct($arr, $i);
+        }
         foreach ($arr[$i] as $row) {
+            if (!is_null($skipCondition)) {
+                if ($skipCondition($row)) continue; // type 2
+            }
             $value = $getValue($row);
             $s .= ('<li>' . $value . '</li>');
             $id = $getId($row);
             if (isset($arr[$id])) {
-                $s .= static::getTree($arr, $id, $getValue, $getId);
+                $s .= static::getTree($arr, $id, $getValue, $getId, $skipCondition, $sortFunct);
             }
         }
         $s .= '</ul>';

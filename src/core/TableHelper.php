@@ -18,15 +18,20 @@ class TableHelper {
      * @param string $prefix - class for <p>, or ''
      * @param callable $getValue - коллбэк возвращающий значение для каждой подтаблицы
      * @param callable $additionalParams - дополнительные параметры, передаваемые в функцию
+     * @param callable||null $skipCondition - если не null, то возвращает true если элемент массива
+     *   нужно пропустить
      * @return string
      */
     public static function childTables(int $tbl_id, string $prefix, callable $getValue,
-            array $additionalParams) {
+            array $additionalParams, mixed $skipCondition) {
         global $td;
         $s = '';
         if (isset($td['cat'][$tbl_id])) {
             $s .= '<p' . $prefix . '>';
             foreach ($td['cat'][$tbl_id] as $ind) {
+                if (!is_null($skipCondition)) {
+                    if ($skipCondition($ind)) continue; // type 2
+                }
                 $s .= $getValue($ind, $additionalParams);
             }
             $s .= '</p>';
@@ -42,12 +47,12 @@ class TableHelper {
      */
     public static function getOneFromMemory(int $id) {
         global $td, $yy;
-        if (!isset($td['ind'][$id]) || !isset($td['dat'][$td['ind'][$id]])) {
+        if (!isset($td['ind'][$id]) || !isset($td['tbl'][$id])) {
             \yy::gotoErrorPage('Table not found');
         }
-        $row = $td['dat'][$td['ind'][$id]];
-        $arr = ['id' => $row[0], 'p_id' => $row[1], 'name' => $row[2], 'descr' => $row[3],
-            'table_type' => $row[4]];
+        $row = $td['tbl'][$id];
+        $arr = ['id' => $row[0], 'p_id' => $td['ind'][$id][0], 'name' => $row[1], 'descr' => $row[2],
+            'table_type' => $row[3]];
         return $arr;
     }
     /**

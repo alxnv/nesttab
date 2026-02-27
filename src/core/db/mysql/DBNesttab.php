@@ -58,5 +58,31 @@ class DbNesttab extends \Alxnv\Nesttab\core\db\BasicDbNesttab {
         return $err;
 
     }
+    
+    /**
+     * Выполнить команду mysql replace для таблицы $tbl
+     * @param string $tbl - имя таблицы
+     * @param array $arr - массив вида 'поле' => 'значение'
+     * @return string - '', если не было ошибок, иначе сообщение об ошибке
+     * ----------------------@return mixed sth | null (null если была ошибка)
+     */
+    function replace(string $tbl, array $arr) {
+        $arr2 = [];
+        $arr3 = [];
+        foreach ($arr as $key => $value) {
+            $arr2[] = $this->nameEscape($key);
+            $arr3[] = $this->escape($value);
+        }
+        $s2 = join(', ', $arr2);
+        $s3 = join(', ', $arr3);
+        $s = "replace into $tbl ($s2) values ($s3)";
+        $res = $this->qdirect($s, [], static::ERROR_MODE_RETURN_ERROR);
+        if ($this->errorCode == 0) {
+            return '';
+        } else {
+            return $this->errorMessage;
+        }
+    }
+            
 
 }

@@ -47,15 +47,19 @@ if ($hasRec) {
     // вывести список всех таблиц следующего уровня, вложенных в данную
     $s =  \Alxnv\Nesttab\core\TableHelper::childTables($tbl['id'], '', 
             function ($ind, $ap) {
-                global $td, $yy;
-                if (isset($td['ind'][$ind]) && isset($td['dat'][$td['ind'][$ind]])) {
-                    $row = $td['dat'][$td['ind'][$ind]];
-                    return '<a href="' . $yy->nurl .  'edit/' . $ap['parent_id'] . '/' . $row[0] . '">' . \yy::qs($row[3]) . '</a><br />';
-                } else {
-                    return '';
-                }
-            },
-            ['parent_id' => $rec_id]); // id текущей записи типа 'one'
+            global $td, $yy;
+            if (isset($td['tbl'][$ind])) {
+                $row = $td['tbl'][$ind];
+                return '<a href="' . $yy->nurl .  'edit/' . $ap['parent_id'] . '/' . $row[0] . '">' . \yy::qs($row[2]) . '</a><br />';
+            } else {
+                return '';
+            }
+        }, 
+        ['parent_id' => $rec_id],
+        function ($ind) {
+            return is_array($ind); // skip condition (if type 2)
+        }        
+        ); // id текущей записи типа 'one'
     echo $s;        
     if ($s <> '') echo '<br />';
 }
