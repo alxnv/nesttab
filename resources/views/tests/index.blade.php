@@ -10,4 +10,6 @@ $pppp = 1;
 <a href="<?=asset('/' . config('nesttab.nurl') . '/tests/show-db-select-time')?>">Db benchmark</a><br />
 <br />
 <a href="<?=asset('/' . config('nesttab.nurl') . '/tests/double-click-test')?>">Test many clicks at once (Для обработчика удаления записей в физической БД (по ajax))</a><br />
+<br />
+<a href="<?=asset('/' . config('nesttab.nurl') . '/tests/locktables-test')?>">Test lock tables for InnoDB with myIsam</a><br />
 @endsection

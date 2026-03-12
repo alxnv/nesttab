@@ -76,6 +76,10 @@ Route::middleware([\App\Http\Middleware\TrimStrings::class,
     Route::post('/tests/save-input-null-test', CP9 . 'TestsController@saveInputNullTest');
     Route::get('/tests/double-click-test', CP9 . 'TestsController@doubleClickTest');
 
+    Route::get('/tests/locktables-test', CP9 . 'TestsController@locktablesTest');
+    Route::get('/tests/locktables-start-test', CP9 . 'TestsController@locktablesStartTest');
+    Route::get('/tests/locktables-test-test', CP9 . 'TestsController@locktablesTestTest');
+
     Route::get('/struct-add-table/{id}', CP9 . 'StructAddTableController@index');
     Route::get('/struct-add-table/step22/{id}', CP9 . 'StructAddTableController@step22');
     Route::post('/struct-table-edit-field/save/{id}', CP9 . 'StructTableEditFieldController@save');

@@ -60,6 +60,74 @@ class TestsController extends BasicController
         return view('nesttab::tests.input-null-strings');
     }
     
+    public function locktablesStartTest() {
+        //return view('nesttab::tests.locktables');
+        global $db;
+        echo '1<br />';
+        flush();
+        $db->errorMode = $db::ERROR_MODE_RETURN_ERROR;
+        $db->qdirect("drop table temp_s5");
+        $db->qdirect("CREATE TABLE `temp_s5` (
+          `id` int(11) NOT NULL AUTO_INCREMENT,
+          `id1` int(11) NOT NULL,
+        `name` varchar(255) NOT NULL,
+        PRIMARY KEY (`id`)
+        ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;");
+        
+        $db->qdirect("SET AUTOCOMMIT=0;");
+        $db->qdirect("lock tables temp_s5 write");
+        if ($db->errorCode <> 0) {
+            echo 'Error: lock tables<br />' . $db->errorMessage . '<br /><br />';
+            exit;
+        }
+        
+        sleep(10);
+
+        $db->qdirect("commit");
+        $db->qdirect("unlock tables");
+        if ($db->errorCode <> 0) {
+            echo 'Error: unlock tables<br />' . $db->errorMessage . '<br /><br />';
+            exit;
+        }
+
+        $db->qdirect("SET AUTOCOMMIT=1;");
+        echo 'Success';
+    }
+    
+    /**
+     * Тестируется locktablesStartTest, Он должнен быть запущен перед запуском этой функции
+     *   в другой вкладке браузера
+     * При удаче висит 10 секунд и выдает success
+     * @global \Alxnv\Nesttab\Http\Controllers\type $db
+     */
+    public function locktablesTestTest() {
+        //return view('nesttab::tests.locktables');
+        global $db;
+        echo '2<br />';
+        flush();
+        $db->qdirect("SET AUTOCOMMIT=0;");
+        $db->qdirect("lock tables temp_s5 write");
+        if ($db->errorCode <> 0) {
+            echo 'Error: lock tables<br />' . $db->errorMessage . '<br /><br />';
+            exit;
+        }
+
+        $db->qdirect("commit");
+        $db->qdirect("unlock tables");
+        if ($db->errorCode <> 0) {
+            echo 'Error: unlock tables<br />' . $db->errorMessage . '<br /><br />';
+            exit;
+        }
+
+        $db->qdirect("SET AUTOCOMMIT=1;");
+        echo 'Success';
+    }
+    
+    public function locktablesTest() {
+        return view('nesttab::tests.locktables');
+    }
+    
+    
     public function saveInputNullTest(Request $request) {
         $r = $request->all();
         var_dump('$r["arr"][2]', $r['arr'][2]);
