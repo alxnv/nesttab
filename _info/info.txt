@@ -1,1 +1,3 @@
 jtsage-datebox в режиме calbox - иногда не нажимается на числа месяца, поэтому сделал режим datebox
+
+d:\xampp - mariadb 10 - соотвествует mysql 5.6
