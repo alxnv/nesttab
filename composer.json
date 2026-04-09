@@ -19,4 +19,12 @@
     },
 	"minimum-stability" : "dev",
 	"prefer-stable" : true
+	"extra": {
+		"laravel": {
+			"providers": [
+				"Alxnv\\Nesttab\\Providers\\RouteServiceProvider"
+			]
+		}
+	}
+
 }

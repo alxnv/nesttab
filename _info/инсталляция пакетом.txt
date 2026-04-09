@@ -1,5 +1,41 @@
 на данный момент эта опция недоступна, но в дальнейшем:
 
+
+new:
+
+1. laravel new nesttab
+   - no starter kit
+   - mariadb database
+
+
+----------------
+перенос nesttab в новую версию laravel:
+
+move vendor/alxnv
+move config/nesttab.php
+move nesttab_docs
+move private_info
+move public/nesttab
+move or create  - public/upload
+config/app.php:
+  locale - ru
+config/database.php:
+  default - mariadb
+  mariadb['database'] - nesttab
+  
+----  
+при инсталляции пакета:
+добавьте в раздел extra файла composer.json вашего пакета следующий код:
+"extra": {
+    "laravel": {
+        "providers": [
+            "MyVendor\\MyPackage\\MyPackageServiceProvider"
+        ]
+    }
+}
+----------------
+
+
 1. создать проект laravel
      composer create-project laravel/laravel nesttab
 1.1 создать и настроить базу данных
