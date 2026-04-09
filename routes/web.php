@@ -22,9 +22,7 @@ use Illuminate\Support\Facades\Route;
 });*/
 
 // Route for admin system. Maybe secret
-Route::middleware([\App\Http\Middleware\TrimStrings::class,
-    \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class])
-        ->prefix(config('nesttab.nurl'))->group(function () {
+Route::prefix(config('nesttab.nurl'))->group(function () {
 
      /**
       * Route::withoutMiddleware([\Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class])
