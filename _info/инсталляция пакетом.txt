@@ -24,6 +24,8 @@ config/database.php:
   mariadb['database'] - nesttab
   
 ----  
+если в composer.json есть параметр version, то он считается стабильным
+
 при инсталляции пакета:
 добавьте в раздел extra файла composer.json вашего пакета следующий код:
 "extra": {

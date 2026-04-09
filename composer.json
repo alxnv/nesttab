@@ -3,9 +3,6 @@
     "description": "Nesttab (for nested tables)",
     "type": "library",
     "license": "proprietary",
-    "require": {
-        "laravelcollective/html": "^6.3"
-    },
     "autoload": {
         "psr-4": {
             "Alxnv\\Nesttab\\": "src/"
