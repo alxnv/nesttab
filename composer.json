@@ -1,6 +1,5 @@
 {
     "name": "alxnv/nesttab",
-	"version": "v1.0.1",
     "description": "Nesttab (for nested tables)",
     "type": "library",
     "license": "proprietary",
