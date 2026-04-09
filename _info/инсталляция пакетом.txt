@@ -5,7 +5,7 @@ new:
 
 1. laravel new nesttab
    - no starter kit
-   - mariadb database
+   - mariadb database (??? смотри #111)
 
 
 ----------------
@@ -23,8 +23,13 @@ config/database.php:
   default - mariadb
   mariadb['database'] - nesttab
   
+composer require alxnv/nesttab:@dev    # загрузка последней (нестабильной) версии nesttab
+
+#111 - так же вместо установки в .env SESSION_DRIVER=file, можно попробовать что то сделать (например, тип бд при установке назначить mysql, или php artisan make:session-table (потому что выдает при загрузке страницы ошибку загрузки номера сессии из БД))
 ----  
 если в composer.json есть параметр version, то он считается стабильным
+
+после изменения composer.json желательно проверить его "composer validate"
 
 при инсталляции пакета:
 добавьте в раздел extra файла composer.json вашего пакета следующий код:
