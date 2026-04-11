@@ -17,6 +17,10 @@ move nesttab_docs
 move private_info
 move public/nesttab
 move or create  - public/upload
+./projbackup.bat
+./excluded_files.txt
+app/models/nesttab
+
 config/app.php:
   locale - ru
 config/database.php:
