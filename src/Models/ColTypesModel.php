@@ -8,17 +8,24 @@ class ColTypesModel {
     
     /**
      * Выбрать все типы полей кроме типа "вложенная таблица"
+     * @param string $b - признак
+     *  в случае если $b == true, в списке типов полей не возвращается поле 'serial'
      * @global type $db
      * @global type $yy
      * @return type
      */
-    public function getFieldsList() {
+    public function getFieldsList(string $tbl_type) {
         global $db, $yy;
         
         $lang = Lang::getLocale(); //$yy->settings['language'];
         //dd($lang);
+        $s = '';
+        if ($tbl_type == 'O') {
+            $s = ' and a.id<>12 ';
+        }
+        
         $arr = $db->qlistArr("select a.*, b.descr from yy_col_types a, "
-                . "yy_col_types_lang b where b.language='$lang' and b.id=a.id "
+                . "yy_col_types_lang b where b.language='$lang' and b.id=a.id " . $s 
                 . "order by a.id_category, b.descr");
         
         $arr2 = [];

@@ -34,9 +34,14 @@ dd($s);*/
         }
         $table_id = intval($id);
         $tbl = \Alxnv\Nesttab\Models\TablesModel::getOne($table_id);
-
+        $b1 = ($tbl['table_type'] == 'O');
+        if (!$b1) {
+            $b1 = (0 <> \Alxnv\Nesttab\Models\TablesModel::tableFieldTypeCount($tbl['id'], 
+                    \yy::SERIAL_TYPE));
+            // true, если в таблице уже есть поле типа serial
+        }
         
-        $arr = (new \Alxnv\Nesttab\Models\ColTypesModel())->getFieldsList();
+        $arr = (new \Alxnv\Nesttab\Models\ColTypesModel())->getFieldsList($b1);
         
         return view('nesttab::struct-table-edit-field.index', ['tbl' => $tbl, 'tblname' => $tbl['id'], 'table_id' => $table_id,
             'field_types' => $arr, 'prev_link' => $prev_link]);

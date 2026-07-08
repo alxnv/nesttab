@@ -10,6 +10,17 @@ namespace Alxnv\Nesttab\Models;
 class TablesModel {
 
     /**
+     * Returns the count of the fields of this field type in the selected table
+     * @param int $tableId
+     * @param int $fieldType
+     */
+    public static function tableFieldTypeCount(int $tableId, int $fieldType) {
+        global $db;
+        $result = $db->q("select count(*) as cnt from yy_columns where table_id = $1"
+                . " and field_type = $2", [$tableId, $fieldType]);
+        return $result['cnt'];
+    }
+    /**
      * Returns data for select, data is taken from $this->getAllForSelect()
      * @param array $fromDb
      * @return array

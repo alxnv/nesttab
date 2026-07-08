@@ -51,7 +51,7 @@ $s = \Alxnv\Nesttab\core\FormatHelper::getTree($td['cat'], 0,
         );
 
 echo $s;
-echo '<br /><p><span class="red">*</span> O - таблица с одной записью, L - список, C - каталог, D - таблица общего вида</p>'
+echo '<br /><p><span class="red">*</span> O - таблица с одной записью, L - список, C - каталог</p>'
 /*for ($i = 0; $i < count($list); $i++) {
     if ($s <> $list[$i]['table_type']) {
         $s = $list[$i]['table_type'];

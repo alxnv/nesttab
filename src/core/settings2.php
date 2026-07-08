@@ -7,9 +7,9 @@ global $yy;
 return [  
         'recs_per_page' => 10, // number of records per page (for list type tables)
         'are_tests_accessible' => true, // отображается гиперссылка на страницу тестов
-	'table_types' => ['One record', 'List', 'Ordinary table', 'Catalogue'],
-	'table_names' => ['one', 'list', 'ord', 'tree'],
-        'table_names_short' => ['O', 'L', 'D', 'C'],
+	'table_types' => ['One record', 'List', 'Catalogue'],
+	'table_names' => ['one', 'list', 'tree'],
+        'table_names_short' => ['O', 'L', 'C']  /* 'D' type deleted(obsolete)*/ ,
         'select_fld_rec_limit' => 20, // limit x,this for data ajaxed into 'select' fld
         'not_selected' => '-- ' . __('not selected') . ' --', // text for not selected element for select
         'aliases' => ['app' => $yy->Engine_Path,

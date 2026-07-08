@@ -6,7 +6,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title><?=__("Administrator's module")?></title>
+    <title><?=__("Administrator module")?></title>
     <?php
     if (isset($requires) && isset($requires['need_confirm'])) {
     ?>
