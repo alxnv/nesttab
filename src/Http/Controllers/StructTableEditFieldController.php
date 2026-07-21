@@ -37,7 +37,7 @@ dd($s);*/
         $b1 = ($tbl['table_type'] == 'O');
         if (!$b1) {
             $b1 = (0 <> \Alxnv\Nesttab\Models\TablesModel::tableFieldTypeCount($tbl['id'], 
-                    \yy::SERIAL_TYPE));
+                    $db::AUTO_TYPE));
             // true, если в таблице уже есть поле типа serial
         }
         
@@ -104,7 +104,7 @@ dd($s);*/
         $fieldModel = \Alxnv\Nesttab\Models\Factory::createFieldModel($r['field_type_id'], $fld['name']);
         return view('nesttab::struct-table-edit-field.' . $fld['name'], ['tbl' => $tbl, 'tblname' => $tbl['name'], 'tbl_id' => $table_id,
             'field_type_id' => intval($r['field_type_id']), 'fld' => $fld, 'r' => $r,
-            'tableModel' => $tableModel, 'fieldModel' =>$fieldModel] 
+            'tableModel' => $tableModel, 'fieldModel' =>$fieldModel, 'params' => $params] 
                 ); // вызываем контроллер
                   // названный по $fld['name']
 

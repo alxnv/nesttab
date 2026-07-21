@@ -48,6 +48,8 @@ class TableHelper extends \Alxnv\Nesttab\core\db\BasicTableHelper {
                 $def = $this->getIntTypeDef($saveParams['intSize']);
                 if ($def === false) throw new \Exception("Bad int type");
                 return $def;
+            case $db::AUTO_TYPE :
+                    return 'bigint';
             default:
                 throw new \Exception("Table type is not defined");
         }

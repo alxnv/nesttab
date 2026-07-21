@@ -411,6 +411,7 @@ class ListTableModel extends BasicTableModel {
     public function save(array &$columns, array $tbl, int $id, int $parentId, array &$r) {
         //$this->setErr('', 'fdsafd');
         global $yy, $db;
+        $this->tbl = $tbl;
         $yy->loadPhpScript(app_path() . '/Models/nesttab/tables/' 
             . ucfirst($tbl['name']) . '.php');
         // get old values for image and file field types
@@ -528,4 +529,17 @@ class ListTableModel extends BasicTableModel {
         \yy::redirectNow($yy->nurl . 'edit/' . $id . '/' . $id2 . '?page=1');
         exit;
     }    
+    /**
+     * 
+     * @param int $pTableID
+     * @return string
+     */
+    public function getWhereClauseForAuto(int $pTableID) {
+        if ($pTableID == 0) {
+            return '';
+        } else {
+            return ' and parent_id = '
+        } 
+    }
+
 }

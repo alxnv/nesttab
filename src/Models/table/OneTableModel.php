@@ -118,6 +118,7 @@ class OneTableModel extends BasicTableModel {
     public function save(array &$columns, array $tbl, int $id, array &$r, bool $isNewRec) {
         //$this->setErr('', 'fdsafd');
         global $yy;
+        $this->tbl = $tbl;
         $yy->loadPhpScript(app_path() . '/Models/nesttab/tables/' 
             . ucfirst($tbl['name']) . '.php');
         // get old values for image and file field types
@@ -167,6 +168,15 @@ class OneTableModel extends BasicTableModel {
             $this->afterDataSaved($tbl, $error, $id, $columns); // вызываем коллбэк после сохранения
               // данных или ошибки сохранения
         }
+    }
+
+    /**
+     * stub
+     * @param int $pTableID
+     * @return string
+     */
+    public function getWhereClauseForAuto(int $pTableID) {
+        return '';
     }
     /**
      * Save table data

@@ -5,6 +5,7 @@
     "to" : "...",
     "of" : "из",
     "Selected" : "Выбрано",
+    "there may be maximum the one field of this type in the table" : "может быть максимум одно поле этого типа в таблице",
     "All tables list" : "Список всех таблиц",
     "Add nested table" : "Добавить вложенную таблицу",
     "PHP extension '%s' has not been loaded" : "PHP расширение '%s' не было загружено",

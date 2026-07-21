@@ -13,7 +13,7 @@ class BasicTableModel {
     
     /**
      * объект для работы с БД, связанный с этим объектом
-     * @var type \MOdels\table\db_operations\BasicTableModel
+     * @var type \Models\table\db_operations\BasicTableModel
      */
     protected $adapter;
     /**
@@ -22,8 +22,38 @@ class BasicTableModel {
      * @var type array
      */
     public $err; 
-
     
+    /**
+     * yy_tables current record (it exists when we save the record by BasicTableModel->save())
+     * @var type array
+     */
+    public $tbl;
+
+
+    /**
+     * get the parent table id for the given table id, or go to the error page if not found
+     * @global \Alxnv\Nesttab\Http\Controllers\type $db
+     * @param int $table_id
+     * @return int
+     */
+    public function getParentTableId(int $table_id) {
+        global $db;
+        $value = $db->q("select parent_table_id from yy_tables_ref where table_id = $1", [$table_id]);
+        if (is_null($value)) {
+            \yy::gotoErrorPage('Table record not found');
+        }
+        return $value['parent_table_id'];
+    }
+    /**
+     * finds the 'auto' type column in $columns, then returns the maximum value of this column
+     *   in the whole table, if it is the first level table,
+     * @param array $columns - array of table column definitions
+     * @param int $step - step to add to the maximum value
+     */
+    public function returnMaxAuto(array $columns, int $step) {
+        $tbl = $this->tbl;
+        
+    }
     /**
      * object constructor
      * @param object $adapter - adapter object for database
