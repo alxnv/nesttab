@@ -38,7 +38,8 @@ class BasicTableModel {
      */
     public function getParentTableId(int $table_id) {
         global $db;
-        $value = $db->q("select parent_table_id from yy_tables_ref where table_id = $1", [$table_id]);
+        $value = $db->q("select parent_table_id from yy_tables_ref where table_id = $1"
+                . " and id_col_type=1", [$table_id]);
         if (is_null($value)) {
             \yy::gotoErrorPage('Table record not found');
         }
@@ -349,17 +350,24 @@ class BasicTableModel {
         //$s = "\\Alxnv\\Nesttab\\core\\db\\" . config('nesttab.db_driver') . "\\TableHelper";
         //$th = new $s();
 
+        if ($parentTableId == 0) {
+            $topId = 0; // временно присваиваем 0, после записи 
+            // присвоим идентификатор этой созданной таблицы
+            $table_level = 0; // уровень таблицы
+        } else {
+            $topId = $parentTbl['lvl1_tbl_id'];
+            $table_level = $parentTbl['table_level'] + 1; // уровень таблицы
+            if ($table_level > 255) {
+                // >255, will not fit to the db field
+                $message = __('The nesting level of the table can`t be more then 254');
+                return false;
+            }
+        }
+
         $message = '';
         if (!$this->adapter->createTableDbCommands($tbl_name, $message, $idFieldDef, $parentTableId, $parentTbl,
                 $options)) {
             return false;
-        }
-
-        if ($parentTableId == 0) {
-            $topId = 0; // временно присваиваем 0, после записи 
-            // присвоим идентификатор этой созданной таблицы
-        } else {
-            $topId = $parentTbl['lvl1_tbl_id'];
         }
         
         // Записываем данные таблицы в yy_tables
@@ -368,6 +376,7 @@ class BasicTableModel {
             'descr' => $tbl_descr,
             'lvl1_tbl_id' => $topId,
             'id_bytes' => $idFieldSizeInBytes,
+            'table_level' => $table_level,
             'table_type' => $arr_table_names_short[$tbl_idx]];
         if (($error = $db->insert('yy_tables', $arr2)) <> '') {
             $message = $error;

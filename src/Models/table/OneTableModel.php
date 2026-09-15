@@ -117,6 +117,10 @@ class OneTableModel extends BasicTableModel {
      */
     public function save(array &$columns, array $tbl, int $id, array &$r, bool $isNewRec) {
         //$this->setErr('', 'fdsafd');
+        /* так же внутри кода обращение к БД:
+         *   может быть при сохранении поля типа auto со значением 0
+         *     (в AutoModel->validate())
+         */
         global $yy;
         $this->tbl = $tbl;
         $yy->loadPhpScript(app_path() . '/Models/nesttab/tables/' 

@@ -31,7 +31,7 @@ class AutoModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
             $table_recs->setErr($index, '"' . $value . '" ' . __('is not valid') . ' ' . __('int value'));
         }
         if (($value == 0) && isset($columns[$i]['parameters']['step'])) {
-            $parent_tbl_id = $table_recs->getParentTableId($table_recs->tbl);
+            $parent_tbl_id = 0; // to replace !!! $table_recs->getParentTableId($table_recs->tbl);
             $s3 = $table_recs->getWhereClauseForAuto($parent_tbl_id); // where clause for searching for the max value
             // set $value to maximum value of auto field value in the table plus 'step' if it is zero
             $value = $table_recs->returnMaxAuto($columns, intval($columns[$i]['parameters']['step']), $s3);
@@ -54,7 +54,7 @@ class AutoModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
      */
     public function editField(array $rec, array $errors, int $table_id, int $rec_id, $r, array $extra) {
         //echo $e->getErr('default');
-        echo \yy::qs($rec['descr']);
+        echo \yy::qs($rec['descr']) . ' (' . __("leave '0' in this field for autonumbering") . ')';
         echo '<br />';
         echo '<input type="number" size="20" '
             . ' name="' . $rec['name'] . '" value="' . (!is_null($rec['value']) ? \yy::qs($rec['value']) : '') . '" />'
@@ -85,7 +85,8 @@ class AutoModel extends \Alxnv\Nesttab\Models\field_struct\BasicModel {
             $this->setErr('step', '"" ' . __('is not valid') . ' ' . __('int value'));
         }
         $default = 0;
-        return $this->saveStep2($tbl, $fld, $r, $old_values, $default, ['step' => $step]);
+        return $this->saveStep2($tbl, $fld, $r, $old_values, $default, ['step' => $step],
+               ['unsigned' => 1]);
 
     }
     

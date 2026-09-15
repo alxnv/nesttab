@@ -8,19 +8,19 @@ class ColTypesModel {
     
     /**
      * Выбрать все типы полей кроме типа "вложенная таблица"
-     * @param string $b - признак
-     *  в случае если $b == true, в списке типов полей не возвращается поле 'serial'
+     * @param bool $dontAddAutoField - признак
+     *  в случае если $dontAddAutoField == true, в списке типов полей не возвращается поле 'auto'
      * @global type $db
      * @global type $yy
      * @return type
      */
-    public function getFieldsList(string $tbl_type) {
+    public function getFieldsList(bool $dontAddAutoField) {
         global $db, $yy;
         
         $lang = Lang::getLocale(); //$yy->settings['language'];
         //dd($lang);
         $s = '';
-        if ($tbl_type == 'O') {
+        if ($dontAddAutoField) {
             $s = ' and a.id<>12 ';
         }
         

@@ -409,6 +409,10 @@ class ListTableModel extends BasicTableModel {
      * @param array $r - (array)Request
      */
     public function save(array &$columns, array $tbl, int $id, int $parentId, array &$r) {
+        /* так же внутри кода обращение к БД:
+         *   может быть при сохранении поля типа auto со значением 0
+         *     (в AutoModel->validate())
+         */
         //$this->setErr('', 'fdsafd');
         global $yy, $db;
         $this->tbl = $tbl;
@@ -538,7 +542,7 @@ class ListTableModel extends BasicTableModel {
         if ($pTableID == 0) {
             return '';
         } else {
-            return ' and parent_id = '
+            return ' and parent_id = ';
         } 
     }
 

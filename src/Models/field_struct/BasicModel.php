@@ -169,6 +169,7 @@ class BasicModel {
      * @param array $saveParams - дополнительные параметры сохранения
      *     $saveParams['isNull'] == 1, то создать в таблице данных поле типа null
      *        (не в yy_columns)
+     *     $saveParams['unsigned'] == 1, то unsigned
      *     if (isset($saveParams['defaultForPhys'])), то это значение записывается
      *       в физическую таблицу вместо $default
      */
@@ -216,6 +217,10 @@ class BasicModel {
         
         if ($this->hasErr()) return;
         $definition = $th->getFieldDef($fld_type_id, $params, $saveParams);
+        if (isset($saveParams['unsigned'])) {
+            $definition = $definition . ' unsigned';
+        }
+        
         /*if (!$db->qdirectNoErrorMessage("lock tables yy_columns write")){
             $err .= __('The table does not exist');
             return $err;

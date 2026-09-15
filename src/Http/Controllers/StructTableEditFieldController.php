@@ -92,6 +92,7 @@ dd($s);*/
             }
             $fld =  (new \Alxnv\Nesttab\Models\ColTypesModel())->getOne(intval($r['field_type_id']));
         } else {
+            $params = (object)[];
             if (!$request->has('field_type_id')) \yy::gotoErrorPage('Field type is not defined');
             $fld =  (new \Alxnv\Nesttab\Models\ColTypesModel())->getOne(intval($request->field_type_id));
             if (!$b) $r['name'] = \Alxnv\Nesttab\Models\ColumnsModel::getNextNameOfType($tbl['id'], $fld['name']);
