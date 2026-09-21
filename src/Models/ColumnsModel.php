@@ -306,7 +306,7 @@ class ColumnsModel {
         global $db, $yy;
         $flds = $db->qlistArr("select a.*, b.descr as descr_fld from yy_columns a "
                 . "left join yy_col_types_lang b on a.field_type = b.id where a.table_id = $1"
-                . " and b.language=$2 order by a.ordr",
+                . " and b.language=$2 order by a.ordr, a.id",
                 [$table_id, Lang::getLocale()]);
 
         return $flds;
